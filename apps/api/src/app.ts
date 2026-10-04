@@ -27,6 +27,7 @@ import { progressRoutes } from "./modules/progress/routes";
 import { settingsRoutes } from "./modules/settings/routes";
 import { isStaffActive } from "./modules/settings/team";
 import { consentRoutes } from "./modules/consents/routes";
+import { reencryptWebhookSecrets, resolveEncryptionKey } from "./modules/integrations/crypto";
 import { integrationRoutes } from "./modules/integrations/routes";
 import type { RateLimitConfig } from "./modules/integrations/rate-limit";
 
@@ -44,11 +45,15 @@ export interface AppDeps {
   rateLimit?: RateLimitConfig;
   /** Rahasia untuk /v1/internal/dispatch; default env CRON_SECRET. */
   cronSecret?: string;
+  /** 32 byte; default env ENCRYPTION_KEY. Mengenkripsi rahasia webhook saat disimpan (AES-256-GCM). */
+  encryptionKey?: Uint8Array;
 }
 
 /** Dipakai server lokal dan (nanti) Vercel Function: tidak membuka port di sini. */
-export async function buildApp({ db, otpSender = consoleOtpSender, jwtSecret, now = () => new Date(), storage, anthropicApiKey = process.env.ANTHROPIC_API_KEY, fetchFn, rateLimit, cronSecret }: AppDeps) {
+export async function buildApp({ db, otpSender = consoleOtpSender, jwtSecret, now = () => new Date(), storage, anthropicApiKey = process.env.ANTHROPIC_API_KEY, fetchFn, rateLimit, cronSecret, encryptionKey }: AppDeps) {
   const ctx = { db, secret: resolveSecret(jwtSecret), sender: otpSender, now };
+  const encKey = encryptionKey ?? resolveEncryptionKey();
+  await reencryptWebhookSecrets(db, encKey); // migrasi data idempoten: rahasia webhook lama → terenkripsi
   const files = storage ?? storageFromEnv(ctx.secret);
   const app = Fastify({ logger: false }).withTypeProvider<ZodTypeProvider>();
   app.decorate("isStaffActive", (staffId: string, clinicId: string) => isStaffActive(db, staffId, clinicId));
@@ -123,7 +128,7 @@ export async function buildApp({ db, otpSender = consoleOtpSender, jwtSecret, no
   await app.register(planRoutes, { ctx });
   await app.register(settingsRoutes, { ctx, storage: files, llmAvailable: () => Boolean(anthropicApiKey) });
   await app.register(progressRoutes, { ctx });
-  await app.register(integrationRoutes, { ctx, fetchFn, rateLimit, cronSecret });
+  await app.register(integrationRoutes, { ctx, fetchFn, rateLimit, cronSecret, encryptionKey: encKey });
 
   return app;
 }

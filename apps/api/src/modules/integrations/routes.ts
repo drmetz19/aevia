@@ -52,16 +52,17 @@ export interface IntegrationDeps {
   fetchFn?: typeof fetch;
   rateLimit?: RateLimitConfig;
   cronSecret?: string;
+  encryptionKey: Uint8Array;
 }
 
-export const integrationRoutes: FastifyPluginAsyncZod<IntegrationDeps> = async (app, { ctx, fetchFn, rateLimit, cronSecret }) => {
+export const integrationRoutes: FastifyPluginAsyncZod<IntegrationDeps> = async (app, { ctx, fetchFn, rateLimit, cronSecret, encryptionKey }) => {
   const limiter = new TokenBucketLimiter(rateLimit);
   const ad: IntegrationAuthDeps = { db: ctx.db, secret: ctx.secret, now: ctx.now, limiter };
   const clinicAdmin = requireRole(ctx.secret, ctx.now, "clinic_admin");
   const sc = (req: { principal?: { sub: string; clinic_id: string | null } }) => ({ db: ctx.db, clinicId: req.principal!.clinic_id!, actorId: req.principal!.sub, now: ctx.now() });
-  const staffActor = (req: { principal?: { sub: string; clinic_id: string | null } }) => ({ ...sc(req), actor: { type: "staff" as const, id: req.principal!.sub } });
+  const staffActor = (req: { principal?: { sub: string; clinic_id: string | null } }) => ({ ...sc(req), actor: { type: "staff" as const, id: req.principal!.sub }, encryptionKey });
   const ic = (req: { integration?: import("./auth").Integration }) => ({ db: ctx.db, who: req.integration!, now: ctx.now() });
-  const dd = (): DispatchDeps => ({ db: ctx.db, now: ctx.now, fetchFn });
+  const dd = (): DispatchDeps => ({ db: ctx.db, now: ctx.now, fetchFn, encryptionKey });
 
   app.addContentTypeParser("application/x-www-form-urlencoded", { parseAs: "string", bodyLimit: 16_384 }, (_req, body, done) => {
     done(null, Object.fromEntries(new URLSearchParams(body as string)));
@@ -147,7 +148,7 @@ export const integrationRoutes: FastifyPluginAsyncZod<IntegrationDeps> = async (
   );
 
   // Webhook lewat API (cakupan webhooks:manage)
-  const apiHooks = (req: Parameters<typeof ic>[0]) => ({ db: ctx.db, clinicId: req.integration!.clinicId, actor: { type: "api" as const, id: req.integration!.id, label: req.integration!.label }, now: ctx.now() });
+  const apiHooks = (req: Parameters<typeof ic>[0]) => ({ db: ctx.db, clinicId: req.integration!.clinicId, actor: { type: "api" as const, id: req.integration!.id, label: req.integration!.label }, now: ctx.now(), encryptionKey });
   const hookGuard = requireScope(ad, "webhooks:manage");
   app.get("/v1/integrations/webhooks", { schema: { tags: ["Integrasi"], summary: "Daftar endpoint webhook.", security: apiSec, response: { 200: z.object({ webhooks: z.array(webhookViewSchema) }) } }, preHandler: hookGuard }, async (req) => ({ webhooks: await hooks.listWebhooks(apiHooks(req)) }));
   app.post("/v1/integrations/webhooks", { schema: { tags: ["Integrasi"], summary: "Buat endpoint webhook. Rahasia penandatangan hanya tampil di respons ini.", security: apiSec, body: webhookInputSchema, response: { 201: webhookCreatedSchema } }, preHandler: hookGuard }, async (req, reply) => reply.code(201).send(await hooks.createWebhook(apiHooks(req), req.body)));

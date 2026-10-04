@@ -13,7 +13,7 @@ const NO_CONSENT = "Pasien belum memberi persetujuan akses rekam medis, jadi dat
 
 /** Setiap panggilan integrasi tercatat: actor_type=api, actor_id=id kredensial, `via`=api:<prefix>. */
 const audit = (tx: Tx, c: Ctx, entity: string, entityId: string, action: string, after: Record<string, unknown> = {}) =>
-  writeAudit(tx, { clinicId: c.who.clinicId, actorType: "api", actorId: c.who.id, entity, entityId, action, before: null, after: { via: c.who.label, ...after }, at: c.now });
+  writeAudit(tx, { clinicId: c.who.clinicId, actorType: c.who.actor, actorId: c.who.id, entity, entityId, action, before: null, after: { via: c.who.label, ...after }, at: c.now });
 
 async function patientIn(tx: Tx, id: string) {
   const [p] = await tx.select().from(patients).where(eq(patients.id, id));

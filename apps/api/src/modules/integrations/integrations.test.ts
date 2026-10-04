@@ -8,6 +8,7 @@ import { createDb, seed, type Db } from "@aevia/db";
 import { buildApp } from "../../app";
 import { createLocalStorage } from "../../storage";
 import { dispatchOnce, MAX_ATTEMPTS, RETRY_DELAYS_MS } from "./dispatcher";
+import { decryptSecret, encryptSecret, reencryptWebhookSecrets, resolveEncryptionKey } from "./crypto";
 
 let db: Db;
 let app: Awaited<ReturnType<typeof buildApp>>;
@@ -16,6 +17,7 @@ let clock = new Date("2026-10-04T10:00:00Z");
 const sent: { email: string; code: string }[] = [];
 const SECRET = "test-secret-test-secret-test-secret-123";
 const CRON = "cron-secret-for-tests";
+const ENC = new Uint8Array(32).fill(7);
 type Call = { url: string; headers: Record<string, string>; body: string };
 const hits: Call[] = [];
 let respond: (c: Call) => number = () => 200;
@@ -32,7 +34,7 @@ beforeAll(async () => {
   await db.migrate();
   await seed(db);
   const storage = createLocalStorage({ dir: mkdtempSync(join(tmpdir(), "aevia-int-")), secret: new TextEncoder().encode(SECRET) });
-  const base = { db, jwtSecret: SECRET, now: () => clock, storage, anthropicApiKey: "", fetchFn: fakeFetch, cronSecret: CRON, otpSender: { send: async ({ email, code }: { email: string; code: string }) => void sent.push({ email, code }) } };
+  const base = { db, jwtSecret: SECRET, now: () => clock, storage, anthropicApiKey: "", fetchFn: fakeFetch, encryptionKey: ENC, cronSecret: CRON, otpSender: { send: async ({ email, code }: { email: string; code: string }) => void sent.push({ email, code }) } };
   app = await buildApp(base);
   limited = await buildApp({ ...base, rateLimit: { capacity: 3, perSecond: 0.5 } });
 });
@@ -322,7 +324,7 @@ describe("dispatcher webhook", () => {
     return expected === m[2];
   };
   const deliveries = async () => (await call("GET", `/v1/staff/integrations/webhooks/${hook.id}/deliveries`, adminA)).json().deliveries as { status: string; attempts: number; last_status_code: number | null; event_type: string; next_attempt_at: string | null }[];
-  const run = () => dispatchOnce({ db, now: () => clock, fetchFn: fakeFetch });
+  const run = () => dispatchOnce({ db, now: () => clock, fetchFn: fakeFetch, encryptionKey: ENC });
 
   it("event outbox dikirim bertanda tangan HMAC; header lengkap; payload minimal tanpa PII", async () => {
     await run(); // kuras event lama
@@ -421,6 +423,48 @@ describe("dispatcher webhook", () => {
     expect(bad).toMatchObject({ status: "failed", attempts: 1, last_status_code: 500 });
     expect((await call("POST", `/v1/staff/integrations/webhooks/${hook.id}/test`, adminB)).statusCode).toBe(404);
     respond = () => 200;
+  });
+});
+
+describe("rahasia webhook terenkripsi at-rest", () => {
+  it("tersimpan AES-256-GCM (bukan polos), IV acak, bisa didekripsi hanya dengan kunci yang benar", async () => {
+    const w = (await call("POST", "/v1/staff/integrations/webhooks", adminA, { url: "https://contoh.id/enc", events: ["*"] })).json();
+    const [r] = await rows<{ secret: string }>(sql`SELECT secret FROM webhook_endpoints WHERE id = ${w.id}`);
+    expect(r!.secret).toMatch(/^enc:v1:/);
+    expect(r!.secret).not.toContain(w.secret);
+    expect(decryptSecret(r!.secret, ENC)).toBe(w.secret);
+    expect(() => decryptSecret(r!.secret, new Uint8Array(32).fill(9))).toThrow();
+    expect(encryptSecret("x", ENC)).not.toBe(encryptSecret("x", ENC));
+    // dikirim dengan rahasia yang benar
+    hits.length = 0;
+    respond = () => 200;
+    const t = (await call("POST", `/v1/staff/integrations/webhooks/${w.id}/test`, adminA)).json();
+    expect(t.status).toBe("delivered");
+    const m = /^t=(\d+),v1=([0-9a-f]{64})$/.exec(hits.at(-1)!.headers["x-aevia-signature"]!)!;
+    expect(createHmac("sha256", w.secret).update(`${m[1]}.${hits.at(-1)!.body}`).digest("hex")).toBe(m[2]);
+  });
+  it("migrasi: rahasia lama yang polos dienkripsi ulang (idempoten) dan tetap dipakai menandatangani", async () => {
+    const w = (await call("POST", "/v1/staff/integrations/webhooks", adminA, { url: "https://contoh.id/legacy", events: ["*"] })).json();
+    await db.db.execute(sql`UPDATE webhook_endpoints SET secret = 'whsec_lama_polos' WHERE id = ${w.id}`);
+    // dispatcher menoleransi nilai lama sebelum migrasi
+    hits.length = 0;
+    const t1 = (await call("POST", `/v1/staff/integrations/webhooks/${w.id}/test`, adminA)).json();
+    expect(t1.status).toBe("delivered");
+    const sig = (h: Call, s: string) => createHmac("sha256", s).update(`${/t=(\d+)/.exec(h.headers["x-aevia-signature"]!)![1]}.${h.body}`).digest("hex");
+    expect(hits.at(-1)!.headers["x-aevia-signature"]).toContain(sig(hits.at(-1)!, "whsec_lama_polos"));
+    expect(await reencryptWebhookSecrets(db, ENC)).toBe(1);
+    expect(await reencryptWebhookSecrets(db, ENC)).toBe(0);
+    const [r] = await rows<{ secret: string }>(sql`SELECT secret FROM webhook_endpoints WHERE id = ${w.id}`);
+    expect(r!.secret).toMatch(/^enc:v1:/);
+    expect(decryptSecret(r!.secret, ENC)).toBe("whsec_lama_polos");
+    hits.length = 0;
+    await call("POST", `/v1/staff/integrations/webhooks/${w.id}/test`, adminA);
+    expect(hits.at(-1)!.headers["x-aevia-signature"]).toContain(sig(hits.at(-1)!, "whsec_lama_polos"));
+  });
+  it("ENCRYPTION_KEY: hex 64 atau base64 32 byte diterima; panjang salah ditolak", () => {
+    expect(resolveEncryptionKey("ab".repeat(32))).toHaveLength(32);
+    expect(resolveEncryptionKey(Buffer.alloc(32, 1).toString("base64"))).toHaveLength(32);
+    expect(() => resolveEncryptionKey("pendek")).toThrow(/32 byte/);
   });
 });
 

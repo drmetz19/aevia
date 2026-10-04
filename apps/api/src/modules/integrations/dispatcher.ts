@@ -1,5 +1,6 @@
 import { createHmac } from "node:crypto";
 import { and, asc, eq, isNull, lte } from "drizzle-orm";
+import { decryptSecret } from "./crypto";
 import { clinics, events, webhookDeliveries, webhookEndpoints, type Db } from "@aevia/db";
 
 export const MAX_ATTEMPTS = 3;
@@ -13,6 +14,7 @@ export interface DispatchDeps {
   now: () => Date;
   fetchFn?: typeof fetch;
   timeoutMs?: number;
+  encryptionKey: Uint8Array;
 }
 export interface DispatchResult {
   fanned_out: number;
@@ -89,7 +91,7 @@ async function attemptDue(d: DispatchDeps, clinicId: string, res: DispatchResult
           headers: {
             "content-type": "application/json",
             "user-agent": "AEVIA-Webhooks/1.0",
-            "x-aevia-signature": signBody(ctx.ep.secret, ts, body),
+            "x-aevia-signature": signBody(decryptSecret(ctx.ep.secret, d.encryptionKey), ts, body),
             "x-aevia-event": ctx.ev.type,
             "x-aevia-delivery": dl.id,
           },

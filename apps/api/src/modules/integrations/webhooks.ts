@@ -4,9 +4,10 @@ import type { webhookInputSchema, webhookUpdateSchema } from "@aevia/core";
 import { events, webhookDeliveries, webhookEndpoints, writeAudit, type Db, type Tx } from "@aevia/db";
 import { AuthError } from "../auth/otp";
 import { newWebhookSecret } from "./secrets";
+import { encryptSecret } from "./crypto";
 
 export type Actor = { type: "staff" | "api"; id: string; label?: string };
-type Ctx = { db: Db; clinicId: string; actor: Actor; now: Date };
+type Ctx = { db: Db; clinicId: string; actor: Actor; now: Date; encryptionKey: Uint8Array };
 const NOT_FOUND = "Endpoint webhook ini belum ditemukan.";
 
 const view = (e: typeof webhookEndpoints.$inferSelect) => ({ id: e.id, url: e.url, events: e.events, active: e.active, created_at: e.createdAt.toISOString() });
@@ -30,7 +31,7 @@ export async function listWebhooks(c: Ctx) {
 export async function createWebhook(c: Ctx, body: z.infer<typeof webhookInputSchema>) {
   return c.db.withTenant(c.clinicId, async (tx) => {
     const secret = newWebhookSecret();
-    const [row] = await tx.insert(webhookEndpoints).values({ clinicId: c.clinicId, url: body.url, secret, events: [...new Set(body.events)], createdBy: c.actor.id, createdAt: c.now }).returning();
+    const [row] = await tx.insert(webhookEndpoints).values({ clinicId: c.clinicId, url: body.url, secret: encryptSecret(secret, c.encryptionKey), events: [...new Set(body.events)], createdBy: c.actor.id, createdAt: c.now }).returning();
     await audit(tx, c, row!.id, "webhook.create", null, { url: row!.url, events: row!.events });
     return { ...view(row!), secret };
   });

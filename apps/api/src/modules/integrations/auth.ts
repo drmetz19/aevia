@@ -12,7 +12,9 @@ export interface Integration {
   kind: "api_key" | "oauth";
   /** id baris api_keys / oauth_clients — dipakai sebagai actor_id audit */
   id: string;
-  /** mis. api:aev_live_AbCd1234 — dicatat di setiap audit */
+  /** "mcp" bila klien mengirim X-Aevia-Actor: mcp (server MCP); selain itu "api". Hanya label audit, bukan hak akses. */
+  actor: "api" | "mcp";
+  /** mis. api:aev_live_AbCd1234 atau mcp:aev_live_AbCd1234 — dicatat di setiap audit */
   label: string;
   scopes: string[];
 }
@@ -43,13 +45,13 @@ export async function issueAccessToken(secret: Uint8Array, c: { id: string; clin
     .sign(secret);
 }
 
-async function resolve(d: IntegrationAuthDeps, token: string): Promise<Integration | null> {
+async function resolve(d: IntegrationAuthDeps, token: string, actor: "api" | "mcp"): Promise<Integration | null> {
   const now = d.now();
   if (looksLikeApiKey(token)) {
     const [k] = await d.db.db.select().from(apiKeys).where(and(eq(apiKeys.keyHash, sha256(token)), isNull(apiKeys.revokedAt)));
     if (!k) return null;
     await d.db.db.update(apiKeys).set({ lastUsedAt: now }).where(eq(apiKeys.id, k.id));
-    return { clinicId: k.clinicId, kind: "api_key", id: k.id, label: `api:${k.prefix}`, scopes: k.scopes };
+    return { clinicId: k.clinicId, kind: "api_key", id: k.id, actor, label: `${actor}:${k.prefix}`, scopes: k.scopes };
   }
   try {
     const { payload } = await jwtVerify(token, d.secret, { algorithms: ["HS256"], audience: API_AUDIENCE, currentDate: now });
@@ -57,7 +59,7 @@ async function resolve(d: IntegrationAuthDeps, token: string): Promise<Integrati
     const [c] = await d.db.db.select().from(oauthClients).where(and(eq(oauthClients.id, payload.sub), isNull(oauthClients.revokedAt)));
     if (!c) return null;
     const claimed = String(payload.scope ?? "").split(" ").filter(Boolean);
-    return { clinicId: c.clinicId, kind: "oauth", id: c.id, label: `api:oauth:${c.clientId}`, scopes: claimed.filter((s) => c.scopes.includes(s)) };
+    return { clinicId: c.clinicId, kind: "oauth", id: c.id, actor, label: `${actor}:oauth:${c.clientId}`, scopes: claimed.filter((s) => c.scopes.includes(s)) };
   } catch {
     return null;
   }
@@ -68,7 +70,7 @@ export function requireScope(d: IntegrationAuthDeps, ...needed: Scope[]) {
   return async (req: FastifyRequest, reply: FastifyReply) => {
     const h = req.headers.authorization;
     const token = h?.startsWith("Bearer ") ? h.slice(7).trim() : "";
-    const who = token ? await resolve(d, token) : null;
+    const who = token ? await resolve(d, token, req.headers["x-aevia-actor"] === "mcp" ? "mcp" : "api") : null;
     if (!who) throw new AuthError(401, "invalid_credentials", INVALID);
     const rl = d.limiter.take(who.id, d.now().getTime());
     if (!rl.ok) {
@@ -80,7 +82,7 @@ export function requireScope(d: IntegrationAuthDeps, ...needed: Scope[]) {
       await d.db.db.transaction((tx) =>
         writeAudit(tx, {
           clinicId: who.clinicId,
-          actorType: "api",
+          actorType: who.actor,
           actorId: who.id,
           entity: who.kind === "api_key" ? "api_key" : "oauth_client",
           entityId: who.id,
