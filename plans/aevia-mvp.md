@@ -129,11 +129,11 @@ Bank pertanyaan v0 (JSON di core), SoviaEngine mode script, Guardrail (kata terl
 Console pengaturan: brand mode cobrand/whitelabel, logo, warna (validasi kontras AA), font (pilihan terbatas), nama/avatar asisten (status pending → approved/rejected), custom domain, toggle LLM (disabled bila platform tanpa API key), CRUD program & staf. Admin AEVIA: buat klinik + admin pertama, antrean persetujuan nama asisten. Web membaca tema klinik (CSS variables) & nama asisten approved.
 
 ### Acceptance criteria
-- [ ] Warna kontras < 4.5:1 ditolak dengan pesan yang menjelaskan
-- [ ] Nama asisten baru tidak tampil di web sampai disetujui admin AEVIA
-- [ ] Ganti ke whitelabel → web klinik itu tidak menampilkan "AEVIA" di UI (kecuali halaman syarat & ketentuan)
-- [ ] Toggle LLM tidak bisa dinyalakan tanpa `ANTHROPIC_API_KEY` platform
-- [ ] Admin AEVIA membuat klinik baru → slug baru langsung bisa dibuka
+- [x] Warna kontras < 4.5:1 ditolak dengan pesan yang menjelaskan
+- [x] Nama asisten baru tidak tampil di web sampai disetujui admin AEVIA
+- [x] Ganti ke whitelabel → web klinik itu tidak menampilkan "AEVIA" di UI (kecuali halaman syarat & ketentuan)
+- [x] Toggle LLM tidak bisa dinyalakan tanpa `ANTHROPIC_API_KEY` platform
+- [x] Admin AEVIA membuat klinik baru → slug baru langsung bisa dibuka
 
 ---
 
