@@ -145,10 +145,10 @@ Console pengaturan: brand mode cobrand/whitelabel, logo, warna (validasi kontras
 `api_keys` (hash, scopes), `oauth_clients`, `/v1/oauth/token` client-credentials, `webhook_endpoints`, `webhook_deliveries` + dispatcher outbox (HMAC sha256, retry 3× eksponensial), `/v1/openapi.json` dari Zod. Console tab Integrasi: buat/cabut key & client (secret tampil sekali), daftar webhook + log pengiriman.
 
 ### Acceptance criteria
-- [ ] Key dengan scope `read:patients` bisa GET ringkasan pasien, ditolak untuk scope lain (403)
-- [ ] Client-credentials mengembalikan token berumur pendek berscope
-- [ ] Webhook terkirim dengan `X-Aevia-Signature` yang terverifikasi; endpoint gagal → retry tercatat 3×
-- [ ] `/v1/openapi.json` valid OpenAPI 3.1 dan memuat semua route /v1
+- [x] Key dengan scope `read:patients` bisa GET ringkasan pasien, ditolak untuk scope lain (403)
+- [x] Client-credentials mengembalikan token berumur pendek berscope
+- [x] Webhook terkirim dengan `X-Aevia-Signature` yang terverifikasi; endpoint gagal → retry tercatat 3×
+- [x] `/v1/openapi.json` valid OpenAPI 3.1 dan memuat semua route /v1
 
 ---
 
