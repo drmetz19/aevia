@@ -43,27 +43,10 @@ export async function seed({ db }: Pick<Db, "db">) {
       },
     });
   const rows = await db.select().from(clinics);
-  await db
-    .insert(clinicSettings)
-    .values([
-      ...rows.map((c) => ({ clinicId: c.id, key: "welcome", value: { note: `Pengaturan ${c.slug}` } })),
-      ...rows.map((c) => ({ clinicId: c.id, key: "skin_parameters", value: DEFAULT_SKIN_PARAMETERS })),
-    ])
-    .onConflictDoNothing();
   const id = (slug: string) => rows.find((c) => c.slug === slug)!.id;
-  await db
-    .insert(staff)
-    .values([
-      { clinicId: id("drmetz"), email: "dr.metz@drmetz.test", name: "dr. Metz", role: "professional" },
-      { clinicId: id("drmetz"), email: "admin@drmetz.test", name: "Admin DrMetz", role: "clinic_admin" },
-      { clinicId: id("demo-partner"), email: "admin@demo-partner.test", name: "Admin Lumina", role: "clinic_admin" },
-    ])
-    .onConflictDoNothing();
   await db.insert(platformAdmins).values({ email: "admin@aevia.test", name: "Admin Platform" }).onConflictDoNothing();
   // Harga placeholder, dapat diubah klinik (Phase 8).
-  await db
-    .insert(programs)
-    .values([
+  const programRows = [
       {
         clinicId: id("drmetz"),
         slug: "konsultasi-healthy-aging",
@@ -104,6 +87,26 @@ export async function seed({ db }: Pick<Db, "db">) {
         includes: ["Telaah kondisi kulit", "Rencana langkah awal"],
         sortOrder: 1,
       },
-    ])
-    .onConflictDoNothing();
+  ];
+  // Tabel ber-RLS (FORCE) ditulis dengan konteks klinik, juga untuk pemilik di Postgres sungguhan.
+  await db.transaction(async (tx) => {
+    for (const c of rows) {
+      await tx.execute(sql`SELECT set_config('app.clinic_id', ${c.id}, true)`);
+      const staffRows = [
+        { clinicId: id("drmetz"), email: "dr.metz@drmetz.test", name: "dr. Metz", role: "professional" as const },
+        { clinicId: id("drmetz"), email: "admin@drmetz.test", name: "Admin DrMetz", role: "clinic_admin" as const },
+        { clinicId: id("demo-partner"), email: "admin@demo-partner.test", name: "Admin Lumina", role: "clinic_admin" as const },
+      ].filter((r) => r.clinicId === c.id);
+      if (staffRows.length) await tx.insert(staff).values(staffRows).onConflictDoNothing();
+      await tx
+        .insert(clinicSettings)
+        .values([
+          { clinicId: c.id, key: "welcome", value: { note: `Pengaturan ${c.slug}` } },
+          { clinicId: c.id, key: "skin_parameters", value: DEFAULT_SKIN_PARAMETERS },
+        ])
+        .onConflictDoNothing();
+      const mine = programRows.filter((r) => r.clinicId === c.id);
+      if (mine.length) await tx.insert(programs).values(mine).onConflictDoNothing();
+    }
+  });
 }

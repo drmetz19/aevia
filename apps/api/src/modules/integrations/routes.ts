@@ -102,7 +102,7 @@ export const integrationRoutes: FastifyPluginAsyncZod<IntegrationDeps> = async (
       const now = ctx.now();
       const token = await issueAccessToken(ctx.secret, { id: c.id, clinicId: c.clinicId, scopes: asked, clientId: c.clientId }, now);
       await ctx.db.db.update(oauthClients).set({ lastUsedAt: now }).where(eq(oauthClients.id, c.id));
-      await ctx.db.db.transaction((tx) =>
+      await ctx.db.ownerTx(c.clinicId, (tx) =>
         writeAudit(tx, { clinicId: c.clinicId, actorType: "api", actorId: c.id, entity: "oauth_client", entityId: c.id, action: "oauth.token_issued", before: null, after: { via: `api:oauth:${c.clientId}`, scopes: asked }, at: now }),
       );
       return reply.header("Cache-Control", "no-store").send({ access_token: token, token_type: "Bearer" as const, expires_in: OAUTH_TOKEN_TTL_SECONDS, scope: asked.join(" ") });

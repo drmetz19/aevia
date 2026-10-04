@@ -79,7 +79,7 @@ export function requireScope(d: IntegrationAuthDeps, ...needed: Scope[]) {
     }
     const missing = needed.filter((s) => !who.scopes.includes(s));
     if (missing.length) {
-      await d.db.db.transaction((tx) =>
+      await d.db.ownerTx(who.clinicId, (tx) =>
         writeAudit(tx, {
           clinicId: who.clinicId,
           actorType: who.actor,

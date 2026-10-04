@@ -37,7 +37,7 @@ export async function listClients(c: Ctx) {
 
 export async function createKey(c: Ctx, body: z.infer<typeof createApiKeySchema>) {
   const k = newApiKey(body.mode);
-  return c.db.db.transaction(async (tx) => {
+  return c.db.ownerTx(c.clinicId, async (tx) => {
     const [row] = await tx
       .insert(apiKeys)
       .values({ clinicId: c.clinicId, name: body.name, mode: body.mode, prefix: k.prefix, keyHash: k.hash, scopes: [...new Set(body.scopes)], createdBy: c.actorId, createdAt: c.now })
@@ -48,7 +48,7 @@ export async function createKey(c: Ctx, body: z.infer<typeof createApiKeySchema>
 }
 
 export async function revokeKey(c: Ctx, id: string) {
-  return c.db.db.transaction(async (tx) => {
+  return c.db.ownerTx(c.clinicId, async (tx) => {
     const [row] = await tx
       .update(apiKeys)
       .set({ revokedAt: c.now })
@@ -62,7 +62,7 @@ export async function revokeKey(c: Ctx, id: string) {
 
 export async function createClient(c: Ctx, body: z.infer<typeof createOauthClientSchema>) {
   const n = newClient();
-  return c.db.db.transaction(async (tx) => {
+  return c.db.ownerTx(c.clinicId, async (tx) => {
     const [row] = await tx
       .insert(oauthClients)
       .values({ clinicId: c.clinicId, name: body.name, clientId: n.clientId, secretHash: sha256(n.secret), scopes: [...new Set(body.scopes)], createdBy: c.actorId, createdAt: c.now })
@@ -73,7 +73,7 @@ export async function createClient(c: Ctx, body: z.infer<typeof createOauthClien
 }
 
 export async function revokeClient(c: Ctx, id: string) {
-  return c.db.db.transaction(async (tx) => {
+  return c.db.ownerTx(c.clinicId, async (tx) => {
     const [row] = await tx
       .update(oauthClients)
       .set({ revokedAt: c.now })

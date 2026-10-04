@@ -188,3 +188,25 @@ describe("staf", () => {
     expect(v.json()).toMatchObject({ role: "clinic_admin", clinic_slug: "demo-partner" });
   });
 });
+
+describe("pengirim email OTP", () => {
+  it("Resend: mengirim email netral tanpa merek; galat penyedia dilempar; env menentukan adapter", async () => {
+    const { resendOtpSender, otpSenderFromEnv, consoleOtpSender } = await import("./otp-sender");
+    const seen: { url: string; body: { to: string[]; subject: string; text: string; from: string }; auth: string }[] = [];
+    const f = (async (url: string, init: { body: string; headers: Record<string, string> }) => {
+      seen.push({ url, body: JSON.parse(init.body), auth: init.headers.authorization! });
+      return new Response("{}", { status: 200 });
+    }) as unknown as typeof fetch;
+    await resendOtpSender({ apiKey: "re_x", from: "Klinik <masuk@k.id>", fetchFn: f }).send({ email: "a@b.id", code: "123456", purpose: "patient", clinicSlug: "demo-partner" });
+    expect(seen[0]).toMatchObject({ url: "https://api.resend.com/emails", auth: "Bearer re_x" });
+    expect(seen[0]!.body).toMatchObject({ to: ["a@b.id"], from: "Klinik <masuk@k.id>" });
+    expect(seen[0]!.body.text).toContain("123456");
+    expect(JSON.stringify(seen[0]!.body)).not.toMatch(/aevia/i);
+    const bad = (async () => new Response("no", { status: 422 })) as unknown as typeof fetch;
+    await expect(resendOtpSender({ apiKey: "k", from: "f", fetchFn: bad }).send({ email: "a@b.id", code: "1", purpose: "staff" })).rejects.toThrow(/gagal/);
+    expect(otpSenderFromEnv({ NODE_ENV: "development" } as NodeJS.ProcessEnv)).toBe(consoleOtpSender);
+    expect(() => otpSenderFromEnv({ NODE_ENV: "production" } as NodeJS.ProcessEnv)).toThrow(/RESEND_API_KEY/);
+    expect(() => otpSenderFromEnv({ RESEND_API_KEY: "k" } as NodeJS.ProcessEnv)).toThrow(/OTP_FROM_EMAIL/);
+    expect(otpSenderFromEnv({ RESEND_API_KEY: "k", OTP_FROM_EMAIL: "f" } as NodeJS.ProcessEnv)).not.toBe(consoleOtpSender);
+  });
+});

@@ -61,6 +61,7 @@ export const assistantNameSchema = z.object({
     .max(30, "Nama asisten maksimal 30 karakter.")
     .regex(/^[\p{L}\p{N}][\p{L}\p{N} '-]*$/u, "Nama asisten hanya boleh berisi huruf, angka, spasi, apostrof, atau tanda hubung."),
 });
+export const llmUsageSchema = z.object({ calls_30d: z.number(), fallbacks_30d: z.number(), input_tokens_30d: z.number(), output_tokens_30d: z.number() });
 export const llmBodySchema = z.object({ enabled: z.boolean() });
 
 export const MAX_BRAND_ASSET_BYTES = 1024 * 1024;

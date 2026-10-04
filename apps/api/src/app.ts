@@ -9,12 +9,12 @@ import {
   validatorCompiler,
   type ZodTypeProvider,
 } from "fastify-type-provider-zod";
-import { SCOPES, SCOPE_LABELS } from "@aevia/core";
+import { SCOPES, SCOPE_LABELS, type LLMProvider } from "@aevia/core";
 import type { Db } from "@aevia/db";
 import { clinicRoutes } from "./modules/clinics/routes";
 import { authRoutes } from "./modules/auth/routes";
 import { AuthError } from "./modules/auth/otp";
-import { consoleOtpSender, type OtpSender } from "./modules/auth/otp-sender";
+import { otpSenderFromEnv, type OtpSender } from "./modules/auth/otp-sender";
 import { resolveSecret } from "./modules/auth/tokens";
 import { assessmentRoutes } from "./modules/assessments/routes";
 import { programRoutes } from "./modules/programs/routes";
@@ -28,6 +28,8 @@ import { settingsRoutes } from "./modules/settings/routes";
 import { isStaffActive } from "./modules/settings/team";
 import { consentRoutes } from "./modules/consents/routes";
 import { reencryptWebhookSecrets, resolveEncryptionKey } from "./modules/integrations/crypto";
+import { ClaudeProvider } from "./modules/llm/claude";
+import { createLlmEngine } from "./modules/llm/engine";
 import { integrationRoutes } from "./modules/integrations/routes";
 import type { RateLimitConfig } from "./modules/integrations/rate-limit";
 
@@ -47,13 +49,22 @@ export interface AppDeps {
   cronSecret?: string;
   /** 32 byte; default env ENCRYPTION_KEY. Mengenkripsi rahasia webhook saat disimpan (AES-256-GCM). */
   encryptionKey?: Uint8Array;
+  /** Provider LLM. Default: ClaudeProvider bila ANTHROPIC_API_KEY ada DAN bukan lingkungan test; selain itu mode skrip. */
+  llmProvider?: LLMProvider;
+  llmTimeoutMs?: number;
+  /** Log alasan fallback LLM (default: console.warn kecuali test). */
+  llmLog?: (msg: string) => void;
 }
 
+const isTestEnv = () => process.env.NODE_ENV === "test" || Boolean(process.env.VITEST);
+
 /** Dipakai server lokal dan (nanti) Vercel Function: tidak membuka port di sini. */
-export async function buildApp({ db, otpSender = consoleOtpSender, jwtSecret, now = () => new Date(), storage, anthropicApiKey = process.env.ANTHROPIC_API_KEY, fetchFn, rateLimit, cronSecret, encryptionKey }: AppDeps) {
+export async function buildApp({ db, otpSender = otpSenderFromEnv(), jwtSecret, now = () => new Date(), storage, anthropicApiKey = process.env.ANTHROPIC_API_KEY, fetchFn, rateLimit, cronSecret, encryptionKey, llmProvider, llmTimeoutMs, llmLog }: AppDeps) {
   const ctx = { db, secret: resolveSecret(jwtSecret), sender: otpSender, now };
   const encKey = encryptionKey ?? resolveEncryptionKey();
   await reencryptWebhookSecrets(db, encKey); // migrasi data idempoten: rahasia webhook lama → terenkripsi
+  const provider = llmProvider ?? (anthropicApiKey && !isTestEnv() ? new ClaudeProvider(anthropicApiKey) : undefined);
+  const llm = createLlmEngine({ db, provider, now, timeoutMs: llmTimeoutMs, log: llmLog ?? (isTestEnv() ? undefined : (m) => console.warn(m)) });
   const files = storage ?? storageFromEnv(ctx.secret);
   const app = Fastify({ logger: false }).withTypeProvider<ZodTypeProvider>();
   app.decorate("isStaffActive", (staffId: string, clinicId: string) => isStaffActive(db, staffId, clinicId));
@@ -122,11 +133,11 @@ export async function buildApp({ db, otpSender = consoleOtpSender, jwtSecret, no
   await app.register(consentRoutes, { ctx });
   await app.register(assessmentRoutes, { ctx });
   await app.register(programRoutes, { db });
-  await app.register(consultationRoutes, { ctx });
+  await app.register(consultationRoutes, { ctx, llm });
   await app.register(staffRoutes, { ctx });
   await app.register(clinicalRoutes, { ctx, storage: files });
-  await app.register(planRoutes, { ctx });
-  await app.register(settingsRoutes, { ctx, storage: files, llmAvailable: () => Boolean(anthropicApiKey) });
+  await app.register(planRoutes, { ctx, llm });
+  await app.register(settingsRoutes, { ctx, storage: files, llmAvailable: () => Boolean(provider || anthropicApiKey) });
   await app.register(progressRoutes, { ctx });
   await app.register(integrationRoutes, { ctx, fetchFn, rateLimit, cronSecret, encryptionKey: encKey });
 

@@ -1,4 +1,4 @@
-import { brandSettingsSchema } from "@aevia/core";
+import { brandSettingsSchema, llmUsageSchema } from "@aevia/core";
 import { publicFileUrl, requireStaff, staffFetch } from "@/lib/api";
 import { PageHead, ActionForm, inputCls, labelCls, primaryCls, ghostCls, Submit } from "@/components/Ui";
 import { SettingsTabs } from "@/components/SettingsTabs";
@@ -12,6 +12,8 @@ export default async function Brand() {
   const res = await staffFetch("/v1/staff/brand");
   if (!res.ok) throw new Error("Pengaturan merek belum dapat dimuat.");
   const b = brandSettingsSchema.parse(await res.json());
+  const ur = await staffFetch("/v1/staff/brand/llm-usage");
+  const usage = ur.ok ? llmUsageSchema.parse(await ur.json()) : null;
   const a = b.assistant;
   return (
     <main className="mx-auto max-w-3xl px-4 py-10 md:px-8">
@@ -69,6 +71,14 @@ export default async function Brand() {
             ? "Bila dinyalakan, asisten memakai model bahasa untuk percakapan; pagar pengaman klinis tetap aktif."
             : "Belum tersedia: layanan belum memiliki kunci layanan AI. Asisten tetap berjalan dengan alur terpandu."}
         </p>
+        <p className="mt-2 text-base text-body">Teks asisten dari AI hanya merapikan bahasa (konteks persiapan dan penjelasan rencana), selalu melewati pagar pengaman, dan kembali ke teks standar bila ada kendala. Isi rencana, resep, dan catatan klinis tidak pernah ditulis oleh AI.</p>
+        {usage && (
+          <dl className="mt-3 grid gap-3 sm:grid-cols-3" aria-label="Pemakaian 30 hari terakhir">
+            <div><dt className="text-[13px] font-medium text-body">Panggilan (30 hari)</dt><dd className="font-serif text-3xl text-navy">{usage.calls_30d}</dd></div>
+            <div><dt className="text-[13px] font-medium text-body">Kembali ke teks standar</dt><dd className="font-serif text-3xl text-navy">{usage.fallbacks_30d}</dd></div>
+            <div><dt className="text-[13px] font-medium text-body">Token masuk / keluar</dt><dd className="font-serif text-3xl text-navy">{usage.input_tokens_30d} / {usage.output_tokens_30d}</dd></div>
+          </dl>
+        )}
         <ActionForm action={setLlm} className="mt-4">
                       <>
               <input type="hidden" name="enabled" value={String(!b.llm_enabled)} />

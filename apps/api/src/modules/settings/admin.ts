@@ -1,4 +1,4 @@
-import { and, asc, desc, eq, isNotNull } from "drizzle-orm";
+import { sql, and, asc, desc, eq, isNotNull } from "drizzle-orm";
 import type { z } from "zod";
 import { DEFAULT_SKIN_PARAMETERS } from "@aevia/core";
 import { clinicSettings, clinics, platformAdmins, staff, writeAudit, type Db } from "@aevia/db";
@@ -31,8 +31,10 @@ export async function createClinic(c: Ctx, body: z.infer<typeof createClinicSche
   const [b] = await c.db.db.select({ id: platformAdmins.id }).from(platformAdmins).where(eq(platformAdmins.email, body.admin_email));
   if (a || b) throw new AuthError(409, "email_taken", "Email admin ini sudah terdaftar sebagai staf. Gunakan email lain.");
   const adminName = body.admin_name ?? `Admin ${body.name}`;
+  // klinik baru: id dibuat di dalam transaksi, jadi konteks RLS dipasang setelah id diketahui
   return c.db.db.transaction(async (tx) => {
     const [row] = await tx.insert(clinics).values({ slug: body.slug, name: body.name, brandMode: body.brand_mode, createdAt: c.now }).returning();
+    await tx.execute(sql`SELECT set_config('app.clinic_id', ${row!.id}, true)`);
     const [adm] = await tx.insert(staff).values({ clinicId: row!.id, email: body.admin_email, name: adminName, role: "clinic_admin", createdAt: c.now }).returning();
     await tx.insert(clinicSettings).values({ clinicId: row!.id, key: "skin_parameters", value: DEFAULT_SKIN_PARAMETERS });
     await writeAudit(tx, {
@@ -51,7 +53,7 @@ export async function createClinic(c: Ctx, body: z.infer<typeof createClinicSche
 }
 
 export async function verifyDomain(c: Ctx, clinicId: string, verified: boolean) {
-  return c.db.db.transaction(async (tx) => {
+  return c.db.ownerTx(clinicId, async (tx) => {
     const [before] = await tx.select().from(clinics).where(eq(clinics.id, clinicId));
     if (!before) throw new AuthError(404, "clinic_not_found", "Klinik ini belum ditemukan.");
     if (!before.customDomain) throw new AuthError(409, "no_domain", "Klinik ini belum mengisi domain khusus.");
@@ -76,7 +78,7 @@ export async function assistantQueue(db: Db) {
 
 export async function reviewAssistant(c: Ctx & { storage: StorageProvider }, clinicId: string, decision: "approve" | "reject", note: string) {
   const removals: string[] = [];
-  const out = await c.db.db.transaction(async (tx) => {
+  const out = await c.db.ownerTx(clinicId, async (tx) => {
     const [before] = await tx.select().from(clinics).where(eq(clinics.id, clinicId));
     if (!before) throw new AuthError(404, "clinic_not_found", "Klinik ini belum ditemukan.");
     if (before.assistantNameStatus !== "pending") throw new AuthError(409, "not_pending", "Usulan ini sudah ditanggapi atau tidak ada yang menunggu.");

@@ -9,6 +9,7 @@
     "typecheck": "turbo run typecheck",
     "test": "turbo run test",
     "smoke": "pnpm --filter @aevia/web smoke",
+    "db:migrate": "pnpm --filter @aevia/db migrate",
     "db:seed": "pnpm --filter @aevia/db seed"
   },
   "devDependencies": {

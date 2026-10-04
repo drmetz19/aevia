@@ -15,6 +15,7 @@ import {
   hostnameSchema,
   inviteBodySchema,
   llmBodySchema,
+  llmUsageSchema,
   programInputSchema,
   resolveDomainSchema,
   staffProgramListSchema,
@@ -26,6 +27,7 @@ import { AuthError } from "../auth/otp";
 import { requireRole } from "../auth/guard";
 import type { AuthCtx } from "../auth/service";
 import type { StorageProvider } from "../../storage";
+import { llmUsage30d } from "../llm/engine";
 import * as admin from "./admin";
 import * as brand from "./brand";
 import * as prog from "./programs";
@@ -86,6 +88,7 @@ export const settingsRoutes: FastifyPluginAsyncZod<{ ctx: AuthCtx; storage: Stor
     const a = await brand.pendingAvatarBytes({ db: ctx.db, storage }, req.principal!.clinic_id!);
     return reply.header("content-type", a.contentType).header("cache-control", "private, no-store").header("x-content-type-options", "nosniff").send(a.data);
   });
+  app.get("/v1/staff/brand/llm-usage", { schema: { summary: "Pemakaian LLM 30 hari terakhir (jumlah panggilan, fallback, token).", response: { 200: llmUsageSchema } }, preHandler: clinicAdmin }, async (req) => llmUsage30d(ctx.db, req.principal!.clinic_id!, ctx.now()));
   app.put("/v1/staff/brand/llm", { schema: { body: llmBodySchema, response: { 200: brandSettingsSchema } }, preHandler: clinicAdmin }, async (req) => brand.setLlm(sc(req), req.body.enabled));
 
   // ---- Admin klinik: program ----

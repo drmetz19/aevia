@@ -40,7 +40,7 @@ async function mutate(
   action: string,
   fn: (tx: Tx, before: Clinic) => Promise<{ set: Partial<typeof clinics.$inferInsert>; before: unknown; after: unknown }>,
 ): Promise<Clinic> {
-  return c.db.db.transaction(async (tx) => {
+  return c.db.ownerTx(c.clinicId, async (tx) => {
     const [before] = await tx.select().from(clinics).where(eq(clinics.id, c.clinicId));
     if (!before) throw notFound();
     const r = await fn(tx, before);

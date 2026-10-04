@@ -14,11 +14,12 @@ import {
 import { AuthError } from "../auth/otp";
 import { requireRole } from "../auth/guard";
 import type { AuthCtx } from "../auth/service";
+import { noLlm, type LlmEngine } from "../llm/engine";
 import { consultationSummary, currentPlan, issueRx, listPlans, listPrescriptions, savePlanDraft, saveRxDraft, signPlan } from "./service";
 
 const idParam = z.object({ id: z.uuid() });
 
-export const planRoutes: FastifyPluginAsyncZod<{ ctx: AuthCtx }> = async (app, { ctx }) => {
+export const planRoutes: FastifyPluginAsyncZod<{ ctx: AuthCtx; llm?: LlmEngine }> = async (app, { ctx, llm = noLlm }) => {
   // Resep dan rencana: hanya profesional (bukan admin klinik, Sovia/MCP/API, atau pasien).
   const pro = requireRole(ctx.secret, ctx.now, "professional");
   const patient = requireRole(ctx.secret, ctx.now, "patient");
@@ -54,9 +55,10 @@ export const planRoutes: FastifyPluginAsyncZod<{ ctx: AuthCtx }> = async (app, {
   app.get("/v1/care-plans/current", { schema: { response: { 200: patientPlanSchema } }, preHandler: patient }, async (req) => {
     const plan = await currentPlan(p(req));
     if (!plan) throw new AuthError(404, "plan_not_available", "Rencana akan tersedia setelah konsultasi selesai ditinjau profesional.");
-    return plan;
+    return llm.polishPlan(req.principal!.clinic_id!, plan);
   });
-  app.get("/v1/consultations/:id/summary", { schema: { params: idParam, response: { 200: patientSummarySchema } }, preHandler: patient }, async (req) =>
-    consultationSummary(p(req), req.params.id),
-  );
+  app.get("/v1/consultations/:id/summary", { schema: { params: idParam, response: { 200: patientSummarySchema } }, preHandler: patient }, async (req) => {
+    const r = await consultationSummary(p(req), req.params.id);
+    return r.plan ? { ...r, plan: await llm.polishPlan(req.principal!.clinic_id!, r.plan) } : r;
+  });
 };
