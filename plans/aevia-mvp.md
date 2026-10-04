@@ -160,9 +160,9 @@ Console pengaturan: brand mode cobrand/whitelabel, logo, warna (validasi kontras
 `apps/mcp` dengan @modelcontextprotocol/sdk: transport stdio + Streamable HTTP; auth API key klinik; tools: `get_patient_summary`, `list_checkins`, `get_progress`, `get_care_plan` (read), `send_checkin_reminder`, `create_consultation_request` (write terbatas). Setiap panggilan diaudit. Contoh konfigurasi klien MCP di README.
 
 ### Acceptance criteria
-- [ ] Klien MCP test mendaftar tools persis 6 di atas (tidak ada tool resep/rencana/SOAP)
-- [ ] Panggilan dengan key klinik A tidak bisa membaca pasien klinik B
-- [ ] Setiap panggilan tool menghasilkan baris audit_logs actor=mcp:<key>
+- [x] Klien MCP test mendaftar tools persis 6 di atas (tidak ada tool resep/rencana/SOAP)
+- [x] Panggilan dengan key klinik A tidak bisa membaca pasien klinik B
+- [x] Setiap panggilan tool menghasilkan baris audit_logs actor=mcp:<key>
 
 ---
 
