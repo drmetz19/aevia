@@ -5,18 +5,47 @@ import { mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-const API = "http://localhost:4000";
-const WEB = "http://localhost:3000";
+// Deterministik: data dir sementara baru, port acak bebas, build produksi + `next start`, readiness polling,
+// dan seluruh proses dimatikan per process group (tanpa pkill berdasarkan nama).
+import { createServer } from "node:net";
+import { fileURLToPath } from "node:url";
+
+const ROOT = fileURLToPath(new URL("../../../", import.meta.url));
+const freePort = () =>
+  new Promise((resolve, reject) => {
+    const srv = createServer();
+    srv.once("error", reject);
+    srv.listen(0, "127.0.0.1", () => {
+      const { port } = srv.address();
+      srv.close(() => resolve(port));
+    });
+  });
+const [apiPort, webPort, conPort] = [await freePort(), await freePort(), await freePort()];
+const API = `http://127.0.0.1:${apiPort}`;
+const WEB = `http://127.0.0.1:${webPort}`;
+const CON = `http://127.0.0.1:${conPort}`;
+const dataDir = mkdtempSync(join(tmpdir(), "aevia-smoke-"));
 const procs = [];
-const CON = "http://localhost:3001";
 let apiLog = "";
-const run = (cmd, args, env, capture = false) => {
-  const p = spawn(cmd, args, { env: { ...process.env, ...env }, stdio: ["ignore", capture ? "pipe" : "ignore", "ignore"], detached: true });
-  if (capture) p.stdout.on("data", (d) => (apiLog += d));
+const exited = new Map();
+const run = (name, cmd, args, env, capture = false) => {
+  const p = spawn(cmd, args, { cwd: ROOT, env: { ...process.env, ...env }, stdio: ["ignore", "pipe", "pipe"], detached: true });
+  p.stdout.on("data", (d) => { if (capture) apiLog += d; });
+  p.stderr.on("data", (d) => { if (capture) apiLog += d; });
+  p.on("exit", (code) => exited.set(name, code));
   procs.push(p);
+  return p;
 };
+const runToEnd = (cmd, args, env = {}) =>
+  new Promise((resolve, reject) => {
+    const p = spawn(cmd, args, { cwd: ROOT, env: { ...process.env, ...env }, stdio: ["ignore", "ignore", "inherit"] });
+    p.on("exit", (c) => (c === 0 ? resolve() : reject(new Error(`${cmd} ${args.join(" ")} gagal (${c})`))));
+  });
+const stop = () => procs.forEach((p) => { try { process.kill(-p.pid, "SIGTERM"); } catch {} });
+process.on("SIGINT", () => { stop(); process.exit(130); });
+process.on("SIGTERM", () => { stop(); process.exit(143); });
 async function otpCode(email) {
-  for (let i = 0; i < 20; i++) {
+  for (let i = 0; i < 40; i++) {
     const m = [...apiLog.matchAll(new RegExp(`${email.replace(/[.]/g, "\\.")} kode=(\\d{6})`, "g"))].pop();
     if (m) return m[1];
     await new Promise((r) => setTimeout(r, 250));
@@ -25,25 +54,31 @@ async function otpCode(email) {
 }
 const post = (url, body, token) =>
   fetch(url, { method: "POST", headers: { "content-type": "application/json", ...(token ? { authorization: `Bearer ${token}` } : {}) }, body: JSON.stringify(body) });
-const stop = () => procs.forEach((p) => { try { process.kill(-p.pid); } catch {} });
-async function waitFor(url) {
-  for (let i = 0; i < 120; i++) {
-    try { if ((await fetch(url)).status < 500) return; } catch {}
-    await new Promise((r) => setTimeout(r, 1000));
+async function waitFor(name, url, ok = (r) => r.status === 200, timeoutMs = 120_000) {
+  const t0 = Date.now();
+  while (Date.now() - t0 < timeoutMs) {
+    if (exited.has(name)) throw new Error(`Proses ${name} berhenti (kode ${exited.get(name)}) sebelum siap`);
+    try { if (ok(await fetch(url))) return; } catch {}
+    await new Promise((r) => setTimeout(r, 500));
   }
-  throw new Error(`Timeout menunggu ${url}`);
+  throw new Error(`Timeout menunggu ${name} di ${url}`);
 }
 const fails = [];
 const check = (ok, msg) => { console.log(`${ok ? "✓" : "✗"} ${msg}`); if (!ok) fails.push(msg); };
 const text = (html) => html.replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>/g, "").replace(/<[^>]+>/g, " ");
 
 try {
-  run("pnpm", ["--filter", "@aevia/api", "dev"], { PGLITE_DIR: mkdtempSync(join(tmpdir(), "aevia-smoke-")), PORT: "4000" }, true);
-  run("pnpm", ["--filter", "@aevia/web", "dev"], { API_URL: API });
-  run("pnpm", ["--filter", "@aevia/console", "dev"], { API_URL: API });
-  await waitFor(`${API}/health`);
-  await waitFor(`${WEB}/c/drmetz`);
-  await waitFor(`${CON}/masuk`);
+  if (!process.env.SMOKE_SKIP_BUILD) {
+    await runToEnd("pnpm", ["--filter", "@aevia/web", "--filter", "@aevia/console", "build"]);
+  }
+  run("api", "pnpm", ["--filter", "@aevia/api", "exec", "tsx", "src/server.ts"], { PGLITE_DIR: join(dataDir, "pglite"), UPLOADS_DIR: join(dataDir, "uploads"), PORT: String(apiPort), NODE_ENV: "development" }, true);
+  await waitFor("api", `${API}/health`);
+  run("web", "pnpm", ["--filter", "@aevia/web", "exec", "next", "start", "-p", String(webPort)], { API_URL: API });
+  run("console", "pnpm", ["--filter", "@aevia/console", "exec", "next", "start", "-p", String(conPort)], { API_URL: API, API_PUBLIC_URL: API });
+  await waitFor("web", `${WEB}/c/drmetz`);
+  await waitFor("console", `${CON}/masuk`);
+  // Pemanasan: pastikan data seed terbaca lewat web sebelum pengecekan dimulai.
+  await waitFor("web", `${WEB}/c/demo-partner`);
 
   const dm = await (await fetch(`${WEB}/c/drmetz`)).text();
   check(dm.includes("DrMetz"), "/c/drmetz memuat nama DrMetz");
@@ -246,6 +281,7 @@ try {
   check(home7.includes("Cek progres") && home7.includes("Mulai check-in"), "beranda: CTA check-in & progres");
   const ci = flat(await (await fetch(`${WEB}/c/drmetz/checkin`, { headers: cookie })).text());
   check(ci.includes("Kualitas tidur") && ci.includes('type="radio"') && ci.includes("Simpan check-in"), "check-in: metrik dari rencana signed (form no-JS)");
+  check(ci.includes('aria-label="3, Cukup"') && /required=""/.test(ci), "check-in: aria-label per radio + required");
   const c1 = await post(`${API}/v1/checkins`, { values: { tidur: 2 }, note: "awal" }, token);
   check(c1.status === 201, "API: check-in pertama");
   const c2 = await post(`${API}/v1/checkins`, { values: { tidur: 3 } }, token);
@@ -284,6 +320,7 @@ try {
   fails.push(String(e));
 } finally {
   stop();
+  await new Promise((r) => setTimeout(r, 500));
 }
 console.log(fails.length ? `\nSmoke GAGAL (${fails.length})` : "\nSmoke OK");
 process.exit(fails.length ? 1 : 0);

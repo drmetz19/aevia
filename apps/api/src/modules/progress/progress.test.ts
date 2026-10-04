@@ -70,6 +70,7 @@ describe("check-in umum (tanpa rencana)", () => {
     const form = (await call("GET", "/v1/checkins/form", pt)).json();
     expect(form).toMatchObject({ general: true, plan_id: null });
     expect(form.fields.map((f: { key: string }) => f.key)).toEqual(["tidur", "energi", "stres"]);
+    expect(form.fields.find((f: { key: string }) => f.key === "stres").label).toBe("Ketenangan (kebalikan stres)");
     const empty = (await call("GET", "/v1/progress", pt)).json();
     expect(empty).toMatchObject({ checkin_count: 0, last_checkin_at: null, general: true });
     expect(empty.metrics.every((m: { current: number | null }) => m.current === null)).toBe(true);
@@ -79,7 +80,7 @@ describe("check-in umum (tanpa rencana)", () => {
     const pt = await patient("drmetz", "g2@contoh.test");
     const n0 = (await eventsOf("checkin.submitted")).length;
     const p0 = (await eventsOf("progress.updated")).length;
-    const first = await call("POST", "/v1/checkins", pt, { values: { tidur: 2, energi: 3, stres: 4 }, note: "minggu pertama" });
+    const first = await call("POST", "/v1/checkins", pt, { values: { tidur: 2, energi: 3, stres: 2 }, note: "minggu pertama" });
     expect(first.statusCode).toBe(201);
     expect(first.json().metrics.find((m: { key: string }) => m.key === "tidur")).toMatchObject({ current: 2, previous: null, delta_text: null, status: "first" });
 
@@ -87,7 +88,7 @@ describe("check-in umum (tanpa rencana)", () => {
     const second = (await call("POST", "/v1/checkins", await relogin("g2@contoh.test"), { values: { tidur: 3, energi: 3, stres: 3 } })).json();
     const tidur = second.metrics.find((m: { key: string }) => m.key === "tidur");
     expect(tidur).toMatchObject({ current: 3, previous: 2, change_pct: 50, delta_text: "Naik 50% sejak check-in terakhir", status: "positive" });
-    expect(second.metrics.find((m: { key: string }) => m.key === "stres")).toMatchObject({ change_pct: -25, delta_text: "Turun 25% sejak check-in terakhir", status: "positive" });
+    expect(second.metrics.find((m: { key: string }) => m.key === "stres")).toMatchObject({ change_pct: 50, delta_text: "Naik 50% sejak check-in terakhir", status: "positive", direction: "up" });
     expect(second.metrics.find((m: { key: string }) => m.key === "energi").status).toBe("stable");
     expect(second.checkin_count).toBe(2);
     expect(JSON.stringify(second)).not.toMatch(/buruk|gagal/i);
@@ -100,7 +101,7 @@ describe("check-in umum (tanpa rencana)", () => {
 
   it("validasi: kosong, kunci asing, skala di luar 1–5, bukan bilangan bulat → 400 humane", async () => {
     const pt = await patient("drmetz", "g3@contoh.test");
-    expect((await call("POST", "/v1/checkins", pt, { values: {} })).json().message).toMatch(/belum terisi/);
+    expect((await call("POST", "/v1/checkins", pt, { values: {} })).json().message).toBe("Ada satu bagian yang belum terisi.");
     expect((await call("POST", "/v1/checkins", pt, { values: { asing: 3 } })).statusCode).toBe(400);
     const range = await call("POST", "/v1/checkins", pt, { values: { tidur: 6 } });
     expect(range.statusCode).toBe(400);

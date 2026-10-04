@@ -1,6 +1,7 @@
 import { and, asc, desc, eq, isNull, lte } from "drizzle-orm";
 import {
   CHECKIN_INTERVAL_DAYS,
+  CHECKIN_REQUIRED,
   GENERAL_METRICS,
   REMINDER_MESSAGE,
   checkinFields,
@@ -77,7 +78,7 @@ export async function submitCheckin(c: PCtx, body: { values: Record<string, numb
     const a = await activeMetrics(tx, c.patientId);
     const fields = new Map(checkinFields(a.metrics).map((f) => [f.key, f]));
     const entries = Object.entries(body.values);
-    if (!entries.length) throw new AuthError(400, "checkin_empty", "Ada satu bagian yang belum terisi. Isi minimal satu penilaian.");
+    if (!entries.length) throw new AuthError(400, "checkin_empty", CHECKIN_REQUIRED);
     for (const [k, v] of entries) {
       const f = fields.get(k);
       if (!f) throw new AuthError(400, "checkin_unknown", "Ada penilaian yang tidak dikenali. Silakan muat ulang halaman check-in.");

@@ -155,7 +155,7 @@ export async function submitCheckinAction(fd: FormData) {
     if (Number.isFinite(n)) values[k.slice(2)] = n;
   }
   if (!Object.keys(values).length) {
-    redirect(`/c/${slug}/checkin?pesan=${encodeURIComponent("Ada satu bagian yang belum terisi. Isi minimal satu penilaian.")}`);
+    redirect(`/c/${slug}/checkin?pesan=${encodeURIComponent("Ada satu bagian yang belum terisi.")}`);
   }
   const note = String(fd.get("note") ?? "").trim().slice(0, 500);
   const res = await apiAuthed(slug, "/v1/checkins", { method: "POST", body: JSON.stringify({ values, ...(note ? { note } : {}) }) });

@@ -1,11 +1,11 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { scaleAnchors } from "@aevia/core";
 import { ClinicHeader } from "@/components/ClinicHeader";
 import { brandStyle, fetchClinic } from "@/lib/api";
 import { getCheckinForm, requirePatient } from "@/lib/session";
 import { submitCheckinAction } from "../actions";
 
-const SCALE_HINT = ["Perlu perhatian lebih", "Kurang", "Cukup", "Baik", "Sangat baik"];
 
 export default async function Checkin({ params, searchParams }: { params: Promise<{ slug: string }>; searchParams: Promise<{ pesan?: string }> }) {
   const { slug } = await params;
@@ -33,13 +33,13 @@ export default async function Checkin({ params, searchParams }: { params: Promis
               <legend className="px-1 text-xl font-semibold leading-7 text-navy">{f.label}</legend>
               {f.scale ? (
                 <>
-                  <p className="text-[13px] font-medium text-body">Skala 1 sampai 5 (5 = paling baik{f.key === "stres" ? "; untuk stres, 5 = tingkat stres paling tinggi" : ""})</p>
+                  <p className="text-[13px] font-medium text-body">Skala 1 sampai 5 ({f.key === "stres" ? "5 = paling tenang" : "5 = paling baik"})</p>
                   <div className="mt-3 grid grid-cols-5 gap-2">
                     {[1, 2, 3, 4, 5].map((n) => (
                       <label key={n} className="flex cursor-pointer flex-col items-center rounded-md border border-line bg-ivory px-1 py-3 text-base font-semibold text-navy has-[:checked]:border-navy has-[:checked]:bg-sand has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-[var(--brand-accent)]">
-                        <input type="radio" name={`v:${f.key}`} value={n} className="sr-only" />
+                        <input type="radio" name={`v:${f.key}`} value={n} required aria-label={`${n}, ${scaleAnchors(f.key)[n - 1]}`} className="sr-only" />
                         {n}
-                        <span className="mt-1 hidden text-[11px] font-medium text-body sm:block">{f.key === "stres" ? ["Rendah", "", "Sedang", "", "Tinggi"][n - 1] : SCALE_HINT[n - 1]}</span>
+                        <span className="mt-1 hidden text-center text-[13px] font-medium leading-tight text-body sm:block">{scaleAnchors(f.key)[n - 1]}</span>
                       </label>
                     ))}
                   </div>

@@ -5,7 +5,7 @@ import type { MonitorMetric } from "./plan";
 export const GENERAL_METRICS: MonitorMetric[] = [
   { metric_key: "tidur", label: "Kualitas tidur", unit: "skor", baseline: null, target: null, direction: "up" },
   { metric_key: "energi", label: "Tingkat energi", unit: "skor", baseline: null, target: null, direction: "up" },
-  { metric_key: "stres", label: "Tingkat stres", unit: "skor", baseline: null, target: null, direction: "down" },
+  { metric_key: "stres", label: "Ketenangan (kebalikan stres)", unit: "skor", baseline: null, target: null, direction: "up" },
 ];
 
 export const SCALE_MIN = 1;
@@ -13,6 +13,15 @@ export const SCALE_MAX = 5;
 export const NUMERIC_MAX = 100000;
 /** Satuan kosong atau "skor" = skala 1–5; selain itu angka bebas (mis. kg, %, cm). */
 export const isScaleMetric = (m: Pick<MonitorMetric, "unit">) => ["", "skor"].includes(m.unit.trim().toLowerCase());
+
+/** Semua skala 1–5 bermakna "5 = paling baik" (untuk stres: paling tenang), apa pun `direction` yang tersimpan di rencana.
+ *  Karena itu arah efektif skala selalu naik; `direction` hanya berlaku untuk metrik numerik (mis. berat badan). */
+export const effectiveDirection = (m: Pick<MonitorMetric, "unit" | "direction">): "up" | "down" => (isScaleMetric(m) ? "up" : m.direction);
+
+export const SCALE_ANCHORS = ["Perlu perhatian lebih", "Kurang", "Cukup", "Baik", "Sangat baik"] as const;
+export const SCALE_ANCHORS_CALM = ["Sangat tegang", "Tegang", "Cukup tenang", "Tenang", "Sangat tenang"] as const;
+export const scaleAnchors = (key: string) => (key === "stres" ? SCALE_ANCHORS_CALM : SCALE_ANCHORS);
+export const CHECKIN_REQUIRED = "Ada satu bagian yang belum terisi.";
 
 export const checkinFieldSchema = z.object({
   key: z.string(),
@@ -85,12 +94,13 @@ const round1 = (n: number) => Math.round(n * 10) / 10;
 
 /** Hitung kartu progres dari riwayat. Bahasa tidak pernah menghakimi ("buruk"/"gagal"); arah naik/turun dihitung sesuai metrik. */
 export function computeMetric(m: MonitorMetric, history: HistoryPoint[]): ProgressMetric {
+  const dir = effectiveDirection(m);
   const h = [...history].sort((a, b) => a.at.localeCompare(b.at));
   const current = h.at(-1)?.value ?? null;
   const previous = h.length > 1 ? h.at(-2)!.value : null;
   let change: number | null = null;
   if (current !== null && previous !== null && previous !== 0) change = round1(((current - previous) / Math.abs(previous)) * 100);
-  const improved = change !== null && (m.direction === "up" ? change > 0 : change < 0);
+  const improved = change !== null && (dir === "up" ? change > 0 : change < 0);
   let status: ProgressMetric["status"] = "first";
   let text: string = STATUS_TEXT.first;
   if (previous !== null) {
@@ -110,7 +120,7 @@ export function computeMetric(m: MonitorMetric, history: HistoryPoint[]): Progre
     key: m.metric_key,
     label: m.label,
     unit: m.unit,
-    direction: m.direction,
+    direction: dir,
     current,
     previous,
     target: m.target,
