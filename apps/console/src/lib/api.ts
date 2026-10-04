@@ -27,3 +27,9 @@ export async function requireStaff(allowed?: Role[]) {
 
 export const fmtDate = (iso: string) =>
   new Date(iso).toLocaleString("id-ID", { dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Jakarta" }) + " WIB";
+
+/** URL berkas yang bisa dijangkau browser (driver lokal mengembalikan path relatif ke API). */
+export function publicFileUrl(url: string): string {
+  if (/^https?:\/\//.test(url)) return url;
+  return `${process.env.API_PUBLIC_URL ?? API_URL}${url}`;
+}

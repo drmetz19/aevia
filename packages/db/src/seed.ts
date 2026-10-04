@@ -1,4 +1,5 @@
 import { sql } from "drizzle-orm";
+import { DEFAULT_SKIN_PARAMETERS } from "@aevia/core";
 import type { Db } from "./client";
 import { clinics, clinicSettings, platformAdmins, programs, staff } from "./schema";
 
@@ -40,7 +41,10 @@ export async function seed({ db }: Pick<Db, "db">) {
   const rows = await db.select().from(clinics);
   await db
     .insert(clinicSettings)
-    .values(rows.map((c) => ({ clinicId: c.id, key: "welcome", value: { note: `Pengaturan ${c.slug}` } })))
+    .values([
+      ...rows.map((c) => ({ clinicId: c.id, key: "welcome", value: { note: `Pengaturan ${c.slug}` } })),
+      ...rows.map((c) => ({ clinicId: c.id, key: "skin_parameters", value: DEFAULT_SKIN_PARAMETERS })),
+    ])
     .onConflictDoNothing();
   const id = (slug: string) => rows.find((c) => c.slug === slug)!.id;
   await db

@@ -161,3 +161,54 @@ export const consultations = pgTable("consultations", {
   status: text("status", { enum: ["scheduled", "completed", "no_show", "cancelled"] }).notNull().default("scheduled"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
+
+export const soapNotes = pgTable("soap_notes", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  clinicId: uuid("clinic_id").notNull().references(() => clinics.id, { onDelete: "cascade" }),
+  consultationId: uuid("consultation_id").notNull().unique().references(() => consultations.id, { onDelete: "cascade" }),
+  subjective: text("subjective").notNull().default(""),
+  objective: text("objective").notNull().default(""),
+  assessment: text("assessment").notNull().default(""),
+  plan: text("plan").notNull().default(""),
+  updatedBy: uuid("updated_by").references(() => staff.id),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
+export const skinAnalyses = pgTable("skin_analyses", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  clinicId: uuid("clinic_id").notNull().references(() => clinics.id, { onDelete: "cascade" }),
+  consultationId: uuid("consultation_id").notNull().unique().references(() => consultations.id, { onDelete: "cascade" }),
+  scores: jsonb("scores").$type<Record<string, number>>().notNull().default({}),
+  notes: text("notes").notNull().default(""),
+  updatedBy: uuid("updated_by").references(() => staff.id),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
+export const skinPhotos = pgTable("skin_photos", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  clinicId: uuid("clinic_id").notNull().references(() => clinics.id, { onDelete: "cascade" }),
+  consultationId: uuid("consultation_id").notNull().references(() => consultations.id, { onDelete: "cascade" }),
+  patientId: uuid("patient_id").notNull().references(() => patients.id, { onDelete: "cascade" }),
+  storageKey: text("storage_key").notNull(),
+  contentType: text("content_type").notNull(),
+  angle: text("angle", { enum: ["front", "left", "right", "other"] }).notNull().default("front"),
+  takenAt: timestamp("taken_at", { withTimezone: true }).notNull().defaultNow(),
+  annotations: jsonb("annotations").$type<unknown[]>().notNull().default([]),
+  createdBy: uuid("created_by").references(() => staff.id),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
+export const auditLogs = pgTable("audit_logs", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  clinicId: uuid("clinic_id").notNull().references(() => clinics.id, { onDelete: "cascade" }),
+  actorType: text("actor_type", { enum: ["staff", "patient", "system", "api", "mcp"] }).notNull(),
+  actorId: uuid("actor_id"),
+  entity: text("entity").notNull(),
+  entityId: uuid("entity_id").notNull(),
+  action: text("action").notNull(),
+  before: jsonb("before").$type<unknown>(),
+  after: jsonb("after").$type<unknown>(),
+  at: timestamp("at", { withTimezone: true }).notNull().defaultNow(),
+});

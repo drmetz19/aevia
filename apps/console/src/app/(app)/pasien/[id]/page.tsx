@@ -83,6 +83,7 @@ export default async function Pasien({ params, searchParams }: Props) {
               {r.consultation && (
                 <p className="mt-3 text-base text-navy">
                   Terjadwal {fmtDate(r.consultation.scheduled_at)} ·{" "}
+                  <Link href={`/konsultasi/${r.consultation.id}`} className="font-semibold underline underline-offset-4">Buka catatan konsultasi</Link> ·{" "}
                   <a href={r.consultation.meeting_url} rel="noopener noreferrer" className="font-semibold underline underline-offset-4">Tautan pertemuan</a>
                 </p>
               )}

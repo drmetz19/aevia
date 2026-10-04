@@ -1,7 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { eq, sql } from "drizzle-orm";
 import { createDb, type Db } from "./client";
-import { clinics, clinicSettings, consents, events, patients, programs } from "./schema";
+import { clinics, clinicSettings, consents, events, patients, programs, auditLogs } from "./schema";
 import { seed } from "./seed";
 
 let d: Db;
@@ -79,5 +79,11 @@ describe("isolasi tenant (RLS, role aevia_app)", () => {
     expect(seenByA.length).toBe(3);
     expect(seenByA.every((p) => p.clinicId === a)).toBe(true);
     expect((await d.withTenant(b, (tx) => tx.select().from(programs))).map((p) => p.slug)).toEqual(["konsultasi-awal"]);
+  });
+
+  it("audit_logs terisolasi dan append-only", async () => {
+    await d.withTenant(a, (tx) => tx.insert(auditLogs).values({ clinicId: a, actorType: "system", entity: "x", entityId: a, action: "t" }));
+    expect(await d.withTenant(b, (tx) => tx.select().from(auditLogs))).toEqual([]);
+    await expect(d.withTenant(a, (tx) => tx.delete(auditLogs))).rejects.toThrow();
   });
 });

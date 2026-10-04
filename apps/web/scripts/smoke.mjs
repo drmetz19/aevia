@@ -178,6 +178,38 @@ try {
   const wlProg = (await (await fetch(`${WEB}/c/demo-partner/program`, { headers: { cookie: `aevia_session_demo-partner=${t2}` } })).text()).replace(/<!-- -->/g, "");
   check(wlProg.includes("Konsultasi Awal") && !wlProg.includes("Healthy Aging") && !/aevia/i.test(text(wlProg)), "whitelabel: katalog klinik sendiri, tanpa AEVIA");
 
+  // --- Phase 5: SOAP, skin, foto, audit ---
+  await fetch(`${API}/v1/me/consents`, { method: "PUT", headers: hdr, body: JSON.stringify({ scope: "photos", granted: true }) });
+  const reqMine = (await (await fetch(`${API}/v1/consultation-requests/mine`, { headers: hdr })).json()).requests.find((r) => r.consultation);
+  const kid = reqMine.consultation.id;
+  const sAuth = { authorization: `Bearer ${sTok}` };
+  const soapPage = await (await fetch(`${CON}/konsultasi/${kid}`, { headers: sCookie })).text();
+  check(soapPage.includes("Catatan SOAP") && soapPage.includes("Subjective") && soapPage.includes("Audit") && soapPage.includes("Resep"), "console /konsultasi/:id: tab + form SOAP");
+  const putSoap = await fetch(`${API}/v1/staff/consultations/${kid}/soap`, { method: "PUT", headers: { ...sAuth, "content-type": "application/json" }, body: JSON.stringify({ subjective: "Sulit tidur", objective: "Kulit kering", assessment: "Perlu tinjauan", plan: "Kontrol 2 minggu" }) });
+  check(putSoap.status === 200, "API: simpan SOAP");
+  const soapAfter = await (await fetch(`${CON}/konsultasi/${kid}`, { headers: sCookie })).text();
+  check(soapAfter.includes("Sulit tidur") && soapAfter.includes("Kontrol 2 minggu"), "SOAP tersimpan tampil kembali di console");
+  const jpg = Buffer.concat([Buffer.from([0xff, 0xd8, 0xff, 0xe0]), Buffer.from("smoke-image")]);
+  const up = await fetch(`${API}/v1/staff/consultations/${kid}/photos?angle=front`, { method: "POST", headers: { ...sAuth, "content-type": "image/jpeg" }, body: jpg });
+  check(up.status === 201, "API: unggah foto (jpg + magic bytes)");
+  const pid = (await up.json()).id;
+  const badUp = await fetch(`${API}/v1/staff/consultations/${kid}/photos`, { method: "POST", headers: { ...sAuth, "content-type": "image/jpeg" }, body: Buffer.from("not an image") });
+  check(badUp.status === 415, "API: berkas bukan gambar ditolak");
+  await fetch(`${API}/v1/staff/photos/${pid}/annotations`, { method: "PUT", headers: { ...sAuth, "content-type": "application/json" }, body: JSON.stringify({ annotations: [{ type: "point", x: 0.3, y: 0.4, label: "Bercak", severity: "medium" }] }) });
+  const skinPage = (await (await fetch(`${CON}/konsultasi/${kid}?tab=skin`, { headers: sCookie })).text()).replace(/<!-- -->/g, "");
+  check(skinPage.includes("Melasma &amp; hiperpigmentasi") && skinPage.includes("Skor kulit keseluruhan"), "tab Skin: parameter default klinik");
+  check(skinPage.includes("Bercak") && skinPage.includes("Overlay area") && skinPage.includes("Foto klinis"), "tab Skin: foto + anotasi + overlay area");
+  check(!/multi-?spectral/i.test(skinPage), "tab Skin: tanpa klaim multi-spectral");
+  const furl = (await (await fetch(`${API}/v1/staff/photos/${pid}/url`, { headers: sAuth })).json()).url;
+  check((await fetch(`${API}${furl}`)).status === 200, "URL bertanda tangan melayani foto");
+  check((await fetch(`${API}/v1/staff/consultations/${kid}/soap`, { method: "PUT", headers: { ...hdr }, body: JSON.stringify({ subjective: "", objective: "", assessment: "", plan: "" }) })).status === 403, "token pasien 403 di endpoint SOAP");
+  await fetch(`${API}/v1/me/consents`, { method: "PUT", headers: hdr, body: JSON.stringify({ scope: "photos", granted: false }) });
+  check((await fetch(`${API}${furl}`)).status === 403, "consent foto dicabut → URL foto 403");
+  const audit = (await (await fetch(`${CON}/konsultasi/${kid}?tab=audit`, { headers: sCookie })).text()).replace(/<!-- -->/g, "");
+  check(audit.includes("SOAP dibuat") && audit.includes("Foto diunggah") && audit.includes("Sebelum dan sesudah"), "tab Audit: riwayat perubahan");
+  const hiddenSkin = (await (await fetch(`${CON}/konsultasi/${kid}?tab=skin`, { headers: sCookie })).text()).replace(/<!-- -->/g, "");
+  check(hiddenSkin.includes("sudah mencabutnya") && !hiddenSkin.includes("Bercak"), "consent dicabut → foto & anotasi disembunyikan di console");
+
   // Console staf
   check((await fetch(`${CON}/masuk`)).status === 200, "console /masuk 200");
   const se = "dr.metz@drmetz.test";
