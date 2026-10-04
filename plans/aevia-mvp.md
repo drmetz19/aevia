@@ -99,10 +99,10 @@ Bank pertanyaan v0 (JSON di core), SoviaEngine mode script, Guardrail (kata terl
 `prescriptions` + items, `care_plans` berversi (draft→signed). Console: tab Resep & tab Rencana (Fokus saat ini · Langkah berikutnya · Yang dipantau · Kapan ditinjau + target metrik) → tombol tanda tangan. Web: halaman ringkasan konsultasi + rencana ("Rencana Anda telah diperbarui oleh tim <klinik>"), Sovia menjelaskan rencana (mode skrip: templat), empty state sebelum signed.
 
 ### Acceptance criteria
-- [ ] Hanya role professional bisa membuat resep/menandatangani rencana (Sovia/MCP/pasien ditolak)
-- [ ] Rencana signed tidak bisa diedit; edit membuat versi baru status draft
-- [ ] Pasien hanya melihat versi signed terbaru; sebelum ada → empty state "Rencana akan tersedia setelah konsultasi selesai ditinjau profesional."
-- [ ] Event `plan.approved` tercatat di outbox
+- [x] Hanya role professional bisa membuat resep/menandatangani rencana (Sovia/MCP/pasien ditolak)
+- [x] Rencana signed tidak bisa diedit; edit membuat versi baru status draft
+- [x] Pasien hanya melihat versi signed terbaru; sebelum ada → empty state "Rencana akan tersedia setelah konsultasi selesai ditinjau profesional."
+- [x] Event `plan.approved` tercatat di outbox
 
 ---
 
