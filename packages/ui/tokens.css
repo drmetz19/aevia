@@ -1,0 +1,43 @@
+/* Token AEVIA (desain-terkunci). --brand-* ditimpa per klinik (whitelabel). */
+:root {
+  --aevia-navy: #0b1f3a;
+  --aevia-copper: #c9825a;
+  --aevia-deep: #071426;
+  --aevia-ivory: #f7f4ef;
+  --aevia-sand: #e9ddd2;
+  --aevia-slate: #697386;
+  --aevia-white: #ffffff;
+  --aevia-border: #e6dccf;
+
+  --brand-primary: var(--aevia-navy);
+  --brand-accent: var(--aevia-copper);
+  --brand-dark: var(--aevia-deep);
+  --brand-bg: var(--aevia-ivory);
+  --brand-soft: var(--aevia-sand);
+
+  --status-success: #2f6b4f;
+  --status-warning: #a86b1e;
+  --status-critical: #9a3b30;
+
+  --radius-sm: 10px;
+  --radius-md: 20px;
+  --radius-pill: 36px;
+  --shadow-soft: 0 1px 2px rgba(11, 31, 58, 0.06), 0 8px 24px rgba(11, 31, 58, 0.06);
+  --gutter: 16px;
+
+  --font-serif: var(--font-dm-serif), "DM Serif Display", Georgia, serif;
+  --font-sans: var(--font-manrope), Manrope, system-ui, sans-serif;
+}
+
+body {
+  background: var(--brand-bg);
+  color: var(--brand-primary);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 26px;
+}
+
+:focus-visible {
+  outline: 2px solid var(--brand-accent);
+  outline-offset: 2px;
+}

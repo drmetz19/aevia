@@ -1,0 +1,19 @@
+/* Tailwind v4: tema AEVIA lewat CSS (pengganti preset JS). Impor setelah `@import "tailwindcss"`. */
+@theme inline {
+  --color-navy: var(--brand-primary);
+  --color-copper: var(--brand-accent);
+  --color-deep: var(--brand-dark);
+  --color-ivory: var(--brand-bg);
+  --color-sand: var(--brand-soft);
+  --color-slate: var(--aevia-slate);
+  --color-line: var(--aevia-border);
+  --color-success: var(--status-success);
+  --color-warning: var(--status-warning);
+  --color-critical: var(--status-critical);
+  --font-serif: var(--font-serif);
+  --font-sans: var(--font-sans);
+  --radius-md: 10px;
+  --radius-lg: 20px;
+  --radius-pill: 36px;
+  --shadow-soft: 0 1px 2px rgba(11, 31, 58, 0.06), 0 8px 24px rgba(11, 31, 58, 0.06);
+}
