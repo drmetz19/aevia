@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { AlertTriangle, CheckCircle2, CircleDot } from "lucide-react";
-import { areaLabel, type Level } from "@aevia/core";
+import { COMPLETION_LINE, RESULT_LINES, areaLabel, type Level } from "@aevia/core";
 import { ClinicHeader } from "@/components/ClinicHeader";
 import { SoviaHeader } from "@/components/SoviaHeader";
 import { brandStyle, fetchClinic } from "@/lib/api";
@@ -29,10 +29,14 @@ export default async function Hasil({ params }: { params: Promise<{ slug: string
         <div className="mb-6 overflow-hidden rounded-lg border border-line bg-white">
           <SoviaHeader clinic={clinic} />
         </div>
-        <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-copper">Hasil assessment</p>
+        <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-copper-ink">Hasil assessment</p>
         <h1 className="mt-1 font-serif text-4xl leading-tight text-navy">Gambaran awal kondisi Anda</h1>
         <p className="mt-2 text-base text-body">
-          {r.disclaimer} Ini hanya gambaran awal untuk membantu Anda dan profesional klinik memulai percakapan.
+          {COMPLETION_LINE}
+        </p>
+        <p className="mt-2 text-base text-body">{RESULT_LINES[0]}</p>
+        <p className="mt-2 text-base text-body">
+          {RESULT_LINES[1]} <strong className="font-semibold text-navy">{r.disclaimer}</strong>
         </p>
         {state.flagged && state.emergency_message && (
           <div role="alert" className="mt-4 flex gap-3 rounded-lg border border-critical bg-white p-4 text-base text-navy">
@@ -62,25 +66,21 @@ export default async function Hasil({ params }: { params: Promise<{ slug: string
             const { Icon, cls } = levelIcon[a.level];
             return (
               <li key={a.area} className="rounded-lg border border-line bg-white p-5 shadow-soft">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-copper">{a.label}</p>
-                <p className="mt-1 font-serif text-4xl text-navy">
-                  {a.score}
-                  <span className="text-base text-body"> / 100</span>
-                </p>
-                <div aria-hidden="true" className="mt-2 h-2 overflow-hidden rounded-pill bg-sand">
-                  <div className="h-full bg-copper" style={{ width: `${a.score}%` }} />
-                </div>
-                <p className="mt-3 flex items-center gap-2 text-base font-semibold text-navy">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-copper-ink">{a.label}</p>
+                <p className="mt-2 flex items-center gap-2 text-base font-semibold text-navy">
                   <Icon aria-hidden="true" className={cls} size={20} strokeWidth={1.5} />
                   {a.level_label}
                 </p>
+                <div aria-hidden="true" className="mt-3 h-1.5 overflow-hidden rounded-pill bg-sand">
+                  <div className="h-full bg-copper" style={{ width: `${Math.max(a.score, 6)}%` }} />
+                </div>
               </li>
             );
           })}
         </ul>
 
         <div className="mt-8 flex flex-wrap items-center gap-4">
-          <Link href={`/c/${slug}/konsultasi`} className="inline-flex rounded-pill bg-copper px-7 py-3 text-lg font-semibold text-white shadow-soft">
+          <Link href={`/c/${slug}/program`} className="inline-flex rounded-pill bg-copper px-7 py-3 text-lg font-semibold text-white shadow-soft">
             Siapkan konsultasi
           </Link>
           <Link href={`/c/${slug}/beranda`} className="text-base font-semibold text-navy underline underline-offset-4">

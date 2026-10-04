@@ -119,3 +119,45 @@ export const events = pgTable("events", {
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   deliveredAt: timestamp("delivered_at", { withTimezone: true }),
 });
+
+export const programs = pgTable(
+  "programs",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    clinicId: uuid("clinic_id").notNull().references(() => clinics.id, { onDelete: "cascade" }),
+    slug: text("slug").notNull(),
+    name: text("name").notNull(),
+    summary: text("summary").notNull().default(""),
+    durationWeeks: integer("duration_weeks"),
+    priceIdr: integer("price_idr"),
+    includes: jsonb("includes").$type<string[]>().notNull().default([]),
+    active: boolean("active").notNull().default(true),
+    sortOrder: integer("sort_order").notNull().default(0),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [unique().on(t.clinicId, t.slug)],
+);
+
+export const consultationRequests = pgTable("consultation_requests", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  clinicId: uuid("clinic_id").notNull().references(() => clinics.id, { onDelete: "cascade" }),
+  patientId: uuid("patient_id").notNull().references(() => patients.id, { onDelete: "cascade" }),
+  programId: uuid("program_id").notNull().references(() => programs.id),
+  assessmentId: uuid("assessment_id").references(() => assessments.id),
+  prep: jsonb("prep").$type<Record<string, unknown>>().notNull().default({}),
+  status: text("status", { enum: ["submitted", "accepted", "declined"] }).notNull().default("submitted"),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  decidedAt: timestamp("decided_at", { withTimezone: true }),
+});
+
+export const consultations = pgTable("consultations", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  clinicId: uuid("clinic_id").notNull().references(() => clinics.id, { onDelete: "cascade" }),
+  requestId: uuid("request_id").notNull().unique().references(() => consultationRequests.id, { onDelete: "cascade" }),
+  patientId: uuid("patient_id").notNull().references(() => patients.id, { onDelete: "cascade" }),
+  professionalId: uuid("professional_id").notNull().references(() => staff.id),
+  scheduledAt: timestamp("scheduled_at", { withTimezone: true }).notNull(),
+  meetingUrl: text("meeting_url").notNull(),
+  status: text("status", { enum: ["scheduled", "completed", "no_show", "cancelled"] }).notNull().default("scheduled"),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+});

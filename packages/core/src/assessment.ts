@@ -19,6 +19,12 @@ export const questions = bank.questions as Question[];
 export const areas = bank.areas as { id: string; label: string }[];
 export const areaLabel = (id: string) => areas.find((a) => a.id === id)?.label ?? id;
 export const findQuestion = (id: string) => questions.find((q) => q.id === id);
+export const PROGRESS_LINE = "Bagian ini membantu memberi konteks yang lebih lengkap.";
+export const COMPLETION_LINE = "Assessment selesai. Mari lihat gambaran awal Anda.";
+export const RESULT_LINES = [
+  "Pola jawaban Anda menunjukkan beberapa area yang mungkin relevan untuk diperhatikan.",
+  "Hasil ini digunakan sebagai konteks awal sebelum konsultasi.",
+] as const;
 export const DISCLAIMER = "Hasil assessment bukan diagnosis.";
 
 export const publicQuestionSchema = z.object({
@@ -124,7 +130,7 @@ const ACKS = ["Terima kasih, sudah saya catat.", "Baik, terima kasih sudah berba
 export const scriptEngine: SoviaEngine = {
   mode: "script",
   intro: (name) =>
-    `Halo, saya ${name}. Mari mulai dengan memahami kondisi Anda saat ini. Tidak ada jawaban benar atau salah, pilih yang paling sesuai dengan keadaan Anda.`,
+    `Halo, saya ${name}. Mari mulai dengan memahami kondisi Anda saat ini. Tidak ada jawaban benar atau salah. Pilih yang paling menggambarkan kondisi Anda.`,
   acknowledge: (i) => ACKS[i % ACKS.length]!,
 };
 

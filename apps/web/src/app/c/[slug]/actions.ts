@@ -116,3 +116,31 @@ export async function completeAction(fd: FormData) {
   if (!res.ok) redirect(`/c/${slug}/assessment?pesan=${encodeURIComponent("Ada beberapa pertanyaan yang belum terisi. Silakan lengkapi dulu ya.")}`);
   redirect(`/c/${slug}/assessment/hasil`);
 }
+
+export async function submitRequestAction(fd: FormData) {
+  const slug = String(fd.get("slug") ?? "");
+  const programId = String(fd.get("program_id") ?? "");
+  if (!SLUG_RE.test(slug) || !/^[0-9a-f-]{36}$/.test(programId)) redirect("/");
+  const lines = String(fd.get("pertanyaan") ?? "")
+    .split("\n")
+    .map((l) => l.trim())
+    .filter(Boolean)
+    .slice(0, 8)
+    .map((l) => l.slice(0, 300));
+  const prep = {
+    tujuan: String(fd.get("tujuan") ?? "").trim().slice(0, 600),
+    keluhan: String(fd.get("keluhan") ?? "").trim().slice(0, 1200),
+    pertanyaan: lines,
+    konteks_assessment: String(fd.get("konteks_assessment") ?? "").trim().slice(0, 1200),
+  };
+  if (!prep.tujuan) {
+    redirect(`/c/${slug}/konsultasi?program=${programId}&pesan=${encodeURIComponent("Ada satu bagian yang belum terisi. Mohon tuliskan tujuan Anda.")}`);
+  }
+  const res = await apiAuthed(slug, "/v1/consultation-requests", { method: "POST", body: JSON.stringify({ program_id: programId, prep }) });
+  if (!res || res.status === 401 || res.status === 403) redirect(sessionEnded(slug));
+  if (res.status === 409) redirect(`/c/${slug}/beranda?info=ada`);
+  if (!res.ok) {
+    redirect(`/c/${slug}/konsultasi?program=${programId}&pesan=${encodeURIComponent("Terjadi kendala di sisi kami. Silakan coba lagi sebentar lagi.")}`);
+  }
+  redirect(`/c/${slug}/beranda?info=terkirim`);
+}

@@ -61,7 +61,7 @@ export default async function ClinicLanding({ params }: Props) {
         </section>
 
         <section aria-labelledby="alur" className="mx-auto max-w-6xl px-4 py-12 md:px-8 md:py-16">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-copper">Alur pendampingan</p>
+          <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-copper-ink">Alur pendampingan</p>
           <h2 id="alur" className="mt-2 text-[28px] font-semibold leading-9 text-navy">
             Empat langkah, satu perjalanan
           </h2>
@@ -72,7 +72,7 @@ export default async function ClinicLanding({ params }: Props) {
                   <span className="flex h-8 w-8 items-center justify-center rounded-pill bg-sand text-sm font-semibold text-navy">
                     {i + 1}
                   </span>
-                  <Icon aria-hidden="true" className="text-copper" size={22} strokeWidth={1.5} />
+                  <Icon aria-hidden="true" className="text-copper-ink" size={22} strokeWidth={1.5} />
                 </div>
                 <h3 className="mt-4 text-xl font-semibold leading-7 text-navy">{title}</h3>
                 <p className="mt-1 text-base text-body">{desc}</p>
@@ -92,7 +92,7 @@ export default async function ClinicLanding({ params }: Props) {
               unoptimized={Boolean(clinic.avatar_url)}
             />
             <div>
-              <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-copper">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-copper-ink">
                 {white ? `${assistant} · AI Guide` : `${assistant} · AI Guide by AEVIA`}
               </p>
               <h2 id="sovia" className="mt-1 text-xl font-semibold leading-7 text-navy">

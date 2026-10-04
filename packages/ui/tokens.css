@@ -12,6 +12,7 @@
 
   --brand-primary: var(--aevia-navy);
   --brand-accent: var(--aevia-copper);
+  --brand-accent-ink: #94512d; /* copper-ink: ≥4.5:1 di ivory/putih (5.5:1 / 6.0:1) */
   --brand-dark: var(--aevia-deep);
   --brand-bg: var(--aevia-ivory);
   --brand-soft: var(--aevia-sand);

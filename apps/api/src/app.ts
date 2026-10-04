@@ -15,6 +15,9 @@ import { AuthError } from "./modules/auth/otp";
 import { consoleOtpSender, type OtpSender } from "./modules/auth/otp-sender";
 import { resolveSecret } from "./modules/auth/tokens";
 import { assessmentRoutes } from "./modules/assessments/routes";
+import { programRoutes } from "./modules/programs/routes";
+import { consultationRoutes } from "./modules/consultations/routes";
+import { staffRoutes } from "./modules/staff/routes";
 import { consentRoutes } from "./modules/consents/routes";
 
 export interface AppDeps {
@@ -57,6 +60,9 @@ export async function buildApp({ db, otpSender = consoleOtpSender, jwtSecret, no
   await app.register(authRoutes, { ctx });
   await app.register(consentRoutes, { ctx });
   await app.register(assessmentRoutes, { ctx });
+  await app.register(programRoutes, { db });
+  await app.register(consultationRoutes, { ctx });
+  await app.register(staffRoutes, { ctx });
 
   return app;
 }

@@ -46,3 +46,28 @@ export async function getLatestAssessment(slug: string, completedOnly = false): 
   if (!res.ok) throw new Error(`API assessment gagal (${res.status})`);
   return assessmentStateSchema.parse(await res.json());
 }
+
+import { myRequestsSchema, programListSchema, draftSchema, type ConsultationRequestView, type Program } from "@aevia/core";
+
+export async function fetchPrograms(slug: string): Promise<Program[]> {
+  const res = await fetch(`${API_URL}/v1/clinics/${encodeURIComponent(slug)}/programs`, { cache: "no-store" });
+  if (!res.ok) return [];
+  return programListSchema.parse(await res.json()).programs;
+}
+
+export async function getMyRequests(slug: string): Promise<ConsultationRequestView[]> {
+  const res = await apiAuthed(slug, "/v1/consultation-requests/mine");
+  if (!res || res.status === 401 || res.status === 403) redirect(sessionEndedUrl(slug));
+  if (!res.ok) return [];
+  return myRequestsSchema.parse(await res.json()).requests;
+}
+
+export async function getDraft(slug: string) {
+  const res = await apiAuthed(slug, "/v1/consultation-requests/draft", { method: "POST", body: "{}" });
+  if (!res || res.status === 401 || res.status === 403) redirect(sessionEndedUrl(slug));
+  if (!res.ok) throw new Error(`API draf gagal (${res.status})`);
+  return draftSchema.parse(await res.json());
+}
+
+export const rupiah = (n: number | null) =>
+  n === null ? "Hubungi klinik untuk biaya" : new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 }).format(n);

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AlertTriangle } from "lucide-react";
-import { areaLabel, findQuestion, guardEngine, scriptEngine } from "@aevia/core";
+import { COMPLETION_LINE, PROGRESS_LINE, areaLabel, findQuestion, guardEngine, scriptEngine } from "@aevia/core";
 import { ClinicHeader } from "@/components/ClinicHeader";
 import { SoviaAvatar, SoviaHeader } from "@/components/SoviaHeader";
 import { brandStyle, fetchClinic } from "@/lib/api";
@@ -13,9 +13,9 @@ type Props = { params: Promise<{ slug: string }>; searchParams: Promise<{ pesan?
 const engine = guardEngine(scriptEngine);
 const primary = "rounded-pill bg-navy px-6 py-3 text-base font-semibold text-white";
 
-function SoviaBubble({ clinic, children }: { clinic: Parameters<typeof SoviaAvatar>[0]["clinic"]; children: React.ReactNode }) {
+function SoviaBubble({ clinic, children, live }: { clinic: Parameters<typeof SoviaAvatar>[0]["clinic"]; children: React.ReactNode; live?: boolean }) {
   return (
-    <div className="flex items-end gap-2">
+    <div className="flex items-end gap-2" {...(live ? { "aria-live": "polite" as const } : {})}>
       <SoviaAvatar clinic={clinic} size={32} />
       <div className="max-w-[85%] rounded-lg rounded-bl-sm bg-sand px-4 py-3 text-base text-navy">{children}</div>
     </div>
@@ -43,6 +43,7 @@ export default async function AssessmentPage({ params, searchParams }: Props) {
     <div style={brandStyle(clinic)} className="min-h-screen bg-ivory">
       <ClinicHeader clinic={clinic} />
       <main className="mx-auto max-w-2xl px-0 sm:px-4 sm:py-8">
+        <h1 className="sr-only">Assessment bersama {name}</h1>
         <div className="overflow-hidden border-y border-line bg-white shadow-soft sm:rounded-lg sm:border">
           <SoviaHeader clinic={clinic} />
 
@@ -79,6 +80,7 @@ export default async function AssessmentPage({ params, searchParams }: Props) {
                   </span>
                   <span>{Math.round((active.answered / active.total) * 100)}%</span>
                 </div>
+                <p className="mt-1 text-[13px] font-medium text-body">{PROGRESS_LINE}</p>
                 <div
                   role="progressbar"
                   aria-label="Kemajuan assessment"
@@ -91,7 +93,7 @@ export default async function AssessmentPage({ params, searchParams }: Props) {
                 </div>
               </div>
 
-              <div className="space-y-3 px-4 py-6" aria-live="polite">
+              <div className="space-y-3 px-4 py-6">
                 <SoviaBubble clinic={clinic}>{engine.intro(name)}</SoviaBubble>
                 {active.answers.map((a, i) => {
                   const q = findQuestion(a.question_id);
@@ -123,7 +125,7 @@ export default async function AssessmentPage({ params, searchParams }: Props) {
 
                 {active.next_question ? (
                   <div className="space-y-3">
-                    <SoviaBubble clinic={clinic}>
+                    <SoviaBubble clinic={clinic} live>
                       <span className="mb-1 block text-[11px] font-semibold uppercase tracking-[0.12em] text-navy">
                         {areaLabel(active.next_question.area)}
                       </span>
@@ -175,7 +177,7 @@ export default async function AssessmentPage({ params, searchParams }: Props) {
                   </div>
                 ) : (
                   <div className="space-y-3">
-                    <SoviaBubble clinic={clinic}>Terima kasih, semua pertanyaan sudah terjawab. Saya siapkan gambaran awal untuk Anda.</SoviaBubble>
+                    <SoviaBubble clinic={clinic} live>{COMPLETION_LINE}</SoviaBubble>
                     <form action={completeAction} className="pl-10">
                       <input type="hidden" name="slug" value={slug} />
                       <input type="hidden" name="assessment_id" value={active.id} />

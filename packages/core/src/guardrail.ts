@@ -1,16 +1,31 @@
 /** Guardrail Sovia: kata terlarang (Verbal Identity §14), larangan diagnosis, deteksi darurat. */
 
-export const FORBIDDEN_WORDS = ["wajib", "gagal", "permanen", "garansi", "instan", "miracle", "bahaya", "rusak"] as const;
+export const FORBIDDEN_WORDS = [
+  "wajib",
+  "gagal",
+  "permanen",
+  "garansi",
+  "instan",
+  "miracle",
+  "bahaya",
+  "rusak",
+  "cure",
+  "guarantee",
+  "perfect",
+  "kewajiban",
+] as const;
 
 const DIAGNOSIS_PATTERNS: RegExp[] = [
   /\banda\s+(?:sedang\s+|telah\s+|sudah\s+)?(?:mengalami|menderita|terkena|mengidap)\b/i,
   /\bdiagnosis\s+anda\b/i,
   /\banda\s+(?:pasti|positif)\b/i,
+  /\banda\s+harus\b/i,
+  /\bsembuh\s+total\b/i,
 ];
 
 const forbiddenRe = new RegExp(`(?<![\\p{L}])(?:${FORBIDDEN_WORDS.join("|")})(?![\\p{L}])`, "iu");
 
-export const SAFE_SENTENCE = "Hal ini sebaiknya dibahas bersama profesional klinik.";
+export const SAFE_SENTENCE = "Bagian ini sebaiknya dibahas langsung dengan profesional Anda.";
 
 export interface GuardResult {
   text: string;

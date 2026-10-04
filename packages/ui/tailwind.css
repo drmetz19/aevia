@@ -2,6 +2,7 @@
 @theme inline {
   --color-navy: var(--brand-primary);
   --color-copper: var(--brand-accent);
+  --color-copper-ink: var(--brand-accent-ink);
   --color-deep: var(--brand-dark);
   --color-ivory: var(--brand-bg);
   --color-sand: var(--brand-soft);

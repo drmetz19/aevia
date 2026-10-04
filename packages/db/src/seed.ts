@@ -1,6 +1,6 @@
 import { sql } from "drizzle-orm";
 import type { Db } from "./client";
-import { clinics, clinicSettings, platformAdmins, staff } from "./schema";
+import { clinics, clinicSettings, platformAdmins, programs, staff } from "./schema";
 
 export async function seed({ db }: Pick<Db, "db">) {
   await db
@@ -52,4 +52,50 @@ export async function seed({ db }: Pick<Db, "db">) {
     ])
     .onConflictDoNothing();
   await db.insert(platformAdmins).values({ email: "admin@aevia.test", name: "Admin Platform" }).onConflictDoNothing();
+  // Harga placeholder, dapat diubah klinik (Phase 8).
+  await db
+    .insert(programs)
+    .values([
+      {
+        clinicId: id("drmetz"),
+        slug: "konsultasi-healthy-aging",
+        name: "Konsultasi Healthy Aging",
+        summary: "Sesi konsultasi dengan profesional untuk memahami kondisi Anda dan menyusun arah langkah berikutnya.",
+        durationWeeks: null,
+        priceIdr: 450000,
+        includes: ["Telaah hasil assessment", "Konsultasi 1 sesi bersama profesional", "Ringkasan dan rencana personal"],
+        sortOrder: 1,
+      },
+      {
+        clinicId: id("drmetz"),
+        slug: "pendampingan-kulit-8-minggu",
+        name: "Program Pendampingan Kulit 8 Minggu",
+        summary: "Pendampingan bertahap untuk kesehatan kulit, dengan tinjauan berkala bersama profesional.",
+        durationWeeks: 8,
+        priceIdr: 1850000,
+        includes: ["Analisis kulit awal", "Rencana perawatan personal", "Check-in dan tinjauan berkala"],
+        sortOrder: 2,
+      },
+      {
+        clinicId: id("drmetz"),
+        slug: "komposisi-tubuh-12-minggu",
+        name: "Program Komposisi Tubuh 12 Minggu",
+        summary: "Pendampingan bertahap untuk pola makan, aktivitas, dan komposisi tubuh yang lebih seimbang.",
+        durationWeeks: 12,
+        priceIdr: 2950000,
+        includes: ["Pemeriksaan komposisi tubuh awal", "Rencana nutrisi dan aktivitas", "Tinjauan progres berkala"],
+        sortOrder: 3,
+      },
+      {
+        clinicId: id("demo-partner"),
+        slug: "konsultasi-awal",
+        name: "Konsultasi Awal",
+        summary: "Sesi pengenalan bersama profesional Lumina Skin Studio.",
+        durationWeeks: null,
+        priceIdr: 300000,
+        includes: ["Telaah kondisi kulit", "Rencana langkah awal"],
+        sortOrder: 1,
+      },
+    ])
+    .onConflictDoNothing();
 }

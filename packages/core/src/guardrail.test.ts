@@ -15,6 +15,12 @@ describe("sanitizeOutput", () => {
     "Anda mengalami insomnia kronis.",
     "Anda menderita gangguan tidur.",
     "Anda terkena stres berat.",
+    "This is a cure.",
+    "We guarantee results.",
+    "Hasil perfect untuk semua.",
+    "Ini kewajiban Anda.",
+    "Anda harus minum obat ini.",
+    "Anda bisa sembuh total.",
   ])("mengganti kalimat tidak aman: %s", (s) => {
     const r = sanitizeOutput(s);
     expect(r.changed).toBe(true);
@@ -33,7 +39,8 @@ describe("sanitizeOutput", () => {
   });
 
   it("daftar kata terlarang lengkap", () => {
-    expect(FORBIDDEN_WORDS).toEqual(["wajib", "gagal", "permanen", "garansi", "instan", "miracle", "bahaya", "rusak"]);
+    expect(FORBIDDEN_WORDS).toEqual(expect.arrayContaining(["wajib", "gagal", "permanen", "garansi", "instan", "miracle", "bahaya", "rusak", "cure", "guarantee", "perfect", "kewajiban"]));
+    expect(SAFE_SENTENCE).toBe("Bagian ini sebaiknya dibahas langsung dengan profesional Anda.");
   });
 });
 

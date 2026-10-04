@@ -148,6 +148,36 @@ try {
   const noConsent = await post(`${API}/v1/assessments/${s2.id}/complete`, {}, t2);
   check(noConsent.status === 403, "complete tanpa consent → 403");
 
+  // --- Phase 4: program, prep, antrean ---
+  const prog = (await (await fetch(`${WEB}/c/drmetz/program`, { headers: cookie })).text()).replace(/<!-- -->/g, "");
+  check(prog.includes("Konsultasi Healthy Aging") && prog.includes("Program Pendampingan Kulit 8 Minggu") && prog.includes("Rp"), "katalog: 3 program drmetz + harga dari DB");
+  check(!/permanen|body reset|garansi|instan/i.test(text(prog)), "katalog tanpa klaim terlarang");
+  const progs = (await (await fetch(`${API}/v1/clinics/drmetz/programs`)).json()).programs;
+  const kons = (await (await fetch(`${WEB}/c/drmetz/konsultasi?program=${progs[0].id}`, { headers: cookie })).text()).replace(/<!-- -->/g, "");
+  check(kons.includes("Kirim permintaan konsultasi") && kons.includes("Sovia adalah AI"), "form prep tampil + label AI");
+  check(/Tidur/.test(kons) && kons.includes("Anda sudah memiliki gambaran awal"), "form prep terisi dari assessment (Verbal Identity §22)");
+  const rq = await post(`${API}/v1/consultation-requests`, { program_id: progs[0].id, prep: { tujuan: "Tidur lebih baik", keluhan: "Sulit tidur", pertanyaan: ["Apa langkah awal?"], konteks_assessment: "ctx" } }, token);
+  check(rq.status === 201, "API: kirim permintaan konsultasi");
+  const stepper1 = (await (await fetch(`${WEB}/c/drmetz/beranda`, { headers: cookie })).text()).replace(/<!-- -->/g, "");
+  check(stepper1.includes("Menunggu tinjauan"), "stepper beranda: Menunggu tinjauan");
+
+  const sEmail = "dr.metz@drmetz.test";
+  await post(`${API}/v1/staff/auth/otp`, { email: sEmail });
+  const sTok = (await (await post(`${API}/v1/staff/auth/verify`, { email: sEmail, code: await otpCode(sEmail) })).json()).token;
+  const sCookie = { cookie: `aevia_staff_session=${sTok}` };
+  const antrean = await (await fetch(`${CON}/antrean`, { headers: sCookie })).text();
+  check(antrean.includes(email) && antrean.includes("Menunggu ditinjau"), "console /antrean memuat permintaan");
+  const qItems = (await (await fetch(`${API}/v1/staff/queue`, { headers: { authorization: `Bearer ${sTok}` } })).json()).items;
+  const mine = qItems.find((i) => i.patient_email === email);
+  const detail = await (await fetch(`${CON}/pasien/${mine.patient_id}`, { headers: sCookie })).text();
+  check(detail.includes("Tidur lebih baik") && detail.includes("Terima dan jadwalkan"), "console /pasien/:id memuat prep + dialog terima");
+  const acc = await post(`${API}/v1/staff/consultation-requests/${mine.id}/accept`, { scheduled_at: new Date(Date.now() + 86400000).toISOString(), meeting_url: "https://meet.google.com/smoke-test" }, sTok);
+  check(acc.status === 200, "API: terima permintaan");
+  const stepper2 = (await (await fetch(`${WEB}/c/drmetz/beranda`, { headers: cookie })).text()).replace(/<!-- -->/g, "");
+  check(/Terjadwal/.test(stepper2) && stepper2.includes("meet.google.com/smoke-test"), "stepper beranda: Terjadwal + tautan");
+  const wlProg = (await (await fetch(`${WEB}/c/demo-partner/program`, { headers: { cookie: `aevia_session_demo-partner=${t2}` } })).text()).replace(/<!-- -->/g, "");
+  check(wlProg.includes("Konsultasi Awal") && !wlProg.includes("Healthy Aging") && !/aevia/i.test(text(wlProg)), "whitelabel: katalog klinik sendiri, tanpa AEVIA");
+
   // Console staf
   check((await fetch(`${CON}/masuk`)).status === 200, "console /masuk 200");
   const se = "dr.metz@drmetz.test";

@@ -5,6 +5,7 @@ export const aeviaPreset = {
       colors: {
         navy: "var(--brand-primary)",
         copper: "var(--brand-accent)",
+        "copper-ink": "var(--brand-accent-ink)",
         deep: "var(--brand-dark)",
         ivory: "var(--brand-bg)",
         sand: "var(--brand-soft)",

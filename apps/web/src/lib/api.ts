@@ -16,6 +16,7 @@ export function brandStyle(c: PublicClinic): Record<string, string> {
     "--brand-primary": c.colors.primary,
     "--brand-accent": c.colors.accent,
     "--brand-dark": c.colors.dark,
+    "--brand-accent-ink": c.colors.accent ? `color-mix(in srgb, ${c.colors.accent} 68%, black)` : undefined,
     "--brand-bg": c.colors.background,
   };
   return Object.fromEntries(Object.entries(m).filter(([, v]) => v)) as Record<string, string>;

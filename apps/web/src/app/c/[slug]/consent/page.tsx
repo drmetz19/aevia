@@ -16,7 +16,7 @@ export default async function Consent({ params, searchParams }: { params: Promis
     <div style={brandStyle(clinic)} className="min-h-screen bg-ivory">
       <ClinicHeader clinic={clinic} />
       <main className="mx-auto max-w-xl px-4 py-12">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-copper">Persetujuan</p>
+        <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-copper-ink">Persetujuan</p>
         <h1 className="mt-1 font-serif text-4xl leading-tight text-navy">Anda yang menentukan data apa yang dibagikan</h1>
         <p className="mt-3 text-base text-body">
           Pilih yang nyaman bagi Anda. Persetujuan ini hanya berlaku untuk {clinic.name} dan bisa Anda ubah atau cabut kapan saja.
