@@ -3,7 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import { ArrowRight } from "lucide-react";
 import { ClinicHeader } from "@/components/ClinicHeader";
 import { brandStyle, fetchClinic } from "@/lib/api";
-import { getConsents, getLatestAssessment, getMyRequests, requirePatient } from "@/lib/session";
+import { getConsents, getCurrentPlan, getLatestAssessment, getMyRequests, requirePatient } from "@/lib/session";
 import { logout } from "../actions";
 
 
@@ -18,6 +18,7 @@ export default async function Beranda({ params, searchParams }: { params: Promis
   const granted = consents.filter((c) => c.granted).length;
   const assessment = await getLatestAssessment(slug);
   const requests = await getMyRequests(slug);
+  const plan = await getCurrentPlan(slug);
   const accepted = requests.find((r) => r.status === "accepted" && r.consultation);
   const pending = requests.find((r) => r.status === "submitted");
   const fmt = (iso: string) => new Date(iso).toLocaleString("id-ID", { dateStyle: "long", timeStyle: "short", timeZone: "Asia/Jakarta" }) + " WIB";
@@ -32,7 +33,11 @@ export default async function Beranda({ params, searchParams }: { params: Promis
       status: accepted ? `Terjadwal ${fmt(accepted.consultation!.scheduled_at)}` : pending ? "Menunggu tinjauan" : "Belum diajukan",
       state: accepted ? "done" : pending ? "wait" : "todo",
     },
-    { title: "Rencana personal", status: "Tersedia setelah konsultasi", state: "todo" },
+    {
+      title: "Rencana personal",
+      status: plan ? `Siap dilihat · versi ${plan.version}` : accepted ? "Menunggu tinjauan profesional" : "Tersedia setelah konsultasi",
+      state: plan ? "done" : accepted ? "wait" : "todo",
+    },
     { title: "Follow-up & progres", status: "Belum dimulai", state: "todo" },
   ];
 
@@ -82,6 +87,11 @@ export default async function Beranda({ params, searchParams }: { params: Promis
           >
             {assessment?.status === "completed" ? "Ulangi assessment" : "Mulai assessment"} <ArrowRight aria-hidden="true" size={18} strokeWidth={1.5} />
           </Link>
+          {plan && (
+            <Link href={`/c/${clinic.slug}/rencana`} className="inline-flex items-center rounded-pill bg-navy px-7 py-3 text-lg font-semibold text-white">
+              Lihat rencana
+            </Link>
+          )}
           <Link
             href={`/c/${clinic.slug}/program`}
             className="inline-flex items-center rounded-pill border border-navy px-7 py-3 text-lg font-semibold text-navy"

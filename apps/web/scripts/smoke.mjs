@@ -210,6 +210,33 @@ try {
   const hiddenSkin = (await (await fetch(`${CON}/konsultasi/${kid}?tab=skin`, { headers: sCookie })).text()).replace(/<!-- -->/g, "");
   check(hiddenSkin.includes("sudah mencabutnya") && !hiddenSkin.includes("Bercak"), "consent dicabut → foto & anotasi disembunyikan di console");
 
+  // --- Phase 6: resep + rencana bertanda tangan ---
+  const noPlan = (await (await fetch(`${WEB}/c/drmetz/rencana`, { headers: cookie })).text()).replace(/<!-- -->/g, "");
+  check(noPlan.includes("Rencana akan tersedia setelah konsultasi selesai ditinjau profesional."), "rencana: empty state §29 sebelum signed");
+  const rxTab = await (await fetch(`${CON}/konsultasi/${kid}?tab=resep`, { headers: sCookie })).text();
+  check(rxTab.includes("Simpan draf resep"), "console tab Resep berfungsi");
+  const planTab = await (await fetch(`${CON}/konsultasi/${kid}?tab=rencana`, { headers: sCookie })).text();
+  check(planTab.includes("Fokus Anda saat ini") && planTab.includes("Kapan kita tinjau kembali"), "console tab Rencana: heading §24");
+  const jh = { ...sAuth, "content-type": "application/json" };
+  const rxSaved = await (await fetch(`${API}/v1/staff/consultations/${kid}/prescriptions`, { method: "PUT", headers: jh, body: JSON.stringify({ items: [{ name: "Tretinoin 0,025%", dose: "tipis", frequency: "malam" }] }) })).json();
+  await fetch(`${API}/v1/staff/prescriptions/${rxSaved.id}/issue`, { method: "POST", headers: sAuth });
+  const planDraft = await (await fetch(`${API}/v1/staff/consultations/${kid}/care-plans`, { method: "PUT", headers: jh, body: JSON.stringify({ content: { focus: ["Memperbaiki kualitas tidur"], next_steps: ["Rutinitas malam"], monitor: [{ metric_key: "tidur", label: "Kualitas tidur", unit: "skor", baseline: 2, target: 4, direction: "up" }], review_at: "2026-12-01" }, summary: { discussed: "Pola tidur.", priorities: ["Tidur"] } }) })).json();
+  check((await fetch(`${WEB}/c/drmetz/rencana`, { headers: cookie }).then((r) => r.text())).includes("Rencana akan tersedia"), "draf rencana tidak terlihat pasien");
+  const signRes = await fetch(`${API}/v1/staff/care-plans/${planDraft.id}/sign`, { method: "POST", headers: jh, body: JSON.stringify({ confirm: true }) });
+  check(signRes.status === 200, "API: tandatangani rencana");
+  const plan = (await (await fetch(`${WEB}/c/drmetz/rencana`, { headers: cookie })).text()).replace(/<!-- -->/g, "");
+  check(plan.includes("Rencana Anda telah diperbarui oleh tim DrMetz."), "rencana: kalimat §34 (nama klinik)");
+  check(["Fokus Anda saat ini", "Langkah berikutnya", "Yang perlu dipantau", "Kapan kita tinjau kembali", "Yang dibahas", "Prioritas Anda", "Rencana saat ini"].every((h) => plan.includes(h)), "rencana: heading §23 + §24");
+  check(plan.includes("Reviewed by Professional") && plan.includes("Professional Plan"), "rencana: trust badges");
+  check(plan.includes("Sovia adalah AI") && plan.includes("Sovia menjelaskan rencana Anda"), "rencana: bubble penjelasan Sovia");
+  check(plan.includes("Resep dari dr. Metz") && plan.includes("Tretinoin"), "rencana: resep terbit read-only");
+  check(plan.includes("powered by AEVIA") || plan.includes("ditampilkan melalui AEVIA"), "cobrand: menyebut AEVIA sebagai platform");
+  check((await (await fetch(`${WEB}/c/drmetz/beranda`, { headers: cookie })).text()).includes("Lihat rencana"), "beranda: tombol Lihat rencana");
+  const aud = (await (await fetch(`${CON}/konsultasi/${kid}?tab=audit`, { headers: sCookie })).text()).replace(/<!-- -->/g, "");
+  check(aud.includes("Rencana ditandatangani") && aud.includes("Resep diterbitkan") && aud.includes("Subjective (S)"), "audit: label manusiawi (S/O/A/P, rencana, resep)");
+  const wlPlan = (await (await fetch(`${WEB}/c/demo-partner/rencana`, { headers: { cookie: `aevia_session_demo-partner=${t2}` } })).text()).replace(/<!-- -->/g, "");
+  check(wlPlan.includes("Rencana akan tersedia") && !/aevia/i.test(text(wlPlan)), "whitelabel: rencana tanpa AEVIA");
+
   // Console staf
   check((await fetch(`${CON}/masuk`)).status === 200, "console /masuk 200");
   const se = "dr.metz@drmetz.test";

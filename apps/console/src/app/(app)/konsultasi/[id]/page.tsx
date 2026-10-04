@@ -4,6 +4,7 @@ import { EyeOff, Video } from "lucide-react";
 import { auditListSchema, consultationDetailSchema, photoUrlSchema, skinSchema } from "@aevia/core";
 import { fmtDate, publicFileUrl, requireStaff, staffFetch } from "@/lib/api";
 import { AnnotationEditor } from "./AnnotationEditor";
+import { PlanTab, RxTab } from "./PlanTabs";
 import { saveSkinAction, saveSoapAction, uploadPhotoAction } from "./actions";
 
 type Props = { params: Promise<{ id: string }>; searchParams: Promise<{ tab?: string; info?: string; pesan?: string }> };
@@ -22,14 +23,57 @@ const ACTION: Record<string, string> = {
   "skin.update": "Analisis kulit diubah",
   "photo.upload": "Foto diunggah",
   "photo.annotations": "Anotasi foto diubah",
+  "rx.create": "Draf resep dibuat",
+  "rx.update": "Draf resep diubah",
+  "rx.issue": "Resep diterbitkan",
+  "rx.supersede": "Resep digantikan versi baru",
+  "plan.create": "Draf rencana dibuat",
+  "plan.new_version": "Versi baru rencana dibuat",
+  "plan.update": "Draf rencana diubah",
+  "plan.sign": "Rencana ditandatangani",
+  "plan.supersede": "Rencana digantikan versi baru",
 };
+const FIELD: Record<string, string> = {
+  subjective: "Subjective (S)",
+  objective: "Objective (O)",
+  assessment: "Assessment (A)",
+  plan: "Plan (P)",
+  scores: "Skor kulit",
+  notes: "Catatan",
+  annotations: "Anotasi",
+  items: "Item resep",
+  content: "Isi rencana",
+  summary: "Ringkasan",
+  status: "Status",
+  version: "Versi",
+  by_version: "Digantikan oleh versi",
+  from_version: "Dari versi",
+  signature_hash: "Kode tanda tangan",
+  angle: "Sudut foto",
+  content_type: "Jenis berkas",
+  bytes: "Ukuran (byte)",
+  consultation_id: "Konsultasi",
+};
+const humanKey = (k: string) => FIELD[k] ?? k.replace(/_/g, " ");
+
+function show(v: unknown): string {
+  if (v === null || v === undefined || v === "") return "(kosong)";
+  if (typeof v === "string") return v;
+  if (typeof v === "number" || typeof v === "boolean") return String(v);
+  if (Array.isArray(v)) {
+    if (!v.length) return "(kosong)";
+    return v.map((x) => (typeof x === "object" && x !== null ? ((x as { label?: string; name?: string }).label ?? (x as { name?: string }).name ?? show(x)) : String(x))).join(", ");
+  }
+  const o = v as Record<string, unknown>;
+  return Object.entries(o).map(([k, x]) => `${humanKey(k)}: ${show(x)}`).join("; ");
+}
 
 function changed(before: unknown, after: unknown): { key: string; from: string; to: string }[] {
   const b = (before ?? {}) as Record<string, unknown>;
   const a = (after ?? {}) as Record<string, unknown>;
   return [...new Set([...Object.keys(b), ...Object.keys(a)])]
     .filter((k) => JSON.stringify(b[k]) !== JSON.stringify(a[k]))
-    .map((k) => ({ key: k, from: JSON.stringify(b[k] ?? null), to: JSON.stringify(a[k] ?? null) }));
+    .map((k) => ({ key: humanKey(k), from: show(b[k]), to: show(a[k]) }));
 }
 
 export default async function Konsultasi({ params, searchParams }: Props) {
@@ -108,7 +152,7 @@ export default async function Konsultasi({ params, searchParams }: Props) {
               </Link>
             ))}
           </nav>
-          {info && <p role="status" className="mt-4 rounded-md bg-sand px-4 py-3 text-base text-navy">{info === "foto" ? "Selesai. Foto tersimpan." : "Selesai. Perubahan tersimpan."}</p>}
+          {info && <p role="status" className="mt-4 rounded-md bg-sand px-4 py-3 text-base text-navy">{info === "foto" ? "Selesai. Foto tersimpan." : info === "terbit" ? "Selesai. Resep diterbitkan." : info === "ditandatangani" ? "Selesai. Rencana ditandatangani dan kini terlihat oleh pasien." : "Selesai. Perubahan tersimpan."}</p>}
           {pesan && <p role="alert" className="mt-4 text-base text-critical">{pesan}</p>}
 
           {active === "soap" && (
@@ -197,12 +241,8 @@ export default async function Konsultasi({ params, searchParams }: Props) {
             </div>
           )}
 
-          {(active === "resep" || active === "rencana") && (
-            <div className="mt-6 rounded-lg border border-line bg-white p-6 shadow-soft">
-              <h2 className="text-xl font-semibold leading-7 text-navy">{active === "resep" ? "Resep" : "Rencana personal"}</h2>
-              <p className="mt-2 text-base text-body">Bagian ini akan tersedia pada tahap berikutnya.</p>
-            </div>
-          )}
+          {active === "resep" && <RxTab id={id} />}
+          {active === "rencana" && <PlanTab id={id} />}
 
           {active === "audit" && <AuditTab id={id} />}
         </section>

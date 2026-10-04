@@ -20,6 +20,7 @@ import { consultationRoutes } from "./modules/consultations/routes";
 import { staffRoutes } from "./modules/staff/routes";
 import { clinicalRoutes } from "./modules/clinical/routes";
 import { storageFromEnv, type StorageProvider } from "./storage";
+import { planRoutes } from "./modules/plans/routes";
 import { consentRoutes } from "./modules/consents/routes";
 
 export interface AppDeps {
@@ -71,6 +72,7 @@ export async function buildApp({ db, otpSender = consoleOtpSender, jwtSecret, no
   await app.register(consultationRoutes, { ctx });
   await app.register(staffRoutes, { ctx });
   await app.register(clinicalRoutes, { ctx, storage: files });
+  await app.register(planRoutes, { ctx });
 
   return app;
 }

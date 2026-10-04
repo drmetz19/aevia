@@ -69,3 +69,66 @@ export async function saveAnnotationsAction(photoId: string, annotations: Annota
   });
   return res.ok ? { ok: true, message: "Selesai. Anotasi tersimpan." } : { ok: false, message: await msg(res) };
 }
+
+// ---------- Resep & Rencana ----------
+const lines = (v: FormDataEntryValue | null, max = 300) =>
+  String(v ?? "").split("\n").map((l) => l.trim()).filter(Boolean).slice(0, 10).map((l) => l.slice(0, max));
+const slug = (s: string) => s.toLowerCase().normalize("NFKD").replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "").slice(0, 50) || "metrik";
+const num = (v: FormDataEntryValue | null) => (String(v ?? "").trim() === "" ? null : Number(String(v).replace(",", ".")));
+const json = { "content-type": "application/json" };
+
+export async function saveRxAction(fd: FormData) {
+  const id = String(fd.get("consultation_id") ?? "");
+  if (!ID.test(id)) redirect("/antrean");
+  const items = [];
+  for (let i = 0; i < 20; i++) {
+    const name = String(fd.get(`i${i}-name`) ?? "").trim();
+    if (!name) continue;
+    items.push(Object.fromEntries(["name", "strength", "dose", "frequency", "route", "duration", "notes"].map((k) => [k, String(fd.get(`i${i}-${k}`) ?? "").trim()])));
+  }
+  if (!items.length) redirect(back(id, "resep", `pesan=${encodeURIComponent("Ada satu bagian yang belum terisi. Tambahkan minimal satu item resep.")}`));
+  const res = await api(`/v1/staff/consultations/${id}/prescriptions`, { method: "PUT", headers: json, body: JSON.stringify({ items }) });
+  redirect(res.ok ? back(id, "resep", "info=tersimpan") : back(id, "resep", `pesan=${encodeURIComponent(await msg(res))}`));
+}
+
+export async function issueRxAction(fd: FormData) {
+  const id = String(fd.get("consultation_id") ?? "");
+  const rx = String(fd.get("rx_id") ?? "");
+  if (!ID.test(id) || !ID.test(rx)) redirect("/antrean");
+  const res = await api(`/v1/staff/prescriptions/${rx}/issue`, { method: "POST" });
+  redirect(res.ok ? back(id, "resep", "info=terbit") : back(id, "resep", `pesan=${encodeURIComponent(await msg(res))}`));
+}
+
+export async function savePlanAction(fd: FormData) {
+  const id = String(fd.get("consultation_id") ?? "");
+  if (!ID.test(id)) redirect("/antrean");
+  const monitor = [];
+  for (let i = 0; i < 5; i++) {
+    const label = String(fd.get(`m${i}-label`) ?? "").trim();
+    if (!label) continue;
+    monitor.push({
+      metric_key: slug(label),
+      label,
+      unit: String(fd.get(`m${i}-unit`) ?? "").trim(),
+      baseline: num(fd.get(`m${i}-baseline`)),
+      target: num(fd.get(`m${i}-target`)),
+      direction: fd.get(`m${i}-direction`) === "down" ? "down" : "up",
+    });
+  }
+  const review = String(fd.get("review_at") ?? "").trim();
+  const body = {
+    content: { focus: lines(fd.get("focus")), next_steps: lines(fd.get("next_steps")), monitor, review_at: review || null },
+    summary: { discussed: String(fd.get("discussed") ?? "").trim().slice(0, 2000), priorities: lines(fd.get("priorities")) },
+  };
+  const res = await api(`/v1/staff/consultations/${id}/care-plans`, { method: "PUT", headers: json, body: JSON.stringify(body) });
+  redirect(res.ok ? back(id, "rencana", "info=tersimpan") : back(id, "rencana", `pesan=${encodeURIComponent(await msg(res))}`));
+}
+
+export async function signPlanAction(fd: FormData) {
+  const id = String(fd.get("consultation_id") ?? "");
+  const plan = String(fd.get("plan_id") ?? "");
+  if (!ID.test(id) || !ID.test(plan)) redirect("/antrean");
+  if (fd.get("confirm") !== "on") redirect(back(id, "rencana", `pesan=${encodeURIComponent("Mohon centang konfirmasi sebelum menandatangani.")}`));
+  const res = await api(`/v1/staff/care-plans/${plan}/sign`, { method: "POST", headers: json, body: JSON.stringify({ confirm: true }) });
+  redirect(res.ok ? back(id, "rencana", "info=ditandatangani") : back(id, "rencana", `pesan=${encodeURIComponent(await msg(res))}`));
+}

@@ -16,6 +16,8 @@ import {
   consultationRequests,
   patients,
   programs,
+  prescriptions,
+  carePlans,
   skinAnalyses,
   skinPhotos,
   soapNotes,
@@ -217,7 +219,9 @@ export async function auditFor(c: Ctx, consultationId: string) {
     const [soap] = await tx.select({ id: soapNotes.id }).from(soapNotes).where(eq(soapNotes.consultationId, consultationId));
     const [skin] = await tx.select({ id: skinAnalyses.id }).from(skinAnalyses).where(eq(skinAnalyses.consultationId, consultationId));
     const photos = await tx.select({ id: skinPhotos.id }).from(skinPhotos).where(eq(skinPhotos.consultationId, consultationId));
-    const ids = new Set([soap?.id, skin?.id, ...photos.map((p) => p.id)].filter((x): x is string => Boolean(x)));
+    const rx = await tx.select({ id: prescriptions.id }).from(prescriptions).where(eq(prescriptions.consultationId, consultationId));
+    const plans = await tx.select({ id: carePlans.id }).from(carePlans).where(eq(carePlans.consultationId, consultationId));
+    const ids = new Set([soap?.id, skin?.id, ...photos.map((p) => p.id), ...rx.map((r) => r.id), ...plans.map((r) => r.id)].filter((x): x is string => Boolean(x)));
     if (!ids.size) return [];
     const rows = await tx
       .select({ a: auditLogs, name: staff.name })

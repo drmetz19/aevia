@@ -32,7 +32,8 @@ export function sniffImage(b: Uint8Array): PhotoMime | null {
 
 export const angleSchema = z.enum(["front", "left", "right", "other"]);
 export const severitySchema = z.enum(["low", "medium", "high"]);
-export const SEVERITY_LABEL = { low: "Ringan", medium: "Sedang", high: "Perlu perhatian" } as const;
+export const SEVERITY_LABEL = { low: "Rendah", medium: "Sedang", high: "Tinggi" } as const;
+export const SEVERITY_INITIAL = { low: "R", medium: "S", high: "T" } as const;
 
 const unit = z.number().min(0).max(1);
 export const annotationSchema = z

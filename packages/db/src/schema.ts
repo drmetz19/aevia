@@ -212,3 +212,35 @@ export const auditLogs = pgTable("audit_logs", {
   after: jsonb("after").$type<unknown>(),
   at: timestamp("at", { withTimezone: true }).notNull().defaultNow(),
 });
+
+export const prescriptions = pgTable("prescriptions", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  clinicId: uuid("clinic_id").notNull().references(() => clinics.id, { onDelete: "cascade" }),
+  consultationId: uuid("consultation_id").notNull().references(() => consultations.id, { onDelete: "cascade" }),
+  patientId: uuid("patient_id").notNull().references(() => patients.id, { onDelete: "cascade" }),
+  version: integer("version").notNull().default(1),
+  status: text("status", { enum: ["draft", "issued", "superseded"] }).notNull().default("draft"),
+  items: jsonb("items").$type<unknown[]>().notNull().default([]),
+  issuedBy: uuid("issued_by").references(() => staff.id),
+  issuedAt: timestamp("issued_at", { withTimezone: true }),
+  createdBy: uuid("created_by").references(() => staff.id),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
+export const carePlans = pgTable("care_plans", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  clinicId: uuid("clinic_id").notNull().references(() => clinics.id, { onDelete: "cascade" }),
+  patientId: uuid("patient_id").notNull().references(() => patients.id, { onDelete: "cascade" }),
+  consultationId: uuid("consultation_id").notNull().references(() => consultations.id, { onDelete: "cascade" }),
+  version: integer("version").notNull().default(1),
+  status: text("status", { enum: ["draft", "signed", "superseded"] }).notNull().default("draft"),
+  content: jsonb("content").$type<unknown>().notNull().default({}),
+  summary: jsonb("summary").$type<unknown>().notNull().default({}),
+  signedBy: uuid("signed_by").references(() => staff.id),
+  signedAt: timestamp("signed_at", { withTimezone: true }),
+  signatureHash: text("signature_hash"),
+  createdBy: uuid("created_by").references(() => staff.id),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+});

@@ -1,12 +1,12 @@
 "use client";
 
-import { useRef, useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { Trash2 } from "lucide-react";
-import { SEVERITY_LABEL, type Annotation } from "@aevia/core";
+import { SEVERITY_INITIAL, SEVERITY_LABEL, type Annotation } from "@aevia/core";
 import { saveAnnotationsAction } from "./actions";
 
 type Sev = Annotation["severity"];
-const SEV_COLOR: Record<Sev, string> = { low: "var(--status-success)", medium: "var(--status-warning)", high: "var(--status-critical)" };
+const SEV_COLOR: Record<Sev, string> = { low: "var(--status-success)", medium: "color-mix(in srgb, var(--status-warning) 90%, black)", high: "var(--status-critical)" };
 const clamp = (n: number) => Math.min(1, Math.max(0, n));
 const pct = (n: number) => Math.round(n * 1000) / 10;
 
@@ -27,7 +27,20 @@ export function AnnotationEditor({ photoId, src, angle, initial }: { photoId: st
   const [status, setStatus] = useState<{ ok: boolean; message: string } | null>(null);
   const [dirty, setDirty] = useState(false);
   const [pending, start] = useTransition();
+  const [drawMode, setDrawMode] = useState(false);
   const surface = useRef<HTMLDivElement>(null);
+  const labelRef = useRef<HTMLInputElement>(null);
+  const openBtn = useRef<HTMLButtonElement>(null);
+  const returnFocus = useRef(false);
+
+  // Fokus: ke formulir anotasi baru saat dibuka, kembali ke tombol pembuka saat selesai/batal.
+  useEffect(() => {
+    if (draft) labelRef.current?.focus();
+    else if (returnFocus.current) {
+      returnFocus.current = false;
+      openBtn.current?.focus();
+    }
+  }, [draft === null]); // eslint-disable-line react-hooks/exhaustive-deps
   const origin = useRef<{ x: number; y: number } | null>(null);
 
   const pos = (e: React.PointerEvent) => {
@@ -35,6 +48,7 @@ export function AnnotationEditor({ photoId, src, angle, initial }: { photoId: st
     return { x: clamp((e.clientX - r.left) / r.width), y: clamp((e.clientY - r.top) / r.height) };
   };
   const down = (e: React.PointerEvent) => {
+    if (e.pointerType === "touch" && !drawMode) return; // sentuhan hanya menggambar bila Mode gambar aktif; selain itu halaman tetap bisa di-scroll
     surface.current?.setPointerCapture(e.pointerId);
     origin.current = pos(e);
   };
@@ -63,6 +77,7 @@ export function AnnotationEditor({ photoId, src, angle, initial }: { photoId: st
         ? { type: "point", ...base }
         : { type: "area", ...base, w: Math.min(draft.w, 1 - draft.x) || 0.05, h: Math.min(draft.h, 1 - draft.y) || 0.05 };
     setItems((l) => [...l, a]);
+    returnFocus.current = true;
     setDraft(null);
     setDirty(true);
     setStatus(null);
@@ -91,10 +106,10 @@ export function AnnotationEditor({ photoId, src, angle, initial }: { photoId: st
         <span
           key={i}
           aria-hidden="true"
-          className="absolute flex h-6 w-6 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-pill border-2 border-white text-[11px] font-semibold text-white"
+          className="absolute flex h-6 min-w-6 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-pill border-2 border-white px-1 text-xs font-bold text-white"
           style={{ left: `${a.x * 100}%`, top: `${a.y * 100}%`, background: SEV_COLOR[a.severity] }}
         >
-          {i + 1}
+          {i + 1}{SEVERITY_INITIAL[a.severity]}
         </span>
       ),
     );
@@ -105,7 +120,7 @@ export function AnnotationEditor({ photoId, src, angle, initial }: { photoId: st
     <div className="space-y-4">
       <div className="grid gap-4 md:grid-cols-[3fr_2fr]">
         <figure>
-          <div ref={surface} onPointerDown={down} onPointerMove={move} onPointerUp={up} className="relative touch-none cursor-crosshair select-none overflow-hidden rounded-lg bg-sand">
+          <div ref={surface} onPointerDown={down} onPointerMove={move} onPointerUp={up} className={`relative cursor-crosshair select-none overflow-hidden rounded-lg bg-sand ${drawMode ? "touch-none" : "[@media(pointer:fine)]:touch-none"}`}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={src} alt={`Foto klinis, sudut ${angle}`} draggable={false} className="block w-full" />
             {overlay && shapes(false)}
@@ -129,6 +144,11 @@ export function AnnotationEditor({ photoId, src, angle, initial }: { photoId: st
         </figure>
       </div>
 
+      <div className="flex flex-wrap items-center gap-4">
+        <button type="button" aria-pressed={drawMode} onClick={() => setDrawMode((v) => !v)} className={`rounded-pill border border-navy px-5 py-2 text-base font-semibold ${drawMode ? "bg-navy text-white" : "text-navy"}`}>
+          Mode gambar (layar sentuh): {drawMode ? "aktif" : "nonaktif"}
+        </button>
+      </div>
       <label className="flex items-center gap-2 text-base text-navy">
         <input type="checkbox" checked={overlay} onChange={(e) => setOverlay(e.target.checked)} className="h-4 w-4 accent-[var(--brand-primary)]" />
         Tampilkan anotasi pada foto
@@ -155,7 +175,7 @@ export function AnnotationEditor({ photoId, src, angle, initial }: { photoId: st
             <div className="grid gap-3 sm:grid-cols-2">
               <label className="text-[13px] font-medium text-navy">
                 Label
-                <input value={draft.label} maxLength={80} onChange={(e) => setDraft({ ...draft, label: e.target.value })} className={field} />
+                <input ref={labelRef} value={draft.label} maxLength={80} onChange={(e) => setDraft({ ...draft, label: e.target.value })} className={field} />
               </label>
               <label className="text-[13px] font-medium text-navy">
                 Tingkat
@@ -168,11 +188,11 @@ export function AnnotationEditor({ photoId, src, angle, initial }: { photoId: st
             </div>
             <div className="flex gap-3">
               <button type="submit" className="rounded-pill bg-navy px-5 py-2 text-base font-semibold text-white">Tambahkan</button>
-              <button type="button" onClick={() => setDraft(null)} className="rounded-pill border border-navy px-5 py-2 text-base font-semibold text-navy">Batal</button>
+              <button type="button" onClick={() => { returnFocus.current = true; setDraft(null); }} className="rounded-pill border border-navy px-5 py-2 text-base font-semibold text-navy">Batal</button>
             </div>
           </form>
         ) : (
-          <button type="button" onClick={() => setDraft({ type: "point", x: 0.5, y: 0.5, w: 0.1, h: 0.1, label: "", severity: "medium" })} className="rounded-pill border border-navy px-5 py-2 text-base font-semibold text-navy">
+          <button ref={openBtn} type="button" onClick={() => setDraft({ type: "point", x: 0.5, y: 0.5, w: 0.1, h: 0.1, label: "", severity: "medium" })} className="rounded-pill border border-navy px-5 py-2 text-base font-semibold text-navy">
             Tambah anotasi lewat formulir
           </button>
         )}
@@ -187,7 +207,8 @@ export function AnnotationEditor({ photoId, src, angle, initial }: { photoId: st
             {items.map((a, i) => (
               <li key={i} className="flex items-center justify-between gap-3 rounded-md border border-line bg-white px-3 py-2 text-base text-navy">
                 <span>
-                  <strong className="font-semibold">{i + 1}. {a.label}</strong> · {a.type === "point" ? "Titik" : "Area"} · {SEVERITY_LABEL[a.severity]}
+                  <strong className="font-semibold">{i + 1}. {a.label}</strong> · {a.type === "point" ? "Titik" : "Area"} ·{" "}
+                  <span className="inline-flex items-center gap-1 rounded-pill px-2 text-xs font-bold text-white" style={{ background: SEV_COLOR[a.severity] }}><span aria-hidden="true">{SEVERITY_INITIAL[a.severity]}</span>{SEVERITY_LABEL[a.severity]}</span>
                   <span className="block text-[13px] font-medium text-body">
                     kiri {pct(a.x)}%, atas {pct(a.y)}%{a.type === "area" ? `, lebar ${pct(a.w ?? 0)}%, tinggi ${pct(a.h ?? 0)}%` : ""}
                   </span>

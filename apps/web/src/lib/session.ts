@@ -71,3 +71,13 @@ export async function getDraft(slug: string) {
 
 export const rupiah = (n: number | null) =>
   n === null ? "Hubungi klinik untuk biaya" : new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 }).format(n);
+
+import { patientPlanSchema, type PatientPlan } from "@aevia/core";
+
+export async function getCurrentPlan(slug: string): Promise<PatientPlan | null> {
+  const res = await apiAuthed(slug, "/v1/care-plans/current");
+  if (!res || res.status === 401 || res.status === 403) redirect(sessionEndedUrl(slug));
+  if (res.status === 404) return null;
+  if (!res.ok) throw new Error(`API rencana gagal (${res.status})`);
+  return patientPlanSchema.parse(await res.json());
+}
