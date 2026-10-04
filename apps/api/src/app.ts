@@ -22,6 +22,8 @@ import { clinicalRoutes } from "./modules/clinical/routes";
 import { storageFromEnv, type StorageProvider } from "./storage";
 import { planRoutes } from "./modules/plans/routes";
 import { progressRoutes } from "./modules/progress/routes";
+import { settingsRoutes } from "./modules/settings/routes";
+import { isStaffActive } from "./modules/settings/team";
 import { consentRoutes } from "./modules/consents/routes";
 
 export interface AppDeps {
@@ -29,14 +31,17 @@ export interface AppDeps {
   otpSender?: OtpSender;
   jwtSecret?: string;
   storage?: StorageProvider;
+  /** Kunci layanan LLM platform; default dari env ANTHROPIC_API_KEY. Kosong → mode LLM tidak dapat dinyalakan. */
+  anthropicApiKey?: string;
   now?: () => Date;
 }
 
 /** Dipakai server lokal dan (nanti) Vercel Function: tidak membuka port di sini. */
-export async function buildApp({ db, otpSender = consoleOtpSender, jwtSecret, now = () => new Date(), storage }: AppDeps) {
+export async function buildApp({ db, otpSender = consoleOtpSender, jwtSecret, now = () => new Date(), storage, anthropicApiKey = process.env.ANTHROPIC_API_KEY }: AppDeps) {
   const ctx = { db, secret: resolveSecret(jwtSecret), sender: otpSender, now };
   const files = storage ?? storageFromEnv(ctx.secret);
   const app = Fastify({ logger: false }).withTypeProvider<ZodTypeProvider>();
+  app.decorate("isStaffActive", (staffId: string, clinicId: string) => isStaffActive(db, staffId, clinicId));
   app.setValidatorCompiler(validatorCompiler);
   app.setSerializerCompiler(serializerCompiler);
 
@@ -45,9 +50,14 @@ export async function buildApp({ db, otpSender = consoleOtpSender, jwtSecret, no
   );
   app.setErrorHandler((err: { statusCode?: number; validation?: unknown }, _req, reply) => {
       const code = (err as { code?: string }).code;
-    if (code === "FST_ERR_CTP_BODY_TOO_LARGE") return reply.code(413).send({ error: "file_too_large", message: "Ukuran foto melebihi 10 MB. Silakan pilih foto yang lebih kecil." });
+    if (code === "FST_ERR_CTP_BODY_TOO_LARGE") {
+      const brandAsset = _req.url.includes("/v1/staff/brand/");
+      return reply.code(413).send({ error: "file_too_large", message: brandAsset ? "Ukuran gambar melebihi 1 MB. Silakan pilih gambar yang lebih kecil." : "Ukuran foto melebihi 10 MB. Silakan pilih foto yang lebih kecil." });
+    }
     if (code === "FST_ERR_CTP_INVALID_MEDIA_TYPE") return reply.code(415).send({ error: "unsupported_type", message: "Format foto belum didukung. Gunakan JPG, PNG, atau WebP." });
-    if (err instanceof AuthError) return reply.code(err.status).send({ error: err.code, message: err.message });
+    if (err instanceof AuthError) {
+      return reply.code(err.status).send({ error: err.code, message: err.message, ...(err.details ? { details: err.details } : {}) });
+    }
     if (hasZodFastifySchemaValidationErrors(err) || err.validation || err.statusCode === 400) {
       return reply.code(400).send({ error: "bad_request", message: "Ada bagian yang belum terisi atau belum sesuai. Mohon periksa kembali." });
     }
@@ -74,6 +84,7 @@ export async function buildApp({ db, otpSender = consoleOtpSender, jwtSecret, no
   await app.register(staffRoutes, { ctx });
   await app.register(clinicalRoutes, { ctx, storage: files });
   await app.register(planRoutes, { ctx });
+  await app.register(settingsRoutes, { ctx, storage: files, llmAvailable: () => Boolean(anthropicApiKey) });
   await app.register(progressRoutes, { ctx });
 
   return app;

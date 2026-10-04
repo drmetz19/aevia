@@ -30,7 +30,7 @@ export default async function Pasien({ params, searchParams }: Props) {
   return (
     <main className="mx-auto max-w-5xl px-4 py-10 md:px-8">
       <Link href="/antrean" className="text-base font-semibold text-navy underline underline-offset-4">← Antrean</Link>
-      <p className="mt-4 text-[11px] font-semibold uppercase tracking-[0.12em] text-copper-ink">Pasien</p>
+      <p className="mt-4 text-[13px] font-semibold uppercase tracking-[0.12em] text-copper-ink">Pasien</p>
       <h1 className="mt-1 font-serif text-4xl text-navy">{d.patient.email}</h1>
       <p className="mt-1 text-base text-body">Terdaftar {fmtDate(d.patient.created_at)}</p>
       {info === "diterima" && (

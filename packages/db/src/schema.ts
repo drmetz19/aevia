@@ -15,6 +15,13 @@ export const clinics = pgTable("clinics", {
     .default("approved"),
   avatarUrl: text("avatar_url"),
   customDomain: text("custom_domain").unique(),
+  customDomainVerified: boolean("custom_domain_verified").notNull().default(false),
+  logoKey: text("logo_key"),
+  avatarKey: text("avatar_key"),
+  pendingAssistantName: text("pending_assistant_name"),
+  pendingAvatarKey: text("pending_avatar_key"),
+  assistantReviewNote: text("assistant_review_note"),
+  assistantSubmittedAt: timestamp("assistant_submitted_at", { withTimezone: true }),
   llmEnabled: boolean("llm_enabled").notNull().default(false),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
@@ -64,6 +71,7 @@ export const staff = pgTable("staff", {
   email: text("email").notNull().unique(),
   name: text("name").notNull(),
   role: text("role", { enum: ["professional", "clinic_admin"] }).notNull(),
+  active: boolean("active").notNull().default(true),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 

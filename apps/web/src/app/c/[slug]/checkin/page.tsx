@@ -18,7 +18,7 @@ export default async function Checkin({ params, searchParams }: { params: Promis
     <div style={brandStyle(clinic)} className="min-h-screen bg-ivory">
       <ClinicHeader clinic={clinic} />
       <main className="mx-auto max-w-2xl px-4 py-10">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-copper-ink">Check-in</p>
+        <p className="text-[13px] font-semibold uppercase tracking-[0.12em] text-copper-ink">Check-in</p>
         <h1 className="mt-1 font-serif text-4xl leading-tight text-navy">Waktunya check-in singkat</h1>
         <p className="mt-2 text-base text-body">
           {form.general
@@ -29,7 +29,7 @@ export default async function Checkin({ params, searchParams }: { params: Promis
           <input type="hidden" name="slug" value={slug} />
           {pesan && <p role="alert" className="text-base text-critical">{pesan}</p>}
           {form.fields.map((f) => (
-            <fieldset key={f.key} className="rounded-lg border border-line bg-white p-5 shadow-soft">
+            <fieldset key={f.key} className="rounded-lg border border-line bg-surface p-5 shadow-soft">
               <legend className="px-1 text-xl font-semibold leading-7 text-navy">{f.label}</legend>
               {f.scale ? (
                 <>
@@ -54,7 +54,7 @@ export default async function Checkin({ params, searchParams }: { params: Promis
           ))}
           <div>
             <label htmlFor="note" className="block text-[13px] font-medium text-navy">Catatan (opsional)</label>
-            <textarea id="note" name="note" rows={3} maxLength={500} placeholder="Hal lain yang ingin Anda catat" className="mt-1 w-full rounded-md border border-line bg-white px-4 py-3 text-base text-navy" />
+            <textarea id="note" name="note" rows={3} maxLength={500} placeholder="Hal lain yang ingin Anda catat" className="mt-1 w-full rounded-md border border-line bg-surface px-4 py-3 text-base text-navy" />
           </div>
           <div className="flex flex-wrap items-center gap-4">
             <button type="submit" className="rounded-pill bg-copper px-7 py-3 text-lg font-semibold text-white shadow-soft">Simpan check-in</button>

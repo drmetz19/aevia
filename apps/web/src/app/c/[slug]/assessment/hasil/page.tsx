@@ -26,10 +26,10 @@ export default async function Hasil({ params }: { params: Promise<{ slug: string
     <div style={brandStyle(clinic)} className="min-h-screen bg-ivory">
       <ClinicHeader clinic={clinic} />
       <main className="mx-auto max-w-3xl px-4 py-10">
-        <div className="mb-6 overflow-hidden rounded-lg border border-line bg-white">
+        <div className="mb-6 overflow-hidden rounded-lg border border-line bg-surface">
           <SoviaHeader clinic={clinic} />
         </div>
-        <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-copper-ink">Hasil assessment</p>
+        <p className="text-[13px] font-semibold uppercase tracking-[0.12em] text-copper-ink">Hasil assessment</p>
         <h1 className="mt-1 font-serif text-4xl leading-tight text-navy">Gambaran awal kondisi Anda</h1>
         <p className="mt-2 text-base text-body">
           {COMPLETION_LINE}
@@ -39,7 +39,7 @@ export default async function Hasil({ params }: { params: Promise<{ slug: string
           {RESULT_LINES[1]} <strong className="font-semibold text-navy">{r.disclaimer}</strong>
         </p>
         {state.flagged && state.emergency_message && (
-          <div role="alert" className="mt-4 flex gap-3 rounded-lg border border-critical bg-white p-4 text-base text-navy">
+          <div role="alert" className="mt-4 flex gap-3 rounded-lg border border-critical bg-surface p-4 text-base text-navy">
             <AlertTriangle aria-hidden="true" className="mt-0.5 shrink-0 text-critical" size={22} strokeWidth={1.5} />
             <p>{state.emergency_message}</p>
           </div>
@@ -50,7 +50,7 @@ export default async function Hasil({ params }: { params: Promise<{ slug: string
           </p>
         )}
 
-        <section aria-labelledby="prioritas" className="mt-8 rounded-lg border border-line bg-white p-6 shadow-soft">
+        <section aria-labelledby="prioritas" className="mt-8 rounded-lg border border-line bg-surface p-6 shadow-soft">
           <h2 id="prioritas" className="text-xl font-semibold leading-7 text-navy">
             Tiga area yang layak dibahas lebih dulu
           </h2>
@@ -65,8 +65,8 @@ export default async function Hasil({ params }: { params: Promise<{ slug: string
           {r.areas.map((a) => {
             const { Icon, cls } = levelIcon[a.level];
             return (
-              <li key={a.area} className="rounded-lg border border-line bg-white p-5 shadow-soft">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-copper-ink">{a.label}</p>
+              <li key={a.area} className="rounded-lg border border-line bg-surface p-5 shadow-soft">
+                <p className="text-[13px] font-semibold uppercase tracking-[0.12em] text-copper-ink">{a.label}</p>
                 <p className="mt-2 flex items-center gap-2 text-base font-semibold text-navy">
                   <Icon aria-hidden="true" className={cls} size={20} strokeWidth={1.5} />
                   {a.level_label}

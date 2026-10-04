@@ -17,13 +17,13 @@ export default async function Progres({ params, searchParams }: { params: Promis
     <div style={brandStyle(clinic)} className="min-h-screen bg-ivory">
       <ClinicHeader clinic={clinic} />
       <main className="mx-auto max-w-3xl px-4 py-10">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-copper-ink">Progres</p>
+        <p className="text-[13px] font-semibold uppercase tracking-[0.12em] text-copper-ink">Progres</p>
         <h1 className="mt-1 font-serif text-4xl leading-tight text-navy">Progres Anda</h1>
         {info === "tersimpan" && (
           <p role="status" className="mt-4 rounded-md bg-sand px-4 py-3 text-base text-navy">Selesai. Check-in Anda tersimpan. Mari lihat apa yang berubah sejak check-in terakhir.</p>
         )}
         {progress.checkin_count === 0 ? (
-          <div className="mt-6 rounded-lg border border-line bg-white p-6 shadow-soft">
+          <div className="mt-6 rounded-lg border border-line bg-surface p-6 shadow-soft">
             <p role="status" className="text-base text-body">{PROGRESS_EMPTY}</p>
             <Link href={`/c/${slug}/checkin`} className="mt-4 inline-flex rounded-pill bg-copper px-7 py-3 text-lg font-semibold text-white shadow-soft">Mulai check-in</Link>
           </div>

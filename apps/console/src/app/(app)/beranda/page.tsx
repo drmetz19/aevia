@@ -5,7 +5,7 @@ export default async function Beranda() {
   const me = await requireStaff();
   return (
     <main className="mx-auto max-w-4xl px-4 py-10 md:px-8">
-      <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-copper-ink">Console</p>
+      <p className="text-[13px] font-semibold uppercase tracking-[0.12em] text-copper-ink">Console</p>
       <h1 className="mt-1 font-serif text-4xl text-navy">Selamat datang, {me.name}</h1>
       <p className="mt-2 text-base text-body">{me.email}</p>
       {me.role !== "aevia_admin" ? (

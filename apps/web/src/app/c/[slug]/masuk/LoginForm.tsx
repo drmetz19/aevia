@@ -3,7 +3,7 @@
 import { useActionState } from "react";
 import { requestCode, verifyCode, type FormState } from "../actions";
 
-const input = "w-full rounded-md border border-line bg-white px-4 py-3 text-base text-navy";
+const input = "w-full rounded-md border border-line bg-surface px-4 py-3 text-base text-navy";
 const primary = "w-full rounded-pill bg-navy px-6 py-3 text-base font-semibold text-white";
 
 export function LoginForm({ slug, ended }: { slug: string; ended: boolean }) {

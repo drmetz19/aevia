@@ -13,7 +13,7 @@ export default async function Antrean() {
   const { items } = res.ok ? queueSchema.parse(await res.json()) : { items: [] };
   return (
     <main className="mx-auto max-w-5xl px-4 py-10 md:px-8">
-      <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-copper-ink">Antrean</p>
+      <p className="text-[13px] font-semibold uppercase tracking-[0.12em] text-copper-ink">Antrean</p>
       <h1 className="mt-1 font-serif text-4xl text-navy">Permintaan konsultasi</h1>
       <p className="mt-2 text-base text-body">Permintaan terbaru dari pasien klinik Anda. Yang menunggu ditinjau tampil lebih dulu.</p>
       {items.length === 0 ? (

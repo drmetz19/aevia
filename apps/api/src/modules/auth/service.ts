@@ -49,7 +49,7 @@ async function findStaffIdentity(db: Db, email: string): Promise<StaffIdentity |
   const [admin] = await db.db.select().from(platformAdmins).where(eq(platformAdmins.email, email));
   if (admin) return { id: admin.id, clinicId: null, slug: null, role: "aevia_admin" };
   // Lookup pra-login lintas klinik: koneksi pemilik (bypass RLS), hanya untuk identitas staf.
-  const [s] = await db.db.select().from(staff).where(eq(staff.email, email));
+  const [s] = await db.db.select().from(staff).where(and(eq(staff.email, email), eq(staff.active, true)));
   if (!s) return null;
   const clinic = await db.db.query.clinics.findFirst({ where: (c, { eq: e }) => e(c.id, s.clinicId) });
   return { id: s.id, clinicId: s.clinicId, slug: clinic?.slug ?? null, role: s.role };
@@ -77,7 +77,7 @@ export async function staffProfile(db: Db, sub: string, role: Role) {
     const [a] = await db.db.select().from(platformAdmins).where(eq(platformAdmins.id, sub));
     return a ? { id: a.id, email: a.email, name: a.name, role, clinic_slug: null } : null;
   }
-  const [s] = await db.db.select().from(staff).where(eq(staff.id, sub));
+  const [s] = await db.db.select().from(staff).where(and(eq(staff.id, sub), eq(staff.active, true)));
   if (!s) return null;
   const clinic = await db.db.query.clinics.findFirst({ where: (c, { eq: e }) => e(c.id, s.clinicId) });
   return { id: s.id, email: s.email, name: s.name, role: s.role as Role, clinic_slug: clinic?.slug ?? null };

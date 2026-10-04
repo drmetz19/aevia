@@ -18,13 +18,17 @@
     "test": "echo \"no tests\""
   },
   "dependencies": {
+    "@aevia/core": "workspace:*",
+    "@fontsource/dm-sans": "5.3.0",
     "@fontsource/dm-serif-display": "5.3.0",
+    "@fontsource/inter": "5.3.0",
+    "@fontsource/lora": "5.3.0",
     "@fontsource/manrope": "5.3.0",
-    "@aevia/core": "workspace:*"
+    "@fontsource/plus-jakarta-sans": "5.3.0"
   },
   "devDependencies": {
     "@types/node": "22.20.5",
-    "typescript": "5.9.3",
-    "@types/react": "19.3.0"
+    "@types/react": "19.3.0",
+    "typescript": "5.9.3"
   }
 }

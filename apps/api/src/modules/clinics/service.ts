@@ -5,7 +5,6 @@ import type { PublicClinic } from "@aevia/core";
 export async function getPublicClinic(db: Db, slug: string): Promise<PublicClinic | null> {
   const c = await findClinicBySlug(db, slug);
   if (!c) return null;
-  const approved = c.assistantNameStatus === "approved";
   return {
     slug: c.slug,
     name: c.name,
@@ -14,7 +13,7 @@ export async function getPublicClinic(db: Db, slug: string): Promise<PublicClini
     logo_url: c.logoUrl,
     colors: c.colors,
     font: c.font,
-    assistant_name: approved ? c.assistantName : "Sovia",
-    avatar_url: approved ? c.avatarUrl : null,
+    assistant_name: c.assistantName,
+    avatar_url: c.avatarUrl,
   };
 }

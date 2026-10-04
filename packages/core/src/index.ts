@@ -7,3 +7,5 @@ export * from "./consultation";
 export * from "./clinical";
 export * from "./plan";
 export * from "./progress";
+export * from "./color";
+export * from "./settings";

@@ -44,7 +44,7 @@ export default async function AssessmentPage({ params, searchParams }: Props) {
       <ClinicHeader clinic={clinic} />
       <main className="mx-auto max-w-2xl px-0 sm:px-4 sm:py-8">
         <h1 className="sr-only">Assessment bersama {name}</h1>
-        <div className="overflow-hidden border-y border-line bg-white shadow-soft sm:rounded-lg sm:border">
+        <div className="overflow-hidden border-y border-line bg-surface shadow-soft sm:rounded-lg sm:border">
           <SoviaHeader clinic={clinic} />
 
           {!active ? (
@@ -109,7 +109,7 @@ export default async function AssessmentPage({ params, searchParams }: Props) {
                 })}
 
                 {active.flagged && active.emergency_message && (
-                  <div role="alert" className="flex gap-3 rounded-lg border border-critical bg-white p-4 text-base text-navy">
+                  <div role="alert" className="flex gap-3 rounded-lg border border-critical bg-surface p-4 text-base text-navy">
                     <AlertTriangle aria-hidden="true" className="mt-0.5 shrink-0 text-critical" size={22} strokeWidth={1.5} />
                     <p>
                       <strong className="font-semibold text-critical">Perlu perhatian segera. </strong>
@@ -126,7 +126,7 @@ export default async function AssessmentPage({ params, searchParams }: Props) {
                 {active.next_question ? (
                   <div className="space-y-3">
                     <SoviaBubble clinic={clinic} live>
-                      <span className="mb-1 block text-[11px] font-semibold uppercase tracking-[0.12em] text-navy">
+                      <span className="mb-1 block text-[13px] font-semibold uppercase tracking-[0.12em] text-navy">
                         {areaLabel(active.next_question.area)}
                       </span>
                       {active.next_question.text}
@@ -141,7 +141,7 @@ export default async function AssessmentPage({ params, searchParams }: Props) {
                           {active.next_question.options.map((o) => (
                             <label
                               key={o.value}
-                              className="flex cursor-pointer items-center gap-3 rounded-md border border-line bg-white px-4 py-3 text-base text-navy has-[:checked]:border-navy has-[:checked]:bg-sand"
+                              className="flex cursor-pointer items-center gap-3 rounded-md border border-line bg-surface px-4 py-3 text-base text-navy has-[:checked]:border-navy has-[:checked]:bg-sand"
                             >
                               <input type="radio" name="value" value={o.value} required className="h-4 w-4 accent-[var(--brand-primary)]" />
                               {o.label}
@@ -159,7 +159,7 @@ export default async function AssessmentPage({ params, searchParams }: Props) {
                             rows={3}
                             maxLength={500}
                             placeholder="Tulis di sini bila ingin menambahkan"
-                            className="w-full rounded-md border border-line bg-white px-4 py-3 text-base text-navy"
+                            className="w-full rounded-md border border-line bg-surface px-4 py-3 text-base text-navy"
                           />
                         </>
                       )}

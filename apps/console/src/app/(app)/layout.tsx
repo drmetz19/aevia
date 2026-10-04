@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { ClipboardList, Home, LogOut } from "lucide-react";
+import { Building2, ClipboardList, Home, LogOut, Palette, Sparkles, Users } from "lucide-react";
 import { requireStaff } from "@/lib/api";
 import { staffLogout } from "../actions";
 
@@ -10,7 +10,18 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
   const me = await requireStaff();
   const nav = [
     { href: "/beranda", label: "Beranda", Icon: Home },
-    ...(me.role === "aevia_admin" ? [] : [{ href: "/antrean", label: "Antrean", Icon: ClipboardList }]),
+    ...(me.role === "aevia_admin"
+      ? [
+          { href: "/admin/klinik", label: "Klinik", Icon: Building2 },
+          { href: "/admin/asisten", label: "Nama asisten", Icon: Sparkles },
+        ]
+      : [{ href: "/antrean", label: "Antrean", Icon: ClipboardList }]),
+    ...(me.role === "clinic_admin"
+      ? [
+          { href: "/pengaturan/brand", label: "Pengaturan", Icon: Palette },
+          { href: "/pengaturan/staf", label: "Staf", Icon: Users },
+        ]
+      : []),
   ];
   return (
     <div className="min-h-screen md:grid md:grid-cols-[240px_1fr]">
@@ -18,7 +29,7 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
         <div className="flex items-center justify-between gap-4 px-4 py-4 md:block md:p-6">
           <div>
             <p className="font-serif text-2xl">AEVIA</p>
-            <p className="text-[13px] font-medium text-white/70">Console</p>
+            <p className="text-[13px] font-medium text-white/80">Console</p>
           </div>
           <nav aria-label="Navigasi utama" className="flex gap-1 md:mt-8 md:flex-col">
             {nav.map(({ href, label, Icon }) => (
@@ -31,7 +42,7 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
         </div>
         <div className="hidden border-t border-white/10 p-6 md:absolute md:bottom-0 md:block md:w-full">
           <p className="text-base font-semibold">{me.name}</p>
-          <p className="text-[13px] font-medium text-white/70">
+          <p className="text-[13px] font-medium text-white/80">
             {roleLabel[me.role]}
             {me.clinic_slug ? ` · ${me.clinic_slug}` : ""}
           </p>

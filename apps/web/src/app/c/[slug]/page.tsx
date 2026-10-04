@@ -37,7 +37,7 @@ export default async function ClinicLanding({ params }: Props) {
       <main>
         <section className="bg-deep text-white">
           <div className="mx-auto max-w-6xl px-4 py-14 md:px-8 md:py-24">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-copper">{eyebrow}</p>
+            <p className="text-[13px] font-semibold uppercase tracking-[0.12em] text-copper-light">{eyebrow}</p>
             <h1 className="mt-4 max-w-3xl font-serif text-4xl leading-[1.15] md:text-5xl md:leading-[56px]">
               Pendampingan kesehatan yang tenang, terarah, dan personal.
             </h1>
@@ -61,13 +61,13 @@ export default async function ClinicLanding({ params }: Props) {
         </section>
 
         <section aria-labelledby="alur" className="mx-auto max-w-6xl px-4 py-12 md:px-8 md:py-16">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-copper-ink">Alur pendampingan</p>
+          <p className="text-[13px] font-semibold uppercase tracking-[0.12em] text-copper-ink">Alur pendampingan</p>
           <h2 id="alur" className="mt-2 text-[28px] font-semibold leading-9 text-navy">
             Empat langkah, satu perjalanan
           </h2>
           <ol className="mt-8 grid gap-4 md:grid-cols-4">
             {steps.map(({ title, desc, Icon }, i) => (
-              <li key={title} className="rounded-lg border border-line bg-white p-5 shadow-soft">
+              <li key={title} className="rounded-lg border border-line bg-surface p-5 shadow-soft">
                 <div className="flex items-center gap-3">
                   <span className="flex h-8 w-8 items-center justify-center rounded-pill bg-sand text-sm font-semibold text-navy">
                     {i + 1}
@@ -82,7 +82,7 @@ export default async function ClinicLanding({ params }: Props) {
         </section>
 
         <section aria-labelledby="sovia" className="mx-auto max-w-6xl px-4 pb-16 md:px-8">
-          <div className="flex flex-col gap-5 rounded-lg border border-line bg-white p-6 shadow-soft md:flex-row md:items-center">
+          <div className="flex flex-col gap-5 rounded-lg border border-line bg-surface p-6 shadow-soft md:flex-row md:items-center">
             <Image
               src={clinic.avatar_url ?? "/sovia-avatar.png"}
               alt={`Avatar ${assistant}, asisten AI`}
@@ -92,7 +92,7 @@ export default async function ClinicLanding({ params }: Props) {
               unoptimized={Boolean(clinic.avatar_url)}
             />
             <div>
-              <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-copper-ink">
+              <p className="text-[13px] font-semibold uppercase tracking-[0.12em] text-copper-ink">
                 {white ? `${assistant} · AI Guide` : `${assistant} · AI Guide by AEVIA`}
               </p>
               <h2 id="sovia" className="mt-1 text-xl font-semibold leading-7 text-navy">
@@ -110,9 +110,12 @@ export default async function ClinicLanding({ params }: Props) {
           </div>
         </section>
       </main>
-      <footer className="border-t border-line bg-white">
+      <footer className="border-t border-line bg-surface">
         <p className="mx-auto max-w-6xl px-4 py-6 text-[13px] font-medium text-slate md:px-8">
-          Hasil assessment bukan diagnosis. © {clinic.name}
+          Hasil assessment bukan diagnosis. © {clinic.name} ·{" "}
+          <Link href={`/c/${slug}/syarat`} className="underline underline-offset-4">
+            Syarat &amp; ketentuan
+          </Link>
         </p>
       </footer>
     </div>

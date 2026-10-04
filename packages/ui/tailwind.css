@@ -5,6 +5,8 @@
   --color-copper-ink: var(--brand-accent-ink);
   --color-deep: var(--brand-dark);
   --color-ivory: var(--brand-bg);
+  --color-surface: var(--brand-surface);
+  --color-copper-light: var(--brand-accent-light);
   --color-sand: var(--brand-soft);
   --color-slate: var(--aevia-slate);
   --color-body: var(--aevia-body);

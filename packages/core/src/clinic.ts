@@ -8,7 +8,7 @@ export const brandColorsSchema = z
     primary: z.string().optional(),
     accent: z.string().optional(),
     background: z.string().optional(),
-    dark: z.string().optional(),
+    surface: z.string().optional(),
   })
   .partial();
 export type BrandColors = z.infer<typeof brandColorsSchema>;

@@ -16,7 +16,7 @@ export interface StorageProvider {
   driver: "local" | "supabase";
   put(key: string, data: Uint8Array, contentType: string): Promise<void>;
   remove(key: string): Promise<void>;
-  /** Driver lokal: dibaca API saat melayani URL bertanda tangan. Driver supabase: tidak dipakai. */
+  /** Dibaca API untuk melayani berkas (foto lewat URL bertanda tangan; aset merek lewat endpoint publik). */
   read?(key: string): Promise<Uint8Array | null>;
   signedUrl(input: SignedUrlInput): Promise<string>;
 }
@@ -83,6 +83,11 @@ export function createSupabaseStorage(opts: { url: string; serviceKey: string; b
     },
     async remove(key) {
       await (await get()).storage.from(opts.bucket).remove([key]);
+    },
+    async read(key) {
+      const { data, error } = await (await get()).storage.from(opts.bucket).download(key);
+      if (error || !data) return null;
+      return new Uint8Array(await data.arrayBuffer());
     },
     async signedUrl({ key, ttlSeconds }) {
       const { data, error } = await (await get()).storage.from(opts.bucket).createSignedUrl(key, ttlSeconds);

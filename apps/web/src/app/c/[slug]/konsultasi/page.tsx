@@ -8,7 +8,7 @@ import { fetchPrograms, getDraft, getMyRequests, requirePatient, rupiah } from "
 import { submitRequestAction } from "../actions";
 
 type Props = { params: Promise<{ slug: string }>; searchParams: Promise<{ program?: string; pesan?: string }> };
-const field = "w-full rounded-md border border-line bg-white px-4 py-3 text-base text-navy";
+const field = "w-full rounded-md border border-line bg-surface px-4 py-3 text-base text-navy";
 const label = "block text-[13px] font-medium text-navy";
 
 export default async function Konsultasi({ params, searchParams }: Props) {
@@ -29,7 +29,7 @@ export default async function Konsultasi({ params, searchParams }: Props) {
     <div style={brandStyle(clinic)} className="min-h-screen bg-ivory">
       <ClinicHeader clinic={clinic} />
       <main className="mx-auto max-w-5xl px-4 py-10">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-copper-ink">Siapkan konsultasi</p>
+        <p className="text-[13px] font-semibold uppercase tracking-[0.12em] text-copper-ink">Siapkan konsultasi</p>
         <h1 className="mt-1 font-serif text-4xl leading-tight text-navy">Hal yang ingin dibahas bersama profesional</h1>
 
         <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_320px]">
@@ -47,14 +47,14 @@ export default async function Konsultasi({ params, searchParams }: Props) {
               </div>
             </div>
             {open ? (
-              <p role="status" className="mt-6 rounded-lg border border-line bg-white p-5 text-base text-navy">
+              <p role="status" className="mt-6 rounded-lg border border-line bg-surface p-5 text-base text-navy">
                 Permintaan untuk program ini sudah kami terima dan sedang ditinjau tim klinik.{" "}
                 <Link href={`/c/${slug}/beranda`} className="font-semibold underline underline-offset-4">
                   Lihat status
                 </Link>
               </p>
             ) : (
-              <form action={submitRequestAction} className="mt-6 space-y-5 rounded-lg border border-line bg-white p-6 shadow-soft">
+              <form action={submitRequestAction} className="mt-6 space-y-5 rounded-lg border border-line bg-surface p-6 shadow-soft">
                 <input type="hidden" name="slug" value={slug} />
                 <input type="hidden" name="program_id" value={program.id} />
                 {pesan && (
@@ -85,8 +85,8 @@ export default async function Konsultasi({ params, searchParams }: Props) {
             )}
           </section>
 
-          <aside aria-label="Program yang dipilih" className="h-fit rounded-lg border border-line bg-white p-6 shadow-soft">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-copper-ink">Program dipilih</p>
+          <aside aria-label="Program yang dipilih" className="h-fit rounded-lg border border-line bg-surface p-6 shadow-soft">
+            <p className="text-[13px] font-semibold uppercase tracking-[0.12em] text-copper-ink">Program dipilih</p>
             <h2 className="mt-1 text-xl font-semibold leading-7 text-navy">{program.name}</h2>
             <p className="mt-2 text-base text-body">{program.summary}</p>
             <p className="mt-4 font-serif text-3xl text-navy">{rupiah(program.price_idr)}</p>

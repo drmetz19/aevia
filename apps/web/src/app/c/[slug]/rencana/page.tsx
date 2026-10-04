@@ -16,12 +16,12 @@ import { SoviaAvatar } from "@/components/SoviaHeader";
 import { brandStyle, fetchClinic } from "@/lib/api";
 import { getCurrentPlan, requirePatient } from "@/lib/session";
 
-const card = "rounded-lg border border-line bg-white p-6 shadow-soft";
+const card = "rounded-lg border border-line bg-surface p-6 shadow-soft";
 const h2 = "text-xl font-semibold leading-7 text-navy";
-const eyebrow = "text-[11px] font-semibold uppercase tracking-[0.12em] text-copper-ink";
+const eyebrow = "text-[13px] font-semibold uppercase tracking-[0.12em] text-copper-ink";
 
 const Badge = ({ children }: { children: string }) => (
-  <span className="inline-flex items-center gap-2 rounded-pill border border-line bg-white px-3 py-1 text-[13px] font-medium text-navy">
+  <span className="inline-flex items-center gap-2 rounded-pill border border-line bg-surface px-3 py-1 text-[13px] font-medium text-navy">
     <span aria-hidden="true" className="h-2 w-2 rounded-pill bg-copper" />
     {children}
   </span>

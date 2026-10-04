@@ -14,8 +14,8 @@ export default async function Masuk({ params, searchParams }: Props) {
     <div style={brandStyle(clinic)} className="min-h-screen bg-ivory">
       <ClinicHeader clinic={clinic} />
       <main className="mx-auto max-w-md px-4 py-12">
-        <div className="rounded-lg border border-line bg-white p-6 shadow-soft">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-copper-ink">Masuk</p>
+        <div className="rounded-lg border border-line bg-surface p-6 shadow-soft">
+          <p className="text-[13px] font-semibold uppercase tracking-[0.12em] text-copper-ink">Masuk</p>
           <h1 className="mt-1 text-[28px] font-semibold leading-9 text-navy">Masuk ke {clinic.name}</h1>
           <p className="mt-2 text-base text-body">Cukup dengan email. Kami kirim kode sekali pakai, tanpa kata sandi.</p>
           <div className="mt-6">

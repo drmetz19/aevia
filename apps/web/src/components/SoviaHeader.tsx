@@ -21,7 +21,7 @@ export function SoviaAvatar({ clinic, size = 40 }: { clinic: PublicClinic; size?
 
 export function SoviaHeader({ clinic }: { clinic: PublicClinic }) {
   return (
-    <div className="flex items-center gap-3 border-b border-line bg-white px-4 py-3">
+    <div className="flex items-center gap-3 border-b border-line bg-surface px-4 py-3">
       <SoviaAvatar clinic={clinic} />
       <div className="min-w-0 leading-tight">
         <p className="text-base font-semibold text-navy">{soviaTitle(clinic)}</p>

@@ -1,4 +1,4 @@
-import { publicClinicSchema, type PublicClinic } from "@aevia/core";
+import { fontStack, publicClinicSchema, themeVars, type PublicClinic } from "@aevia/core";
 
 const API_URL = process.env.API_URL ?? "http://localhost:4000";
 
@@ -9,15 +9,14 @@ export async function fetchClinic(slug: string): Promise<PublicClinic | null> {
   return publicClinicSchema.parse(await res.json());
 }
 
-/** Warna klinik hanya menimpa --brand-* untuk whitelabel; cobrand memakai token AEVIA. */
+/** Tema klinik hanya untuk whitelabel; cobrand memakai token AEVIA. Warna yang tak lolos kontras → token AEVIA. */
 export function brandStyle(c: PublicClinic): Record<string, string> {
   if (c.brand_mode !== "whitelabel") return {};
-  const m: Record<string, string | undefined> = {
-    "--brand-primary": c.colors.primary,
-    "--brand-accent": c.colors.accent,
-    "--brand-dark": c.colors.dark,
-    "--brand-accent-ink": c.colors.accent ? `color-mix(in srgb, ${c.colors.accent} 68%, black)` : undefined,
-    "--brand-bg": c.colors.background,
-  };
-  return Object.fromEntries(Object.entries(m).filter(([, v]) => v)) as Record<string, string>;
+  const out: Record<string, string> = { ...(themeVars(c.colors) ?? {}) };
+  const stack = fontStack(c.font);
+  if (stack) {
+    out["--font-sans"] = stack;
+    out.fontFamily = stack;
+  }
+  return out;
 }

@@ -16,6 +16,8 @@
   --brand-dark: var(--aevia-deep);
   --brand-bg: var(--aevia-ivory);
   --brand-soft: var(--aevia-sand);
+  --brand-surface: var(--aevia-white);
+  --brand-accent-light: var(--aevia-copper);
 
   --status-success: #2f6b4f;
   --status-warning: #a86b1e;

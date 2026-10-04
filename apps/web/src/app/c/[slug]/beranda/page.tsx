@@ -48,7 +48,7 @@ export default async function Beranda({ params, searchParams }: { params: Promis
     <div style={brandStyle(clinic)} className="min-h-screen bg-ivory">
       <ClinicHeader clinic={clinic} />
       <main className="mx-auto max-w-3xl px-4 py-12">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-copper-ink">Beranda</p>
+        <p className="text-[13px] font-semibold uppercase tracking-[0.12em] text-copper-ink">Beranda</p>
         <h1 className="mt-1 font-serif text-4xl leading-tight text-navy">Selamat datang di {clinic.name}</h1>
         <p className="mt-2 text-base text-body">Masuk sebagai {me.email}</p>
         {info === "terkirim" && (
@@ -75,7 +75,7 @@ export default async function Beranda({ params, searchParams }: { params: Promis
             <h2 id="notif" className="text-xl font-semibold leading-7 text-navy">Pemberitahuan</h2>
             <ul className="mt-3 space-y-3">
               {reminders.map((r) => (
-                <li key={r.id} className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-copper bg-white p-4 shadow-soft">
+                <li key={r.id} className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-copper bg-surface p-4 shadow-soft">
                   <p className="text-base text-navy">{r.message}</p>
                   <form action={markReminderReadAction} className="flex items-center gap-3">
                     <input type="hidden" name="slug" value={clinic.slug} />
@@ -93,7 +93,7 @@ export default async function Beranda({ params, searchParams }: { params: Promis
           {steps.map((st, i) => (
             <li
               key={st.title}
-              className={`rounded-lg border bg-white p-4 ${st.state === "todo" ? "border-line" : "border-copper"}`}
+              className={`rounded-lg border bg-surface p-4 ${st.state === "todo" ? "border-line" : "border-copper"}`}
             >
               <span className="block text-[13px] font-medium text-body">Langkah {i + 1}</span>
               <span className="block text-base font-semibold text-navy">{st.title}</span>
@@ -130,7 +130,7 @@ export default async function Beranda({ params, searchParams }: { params: Promis
           </Link>
         </div>
 
-        <section className="mt-10 rounded-lg border border-line bg-white p-6 shadow-soft" aria-labelledby="pers">
+        <section className="mt-10 rounded-lg border border-line bg-surface p-6 shadow-soft" aria-labelledby="pers">
           <h2 id="pers" className="text-xl font-semibold leading-7 text-navy">
             Persetujuan data
           </h2>

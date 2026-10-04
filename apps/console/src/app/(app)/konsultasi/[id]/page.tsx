@@ -102,13 +102,13 @@ export default async function Konsultasi({ params, searchParams }: Props) {
   return (
     <main className="mx-auto max-w-7xl px-4 py-8 md:px-8">
       <Link href={`/pasien/${k.patient.id}`} className="text-base font-semibold text-navy underline underline-offset-4">← {k.patient.email}</Link>
-      <p className="mt-4 text-[11px] font-semibold uppercase tracking-[0.12em] text-copper-ink">Konsultasi</p>
+      <p className="mt-4 text-[13px] font-semibold uppercase tracking-[0.12em] text-copper-ink">Konsultasi</p>
       <h1 className="mt-1 font-serif text-4xl text-navy">{k.program_name}</h1>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-[320px_1fr]">
         <aside aria-label="Ringkasan pasien" className="space-y-4">
           <section className="rounded-lg border border-line bg-white p-5 shadow-soft">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-copper-ink">Pasien</p>
+            <p className="text-[13px] font-semibold uppercase tracking-[0.12em] text-copper-ink">Pasien</p>
             <p className="mt-1 text-base font-semibold text-navy">{k.patient.email}</p>
             <p className="mt-2 text-base text-body">{fmtDate(k.scheduled_at)}</p>
             <a href={k.meeting_url} rel="noopener noreferrer" className="mt-2 inline-flex items-center gap-2 text-base font-semibold text-navy underline underline-offset-4">
@@ -116,7 +116,7 @@ export default async function Konsultasi({ params, searchParams }: Props) {
             </a>
           </section>
           <section className="rounded-lg border border-line bg-white p-5 shadow-soft">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-copper-ink">Foto klinis</p>
+            <p className="text-[13px] font-semibold uppercase tracking-[0.12em] text-copper-ink">Foto klinis</p>
             {!k.photos_consent ? (
               <p className="mt-2 flex gap-2 text-base text-body"><EyeOff aria-hidden="true" size={20} strokeWidth={1.5} className="mt-0.5 shrink-0" />Pasien belum memberi persetujuan foto, atau sudah mencabutnya. Foto disembunyikan.</p>
             ) : skin && skin.photos.length ? (
@@ -133,7 +133,7 @@ export default async function Konsultasi({ params, searchParams }: Props) {
             )}
           </section>
           <section className="rounded-lg border border-line bg-white p-5 shadow-soft">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-copper-ink">Assessment</p>
+            <p className="text-[13px] font-semibold uppercase tracking-[0.12em] text-copper-ink">Assessment</p>
             <p className="mt-2 text-base text-body">{k.assessment_visible ? "Dibagikan pasien." : "Tidak dibagikan oleh pasien."}</p>
             <Link href={`/pasien/${k.patient.id}`} className="mt-2 inline-block text-base font-semibold text-navy underline underline-offset-4">Lihat di profil pasien</Link>
           </section>

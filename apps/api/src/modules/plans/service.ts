@@ -183,7 +183,7 @@ async function patientPlanFrom(tx: Tx, c: PCtx, p: PlanRow): Promise<PatientPlan
     .orderBy(desc(prescriptions.version))
     .limit(1);
   const content = parseContent(p.content);
-  const assistant = clinic?.assistantNameStatus === "approved" ? clinic.assistantName : "Sovia";
+  const assistant = clinic?.assistantName ?? "Sovia";
   return {
     id: p.id,
     version: p.version,

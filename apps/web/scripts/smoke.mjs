@@ -1,6 +1,7 @@
 // Smoke HTML berbasis fetch (fallback bila Chromium Playwright tak bisa dipasang).
 // Menyalakan API (PGlite sementara) + web, memeriksa kriteria Phase 1 #3, lalu mematikan semuanya.
 import { spawn } from "node:child_process";
+import { request as httpRequest } from "node:http";
 import { mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -315,6 +316,69 @@ try {
   check(ch.status === 200 && (await ch.text()).includes("dr. Metz"), "console beranda memuat dr. Metz");
   const cn = await fetch(`${CON}/beranda`, { redirect: "manual" });
   check(cn.status >= 300 && cn.status < 400, "console beranda tanpa sesi → redirect");
+
+  // Phase 8: pengaturan klinik + admin AEVIA
+  const stafToken = async (email) => {
+    await post(`${API}/v1/staff/auth/otp`, { email });
+    return (await (await post(`${API}/v1/staff/auth/verify`, { email, code: await otpCode(email) })).json()).token;
+  };
+  const put = (url, body, tok) => fetch(url, { method: "PUT", headers: { "content-type": "application/json", authorization: `Bearer ${tok}` }, body: JSON.stringify(body) });
+  const ca = await stafToken("admin@demo-partner.test");
+  const pa = await stafToken("admin@aevia.test");
+  const caC = { cookie: `aevia_staff_session=${ca}` };
+  const paC = { cookie: `aevia_staff_session=${pa}` };
+  const palette = { primary: "#1F4D3F", accent: "#B5542F", background: "#F5F7F3", surface: "#FFFFFF" };
+  const lowC = await put(`${API}/v1/staff/brand`, { brand_mode: "whitelabel", colors: { ...palette, primary: "#AAAAAA" }, font: null, custom_domain: null }, ca);
+  const lowB = await lowC.json();
+  check(lowC.status === 400 && /minimal 4,5:1/.test(lowB.message), "brand: kontras < 4,5:1 ditolak dengan penjelasan");
+  const okB = await put(`${API}/v1/staff/brand`, { brand_mode: "whitelabel", colors: palette, font: "Inter", custom_domain: "sehat.lumina.id" }, ca);
+  check(okB.status === 200, "brand: whitelabel + font Inter + domain tersimpan");
+  const dp2 = await (await fetch(`${WEB}/c/demo-partner`)).text();
+  check(/--font-sans:\s*&quot;Inter&quot;|--font-sans:\s*"Inter"/.test(dp2), "web: font klinik (Inter) dipakai lewat CSS variable");
+  check(!/aevia/i.test(text(dp2).replace(/Syarat &amp; ketentuan/g, "")), "whitelabel: landing tanpa kata AEVIA");
+  const terms = await (await fetch(`${WEB}/c/demo-partner/syarat`)).text();
+  check(terms.includes("AEVIA") && terms.includes("Syarat"), "halaman syarat & ketentuan boleh menyebut AEVIA");
+  check(/Sovia/.test(text(dp2)) && !text(dp2).includes("Luna"), "nama asisten baru (Luna) belum tampil sebelum disetujui");
+  const queue = (await (await fetch(`${API}/v1/admin/assistants`, { headers: { authorization: `Bearer ${pa}` } })).json()).items;
+  const lun = queue.find((i) => i.slug === "demo-partner");
+  check(Boolean(lun) && lun.pending_name === "Luna", "admin AEVIA: antrean memuat usulan Luna");
+  const adq = await (await fetch(`${CON}/admin/asisten`, { headers: paC })).text();
+  check(adq.includes("Luna") && adq.includes("Setujui"), "console /admin/asisten memuat antrean + tombol Setujui");
+  check((await post(`${API}/v1/admin/assistants/${lun.clinic_id}/review`, { decision: "approve", note: "" }, pa)).status === 200, "admin AEVIA: setujui nama");
+  const dp3 = await (await fetch(`${WEB}/c/demo-partner`)).text();
+  check(text(dp3).includes("Luna"), "setelah disetujui, nama Luna tampil di web");
+
+  for (const [path, needle] of [["/pengaturan/brand", "Pemeriksaan keterbacaan"], ["/pengaturan/program", "Tambah program"], ["/pengaturan/staf", "Undang staf"]]) {
+    const pg = await fetch(`${CON}${path}`, { headers: caC });
+    check(pg.status === 200 && (await pg.text()).includes(needle), `console ${path} memuat "${needle}"`);
+  }
+  const denied = await fetch(`${CON}/pengaturan/brand`, { headers: sCookie, redirect: "manual" });
+  check(denied.status >= 300 && denied.status < 400, "console pengaturan: profesional dialihkan");
+
+  const nc = await post(`${API}/v1/admin/clinics`, { slug: "klinik-smoke", name: "Klinik Smoke", brand_mode: "whitelabel", admin_email: "owner@klinik-smoke.test" }, pa);
+  check(nc.status === 201, "admin AEVIA: buat klinik baru");
+  const ncp = await fetch(`${WEB}/c/klinik-smoke`);
+  check(ncp.status === 200 && (await ncp.text()).includes("Klinik Smoke"), "slug baru langsung bisa dibuka di web");
+  const klinikPage = await (await fetch(`${CON}/admin/klinik`, { headers: paC })).text();
+  check(klinikPage.includes("Klinik Smoke") && klinikPage.includes("Buat klinik baru"), "console /admin/klinik memuat daftar + form");
+
+  const hostGet = (host, path) =>
+    new Promise((resolve, reject) => {
+      const r = httpRequest({ host: "127.0.0.1", port: webPort, path, method: "GET", headers: { host } }, (res) => {
+        let b = "";
+        res.on("data", (d) => (b += d));
+        res.on("end", () => resolve({ status: res.statusCode, body: b }));
+      });
+      r.on("error", reject);
+      r.end();
+    });
+  const unver = await hostGet("sehat.lumina.id", "/");
+  check(unver.status === 404 || !unver.body.includes("Lumina Skin Studio"), "domain belum diverifikasi tidak dipetakan");
+  const demoId = (await (await fetch(`${API}/v1/admin/clinics`, { headers: { authorization: `Bearer ${pa}` } })).json()).clinics.find((c) => c.slug === "demo-partner").id;
+  check((await put(`${API}/v1/admin/clinics/${demoId}/domain`, { verified: true }, pa)).status === 200, "admin AEVIA: verifikasi domain");
+  await new Promise((r) => setTimeout(r, 2500)); // cache negatif proxy 2 dtk
+  const dom = await hostGet("sehat.lumina.id", "/");
+  check(dom.status === 200 && dom.body.includes("Lumina Skin Studio"), "domain terverifikasi → proxy memetakan host ke klinik");
 } catch (e) {
   console.error(e);
   fails.push(String(e));
