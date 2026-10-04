@@ -174,10 +174,10 @@ Console pengaturan: brand mode cobrand/whitelabel, logo, warna (validasi kontras
 Kontrak di `docs/integrasi/` (KlinikSistem, BeautyCode). KlinikSistem: permintaan konsultasi diterima → push booking ke URL KlinikSistem klinik (adapter HTTP); inbound `POST /v1/integrations/kliniksistem/visits` (status Scheduled/Completed/No-show/Cancelled) → update konsultasi. BeautyCode: inbound `POST /v1/integrations/beautycode/tracker` (skor kulit, tidur, diet trigger) → `external_context` pasien bila consent; tampil di console & draft prep. Mock server untuk test.
 
 ### Acceptance criteria
-- [ ] Konsultasi diterima → mock KlinikSistem menerima booking dengan payload sesuai kontrak
-- [ ] Status "Completed" dari KlinikSistem mengubah status konsultasi AEVIA
-- [ ] Data BeautyCode tanpa consent ditolak (403); dengan consent tampil di detail pasien console
-- [ ] Inbound wajib auth API key scope `integrations:write` (key klinik lain ditolak)
+- [x] Konsultasi diterima → mock KlinikSistem menerima booking dengan payload sesuai kontrak
+- [x] Status "Completed" dari KlinikSistem mengubah status konsultasi AEVIA
+- [x] Data BeautyCode tanpa consent ditolak (403); dengan consent tampil di detail pasien console
+- [x] Inbound wajib auth API key scope `integrations:write` (key klinik lain ditolak)
 
 ---
 
