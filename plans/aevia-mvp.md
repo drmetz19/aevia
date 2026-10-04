@@ -189,9 +189,11 @@ Kontrak di `docs/integrasi/` (KlinikSistem, BeautyCode). KlinikSistem: permintaa
 `LLMProvider` + `ClaudeProvider` (SDK Anthropic, model dari env), dipakai untuk ringkasan prep & penjelasan rencana bila `ANTHROPIC_API_KEY` + `llm_enabled`; fallback otomatis ke skrip bila error/timeout; keluaran tetap lewat Guardrail; prompt sistem berisi Verbal Identity + batas klinis. Test memakai provider palsu.
 
 ### Acceptance criteria
-- [ ] Tanpa API key → mode skrip dipakai walau toggle on
-- [ ] Provider palsu yang mengembalikan "Anda wajib…/diagnosis…" → keluaran disaring guardrail
-- [ ] Provider error/timeout → fallback skrip, tidak ada error ke pasien
-- [ ] Tidak ada jalur LLM yang bisa menulis SOAP/resep/rencana
+- [x] Tanpa API key → mode skrip dipakai walau toggle on
+- [x] Provider palsu yang mengembalikan "Anda wajib…/diagnosis…" → keluaran disaring guardrail
+- [x] Provider error/timeout → fallback skrip, tidak ada error ke pasien
+- [x] Tidak ada jalur LLM yang bisa menulis SOAP/resep/rencana
 
 ---
+
+- [x] Regresi lulus 2026-10-04 — typecheck 7/7 · test 222/222 (core 78, db 10, api 123, mcp 11) · smoke 138 cek hijau 2× · review lintas halaman tanpa KRITIS

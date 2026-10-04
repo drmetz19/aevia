@@ -13,7 +13,14 @@ export default async function Beranda() {
           Lihat antrean permintaan
         </Link>
       ) : (
-        <p className="mt-6 text-base text-body">Alat admin platform akan tersedia pada tahap berikutnya.</p>
+        <div className="mt-6 flex flex-wrap gap-3">
+          <Link href="/admin/klinik" className="inline-flex rounded-pill bg-navy px-6 py-3 text-base font-semibold text-white">
+            Kelola klinik
+          </Link>
+          <Link href="/admin/asisten" className="inline-flex rounded-pill border border-line px-6 py-3 text-base font-semibold text-navy">
+            Tinjau nama asisten
+          </Link>
+        </div>
       )}
     </main>
   );

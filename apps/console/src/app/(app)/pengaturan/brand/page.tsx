@@ -69,7 +69,7 @@ export default async function Brand() {
         <p className="mt-2 text-base text-body">
           {b.llm_available
             ? "Bila dinyalakan, asisten memakai model bahasa untuk percakapan; pagar pengaman klinis tetap aktif."
-            : "Belum tersedia: layanan belum memiliki kunci layanan AI. Asisten tetap berjalan dengan alur terpandu."}
+            : "Belum tersedia untuk saat ini. Asisten berjalan dengan alur terpandu."}
         </p>
         <p className="mt-2 text-base text-body">Teks asisten dari AI hanya merapikan bahasa (konteks persiapan dan penjelasan rencana), selalu melewati pagar pengaman, dan kembali ke teks standar bila ada kendala. Isi rencana, resep, dan catatan klinis tidak pernah ditulis oleh AI.</p>
         {usage && (
