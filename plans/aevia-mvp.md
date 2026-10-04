@@ -37,11 +37,11 @@ Monorepo berjalan; DB (PGlite dev/test, pg prod) dengan migrasi `clinics` + RLS 
 `patients` unik (clinic_id,email), `otp_codes`, `consents`, `staff`, `platform_admins`; `POST /v1/clinics/:slug/auth/otp` & `/verify` → JWT; staf login sama via `/v1/staff/auth/*`; `GET/PUT /v1/me/consents`. Web: halaman masuk (email → kode) + layar consent; console: masuk staf.
 
 ### Acceptance criteria
-- [ ] Email sama bisa punya akun terpisah di drmetz dan demo-partner (2 id berbeda)
-- [ ] OTP salah 5× → dikunci; kedaluwarsa 10 menit; pesan error manusiawi
-- [ ] Token pasien klinik A ditolak (403) di endpoint klinik B
-- [ ] Consent bisa diberi & dicabut; status tersimpan dengan timestamp
-- [ ] Web: alur masuk → consent → beranda pasien berjalan (Playwright)
+- [x] Email sama bisa punya akun terpisah di drmetz dan demo-partner (2 id berbeda)
+- [x] OTP salah 5× → dikunci; kedaluwarsa 10 menit; pesan error manusiawi
+- [x] Token pasien klinik A ditolak (403) di endpoint klinik B
+- [x] Consent bisa diberi & dicabut; status tersimpan dengan timestamp
+- [x] Web: alur masuk → consent → beranda pasien berjalan (Playwright)
 
 ---
 
