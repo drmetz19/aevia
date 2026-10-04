@@ -1,6 +1,6 @@
 import { sql } from "drizzle-orm";
 import type { Db } from "./client";
-import { clinics, clinicSettings } from "./schema";
+import { clinics, clinicSettings, platformAdmins, staff } from "./schema";
 
 export async function seed({ db }: Pick<Db, "db">) {
   await db
@@ -42,4 +42,14 @@ export async function seed({ db }: Pick<Db, "db">) {
     .insert(clinicSettings)
     .values(rows.map((c) => ({ clinicId: c.id, key: "welcome", value: { note: `Pengaturan ${c.slug}` } })))
     .onConflictDoNothing();
+  const id = (slug: string) => rows.find((c) => c.slug === slug)!.id;
+  await db
+    .insert(staff)
+    .values([
+      { clinicId: id("drmetz"), email: "dr.metz@drmetz.test", name: "dr. Metz", role: "professional" },
+      { clinicId: id("drmetz"), email: "admin@drmetz.test", name: "Admin DrMetz", role: "clinic_admin" },
+      { clinicId: id("demo-partner"), email: "admin@demo-partner.test", name: "Admin Lumina", role: "clinic_admin" },
+    ])
+    .onConflictDoNothing();
+  await db.insert(platformAdmins).values({ email: "admin@aevia.test", name: "Admin Platform" }).onConflictDoNothing();
 }

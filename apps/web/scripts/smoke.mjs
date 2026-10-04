@@ -8,10 +8,23 @@ import { join } from "node:path";
 const API = "http://localhost:4000";
 const WEB = "http://localhost:3000";
 const procs = [];
-const run = (cmd, args, env) => {
-  const p = spawn(cmd, args, { env: { ...process.env, ...env }, stdio: "ignore", detached: true });
+const CON = "http://localhost:3001";
+let apiLog = "";
+const run = (cmd, args, env, capture = false) => {
+  const p = spawn(cmd, args, { env: { ...process.env, ...env }, stdio: ["ignore", capture ? "pipe" : "ignore", "ignore"], detached: true });
+  if (capture) p.stdout.on("data", (d) => (apiLog += d));
   procs.push(p);
 };
+async function otpCode(email) {
+  for (let i = 0; i < 20; i++) {
+    const m = [...apiLog.matchAll(new RegExp(`${email.replace(/[.]/g, "\\.")} kode=(\\d{6})`, "g"))].pop();
+    if (m) return m[1];
+    await new Promise((r) => setTimeout(r, 250));
+  }
+  throw new Error(`OTP ${email} tidak muncul di log API`);
+}
+const post = (url, body, token) =>
+  fetch(url, { method: "POST", headers: { "content-type": "application/json", ...(token ? { authorization: `Bearer ${token}` } : {}) }, body: JSON.stringify(body) });
 const stop = () => procs.forEach((p) => { try { process.kill(-p.pid); } catch {} });
 async function waitFor(url) {
   for (let i = 0; i < 120; i++) {
@@ -25,10 +38,12 @@ const check = (ok, msg) => { console.log(`${ok ? "✓" : "✗"} ${msg}`); if (!o
 const text = (html) => html.replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>/g, "").replace(/<[^>]+>/g, " ");
 
 try {
-  run("pnpm", ["--filter", "@aevia/api", "dev"], { PGLITE_DIR: mkdtempSync(join(tmpdir(), "aevia-smoke-")), PORT: "4000" });
+  run("pnpm", ["--filter", "@aevia/api", "dev"], { PGLITE_DIR: mkdtempSync(join(tmpdir(), "aevia-smoke-")), PORT: "4000" }, true);
   run("pnpm", ["--filter", "@aevia/web", "dev"], { API_URL: API });
+  run("pnpm", ["--filter", "@aevia/console", "dev"], { API_URL: API });
   await waitFor(`${API}/health`);
   await waitFor(`${WEB}/c/drmetz`);
+  await waitFor(`${CON}/masuk`);
 
   const dm = await (await fetch(`${WEB}/c/drmetz`)).text();
   check(dm.includes("DrMetz"), "/c/drmetz memuat nama DrMetz");
@@ -47,6 +62,54 @@ try {
   check(nf.status === 404, "slug tak dikenal → 404 di web");
   const as = await fetch(`${WEB}/c/drmetz/assessment`);
   check(as.status === 200, "/c/drmetz/assessment 200");
+
+  // --- Phase 2: masuk → consent → beranda ---
+  const email = `smoke${Date.now()}@contoh.test`;
+  check((await fetch(`${WEB}/c/drmetz/masuk`)).status === 200, "/c/drmetz/masuk 200");
+  const mh = await (await fetch(`${WEB}/c/drmetz/masuk`)).text();
+  check(mh.includes("Kirim kode masuk"), "halaman masuk memuat form email");
+  const wl = await (await fetch(`${WEB}/c/demo-partner/masuk`)).text();
+  check(!/aevia/i.test(text(wl)), "/c/demo-partner/masuk tanpa kata AEVIA");
+
+  const noSess = await fetch(`${WEB}/c/drmetz/beranda`, { redirect: "manual" });
+  check(noSess.status >= 300 && noSess.status < 400 && (noSess.headers.get("location") ?? "").includes("/masuk"), "beranda tanpa sesi → redirect ke masuk");
+
+  check((await post(`${API}/v1/clinics/drmetz/auth/otp`, { email })).status === 200, "API: minta OTP");
+  const bad = await post(`${API}/v1/clinics/drmetz/auth/verify`, { email, code: "000000" });
+  check(bad.status === 400 || bad.status === 200, "API: kode salah ditolak dengan pesan");
+  const code = await otpCode(email);
+  const ver = await post(`${API}/v1/clinics/drmetz/auth/verify`, { email, code });
+  check(ver.status === 200, "API: verifikasi OTP → token");
+  const { token } = await ver.json();
+  const cookie = { cookie: `aevia_session_drmetz=${token}` };
+
+  const toConsent = await fetch(`${WEB}/c/drmetz/beranda`, { headers: cookie, redirect: "manual" });
+  check((toConsent.headers.get("location") ?? "").includes("/c/drmetz/consent"), "sesi baru tanpa keputusan → diarahkan ke consent");
+  const cp = await (await fetch(`${WEB}/c/drmetz/consent`, { headers: cookie })).text();
+  check(cp.includes("Hasil assessment") && cp.includes("Foto kulit") && cp.includes("Simpan pilihan saya"), "layar consent memuat 4 cakupan");
+
+  const hdr = { "content-type": "application/json", authorization: `Bearer ${token}` };
+  for (const [scope, granted] of [["assessment", true], ["medical_record", true], ["photos", false], ["external_context", false]])
+    await fetch(`${API}/v1/me/consents`, { method: "PUT", headers: hdr, body: JSON.stringify({ scope, granted }) });
+  const home = await fetch(`${WEB}/c/drmetz/beranda`, { headers: cookie });
+  const homeHtml = await home.text();
+  check(home.status === 200 && homeHtml.includes(email) && homeHtml.includes("Mulai assessment"), "beranda pasien tampil setelah consent");
+  check(homeHtml.replace(/<!-- -->/g, "").includes("2 dari 4"), "beranda menampilkan ringkasan consent 2 dari 4");
+
+  const other = await fetch(`${API}/v1/clinics/demo-partner/me`, { headers: { authorization: `Bearer ${token}` } });
+  check(other.status === 403, "token klinik A → 403 di klinik B");
+
+  // Console staf
+  check((await fetch(`${CON}/masuk`)).status === 200, "console /masuk 200");
+  const se = "dr.metz@drmetz.test";
+  await post(`${API}/v1/staff/auth/otp`, { email: se });
+  const sv = await post(`${API}/v1/staff/auth/verify`, { email: se, code: await otpCode(se) });
+  check(sv.status === 200, "API: staf masuk");
+  const st = (await sv.json()).token;
+  const ch = await fetch(`${CON}/beranda`, { headers: { cookie: `aevia_staff_session=${st}` } });
+  check(ch.status === 200 && (await ch.text()).includes("dr. Metz"), "console beranda memuat dr. Metz");
+  const cn = await fetch(`${CON}/beranda`, { redirect: "manual" });
+  check(cn.status >= 300 && cn.status < 400, "console beranda tanpa sesi → redirect");
 } catch (e) {
   console.error(e);
   fails.push(String(e));

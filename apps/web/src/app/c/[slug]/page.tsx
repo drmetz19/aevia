@@ -47,9 +47,15 @@ export default async function ClinicLanding({ params }: Props) {
             </p>
             <Link
               href={`/c/${clinic.slug}/assessment`}
-              className="mt-8 inline-flex items-center gap-2 rounded-pill bg-copper px-7 py-3 text-base font-semibold text-white shadow-soft"
+              className="mt-8 inline-flex items-center gap-2 rounded-pill bg-copper px-7 py-3 text-lg font-semibold text-white shadow-soft"
             >
               Mulai assessment <ArrowRight aria-hidden="true" size={18} strokeWidth={1.5} />
+            </Link>
+            <Link
+              href={`/c/${clinic.slug}/masuk`}
+              className="ml-3 mt-8 inline-flex items-center rounded-pill border border-white/60 px-6 py-3 text-base font-semibold text-white"
+            >
+              Masuk
             </Link>
           </div>
         </section>
@@ -69,7 +75,7 @@ export default async function ClinicLanding({ params }: Props) {
                   <Icon aria-hidden="true" className="text-copper" size={22} strokeWidth={1.5} />
                 </div>
                 <h3 className="mt-4 text-xl font-semibold leading-7 text-navy">{title}</h3>
-                <p className="mt-1 text-base text-slate">{desc}</p>
+                <p className="mt-1 text-base text-body">{desc}</p>
               </li>
             ))}
           </ol>
@@ -92,7 +98,7 @@ export default async function ClinicLanding({ params }: Props) {
               <h2 id="sovia" className="mt-1 text-xl font-semibold leading-7 text-navy">
                 Halo, saya {assistant}. Saya akan menemani Anda menyiapkan konsultasi.
               </h2>
-              <p className="mt-2 text-base text-slate">
+              <p className="mt-2 text-base text-body">
                 Saya membantu merangkum keluhan dan tujuan Anda agar waktu bersama profesional lebih bermakna. Saya
                 tidak memberi diagnosis; setiap rencana ditinjau dan disetujui profesional klinik.
               </p>

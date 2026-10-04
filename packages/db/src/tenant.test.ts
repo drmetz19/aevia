@@ -1,7 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { eq, sql } from "drizzle-orm";
 import { createDb, type Db } from "./client";
-import { clinics, clinicSettings } from "./schema";
+import { clinics, clinicSettings, consents, patients } from "./schema";
 import { seed } from "./seed";
 
 let d: Db;
@@ -56,5 +56,15 @@ describe("isolasi tenant (RLS, role aevia_app)", () => {
     expect(inTx).toEqual({ u: "aevia_app", su: false });
     const after = (await d.db.execute(sql`SELECT current_user AS u`)) as unknown as { rows: { u: string }[] };
     expect(after.rows[0]?.u).not.toBe("aevia_app");
+  });
+
+  it("patients & consents ikut terisolasi; email sama boleh di dua klinik", async () => {
+    const pa = await d.withTenant(a, (tx) => tx.insert(patients).values({ clinicId: a, email: "x@y.test" }).returning());
+    const pb = await d.withTenant(b, (tx) => tx.insert(patients).values({ clinicId: b, email: "x@y.test" }).returning());
+    expect(pa[0]!.id).not.toBe(pb[0]!.id);
+    await d.withTenant(a, (tx) => tx.insert(consents).values({ clinicId: a, patientId: pa[0]!.id, scope: "photos", grantedAt: new Date() }));
+    expect(await d.withTenant(b, (tx) => tx.select().from(consents))).toEqual([]);
+    const seenByB = await d.withTenant(b, (tx) => tx.select().from(patients));
+    expect(seenByB.every((p) => p.clinicId === b)).toBe(true);
   });
 });

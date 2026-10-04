@@ -6,6 +6,7 @@
   --color-ivory: var(--brand-bg);
   --color-sand: var(--brand-soft);
   --color-slate: var(--aevia-slate);
+  --color-body: var(--aevia-body);
   --color-line: var(--aevia-border);
   --color-success: var(--status-success);
   --color-warning: var(--status-warning);

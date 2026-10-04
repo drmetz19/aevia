@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "@aevia/ui/fonts.css";
 @import "@aevia/ui/tokens.css";
 @import "@aevia/ui/tailwind.css";
 @source "../../../../packages/ui";

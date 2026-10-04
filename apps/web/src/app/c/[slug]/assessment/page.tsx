@@ -12,7 +12,7 @@ export default async function AssessmentStub({ params }: { params: Promise<{ slu
       <ClinicHeader clinic={clinic} />
       <main className="mx-auto max-w-xl px-4 py-16">
         <h1 className="font-serif text-4xl text-navy">Assessment segera hadir</h1>
-        <p className="mt-4 text-slate">Kami sedang menyiapkan pertanyaan terpandu untuk Anda.</p>
+        <p className="mt-4 text-body">Kami sedang menyiapkan pertanyaan terpandu untuk Anda.</p>
         <Link href={`/c/${clinic.slug}`} className="mt-6 inline-block rounded-pill border border-navy px-6 py-3 font-semibold text-navy">
           Kembali ke beranda klinik
         </Link>

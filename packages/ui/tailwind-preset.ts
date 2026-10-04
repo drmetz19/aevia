@@ -9,6 +9,7 @@ export const aeviaPreset = {
         ivory: "var(--brand-bg)",
         sand: "var(--brand-soft)",
         slate: "var(--aevia-slate)",
+        body: "var(--aevia-body)",
       },
       fontFamily: { serif: ["var(--font-serif)"], sans: ["var(--font-sans)"] },
       borderRadius: { lg: "20px", pill: "36px" },
