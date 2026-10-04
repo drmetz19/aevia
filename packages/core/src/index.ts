@@ -10,3 +10,4 @@ export * from "./progress";
 export * from "./color";
 export * from "./settings";
 export * from "./integrations";
+export * from "./connectors";

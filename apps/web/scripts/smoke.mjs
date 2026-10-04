@@ -401,6 +401,29 @@ try {
   check(docs9.status === 200 && !/https?:\/\/(cdn|unpkg|cdnjs)/i.test(await docs9.text()), "/docs dilayani tanpa CDN");
   const cronNo = await fetch(`${API}/v1/internal/dispatch`, { method: "POST" });
   check(cronNo.status === 401 || cronNo.status === 503, "dispatcher tanpa CRON_SECRET tidak terbuka");
+
+  // Phase 11: konektor
+  const wk = await (await post(`${API}/v1/staff/integrations/api-keys`, { name: "Konektor smoke", scopes: ["integrations:write"] }, ca)).json();
+  const bcNoConsent = await post(`${API}/v1/integrations/beautycode/tracker`, { aevia_patient_id: mine.patient_id, recorded_at: new Date().toISOString(), skin_barrier: 60 }, wk.secret);
+  check(bcNoConsent.status === 404, "BeautyCode: pasien klinik lain tak terjangkau (404)");
+  const ksSave = await put(`${API}/v1/staff/connectors/kliniksistem`, { base_url: "https://ks.klinik-smoke.test", enabled: true, push_requested: false }, ca);
+  const ksB = await ksSave.json();
+  check(ksSave.status === 200 && /^kssec_/.test(ksB.secret), "konektor KlinikSistem: disimpan, rahasia tampil sekali");
+  const conPage = await (await fetch(`${CON}/pengaturan/integrasi`, { headers: caC })).text();
+  check(conPage.includes("Konektor") && conPage.includes("Uji koneksi") && !conPage.includes(ksB.secret), "console: bagian Konektor + Uji koneksi, rahasia tak tampil ulang");
+  await put(`${API}/v1/staff/connectors/kliniksistem`, { base_url: "https://ks.klinik-smoke.test", enabled: false, push_requested: false }, ca);
+  const visNo = await post(`${API}/v1/integrations/kliniksistem/visits`, { booking_id: "KS-1", status: "Completed", occurred_at: new Date().toISOString() }, wk.secret);
+  check(visNo.status === 409 || visNo.status === 404, "inbound KlinikSistem: konektor nonaktif/booking tak dikenal ditolak");
+  // beautycode dengan consent: pasien drmetz (konsol: kartu snapshot)
+  await fetch(`${API}/v1/me/consents`, { method: "PUT", headers: hdr, body: JSON.stringify({ scope: "external_context", granted: true }) });
+  const adm = await stafToken("admin@drmetz.test");
+  const drk = await (await post(`${API}/v1/staff/integrations/api-keys`, { name: "BC drmetz", scopes: ["integrations:write"] }, adm)).json();
+  const bcOk = await post(`${API}/v1/integrations/beautycode/tracker`, { email, recorded_at: new Date().toISOString(), skin_barrier: 71, sleep_hours: 6.5, diet_triggers: ["gula"] }, drk.secret);
+  check(bcOk.status === 201, "BeautyCode: dengan consent diterima (201)");
+  const snap = flat(await (await fetch(`${CON}/pasien/${mine.patient_id}`, { headers: sCookie })).text());
+  check(snap.includes("Beauty Code snapshot") && snap.includes("71") && snap.includes("gula"), "console detail pasien: kartu Beauty Code snapshot");
+  await fetch(`${API}/v1/me/consents`, { method: "PUT", headers: hdr, body: JSON.stringify({ scope: "external_context", granted: false }) });
+  check((await post(`${API}/v1/integrations/beautycode/tracker`, { email, recorded_at: new Date().toISOString(), skin_barrier: 70 }, drk.secret)).status === 403, "BeautyCode: tanpa consent → 403");
 } catch (e) {
   console.error(e);
   fails.push(String(e));

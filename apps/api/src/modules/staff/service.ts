@@ -12,6 +12,7 @@ import {
 } from "@aevia/db";
 import { AuthError } from "../auth/otp";
 import { toView } from "../consultations/service";
+import { beautySnapshotFor } from "../connectors/context";
 
 type Ctx = { db: Db; clinicId: string; staffId: string; now: Date };
 
@@ -75,8 +76,10 @@ export async function patientDetail(c: Ctx, patientId: string) {
       .leftJoin(consultations, eq(consultations.requestId, consultationRequests.id))
       .where(eq(consultationRequests.patientId, p.id))
       .orderBy(desc(consultationRequests.createdAt));
+    const external = await beautySnapshotFor(tx, p.id);
     return {
       patient: { id: p.id, email: p.email, created_at: p.createdAt.toISOString() },
+      external_context: external,
       assessment_visible: visible,
       hidden_reason: visible ? null : HIDDEN_REASON,
       assessment: a

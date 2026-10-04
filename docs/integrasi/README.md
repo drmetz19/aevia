@@ -45,7 +45,7 @@ Token berumur **15 menit** (`aud=aevia-api`, klaim `scope`). Minta token baru sa
 | `write:reminders` | `POST /v1/integrations/reminders` |
 | `write:consultation_requests` | `POST /v1/integrations/consultation-requests` |
 | `webhooks:manage` | `GET/POST/DELETE /v1/integrations/webhooks` |
-| `integrations:write` | Dicadangkan. Belum ada route di MVP. |
+| `integrations:write` | Konektor masuk: `POST /v1/integrations/kliniksistem/visits` dan `POST /v1/integrations/beautycode/tracker` (lihat [kliniksistem.md](kliniksistem.md), [beautycode.md](beautycode.md)) |
 
 Tanpa cakupan yang sesuai: `403 insufficient_scope`. **Tidak ada** route integrasi untuk menulis SOAP, resep, atau rencana pendampingan; semuanya hanya dapat dibuat dan ditandatangani profesional klinik.
 
@@ -119,6 +119,7 @@ Maksimal **3 percobaan**: percobaan 1 segera, ke-2 setelah 1 menit, ke-3 setelah
 | `plan.approved` | Profesional menandatangani rencana | `plan_id`, `patient_id`, `consultation_id`, `version` |
 | `checkin.submitted` | Pasien mengirim check-in | `checkin_id`, `patient_id`, `care_plan_id` |
 | `progress.updated` | Progres terhitung ulang setelah check-in | `patient_id`, `checkin_id` |
+| `consultation.status_changed` | Status konsultasi berubah (mis. dari KlinikSistem) | `consultation_id`, `patient_id`, `status` |
 | `webhook.test` | Tombol "Kirim tes" | `endpoint_id` |
 
 Langganan `*` menerima semua jenis di atas.

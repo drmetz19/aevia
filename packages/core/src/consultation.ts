@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { beautySnapshotSchema } from "./connectors";
 import { areaLabel, DISCLAIMER, questions, type AssessmentResult, type StoredAnswer } from "./assessment";
 import { sanitizeOutput } from "./guardrail";
 
@@ -78,6 +79,9 @@ export const patientDetailSchema = z.object({
   assessment: z
     .object({ id: z.string(), flagged: z.boolean(), completed_at: z.string().nullable(), result: z.unknown() })
     .nullable(),
+  external_context: z
+    .object({ consent_active: z.boolean(), beautycode: beautySnapshotSchema.nullable() })
+    .default({ consent_active: false, beautycode: null }),
   requests: z.array(
     z.object({
       id: z.string(),
@@ -94,14 +98,15 @@ export const HIDDEN_REASON =
   "Pasien belum memberi persetujuan untuk membagikan hasil assessment, jadi isi assessment dan persiapan konsultasi disembunyikan.";
 
 /** Draf persiapan dari assessment (mode skrip). Selalu status draft; bagian rakitan Sovia lewat guardrail. */
-export function draftPrep(result: AssessmentResult | null, answers: StoredAnswer[]): Prep {
+export function draftPrep(result: AssessmentResult | null, answers: StoredAnswer[], extraContext = ""): Prep {
+  const withExtra = (p: Prep): Prep => (extraContext ? { ...p, konteks_assessment: sanitizeOutput(`${p.konteks_assessment} ${extraContext}`.trim()).text.slice(0, 1200) } : p);
   if (!result) {
-    return {
+    return withExtra({
       tujuan: "",
       keluhan: "",
       pertanyaan: ["Hal apa yang paling perlu saya pahami tentang kondisi saya saat ini?"],
       konteks_assessment: "Belum ada hasil assessment. Anda dapat menyelesaikan assessment lebih dulu agar konsultasi lebih terarah.",
-    };
+    });
   }
   const g = (t: string) => sanitizeOutput(t).text;
   const label = (qid: string, v: number | null) => questions.find((q) => q.id === qid)?.options.find((o) => o.value === v)?.label;
@@ -115,19 +120,19 @@ export function draftPrep(result: AssessmentResult | null, answers: StoredAnswer
     .filter((a) => a.text && questions.find((q) => q.id === a.question_id)?.type === "text" && a.question_id !== "tujuan-t")
     .map((a) => a.text!.trim());
   const goalText = answers.find((a) => a.question_id === "tujuan-t")?.text?.trim();
-  return {
+  return withExtra({
     tujuan: g([result.goal, goalText].filter(Boolean).join(". ")),
     keluhan: [g(lines.join("; ")), ...freeText].filter(Boolean).join(". "),
     pertanyaan: top.map((a) => g(`Bagaimana saya bisa mendukung area ${areaLabel(a).toLowerCase()} dengan lebih baik?`)),
     konteks_assessment: g(
       `Area yang layak dibahas lebih dulu: ${top.map(areaLabel).join(", ")}. Hasil ini digunakan sebagai konteks awal sebelum konsultasi. ${DISCLAIMER}`,
     ),
-  };
+  });
 }
 
 import { scriptEngine, type SoviaEngine } from "./assessment";
 export interface PrepEngine extends SoviaEngine {
-  draftPrep(result: AssessmentResult | null, answers: StoredAnswer[]): Prep;
+  draftPrep(result: AssessmentResult | null, answers: StoredAnswer[], extraContext?: string): Prep;
 }
 /** ScriptEngine lengkap (assessment + draf persiapan konsultasi). */
 export const scriptPrepEngine: PrepEngine = { ...scriptEngine, draftPrep };

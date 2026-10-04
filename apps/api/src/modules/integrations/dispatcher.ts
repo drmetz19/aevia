@@ -1,11 +1,11 @@
-import { createHmac } from "node:crypto";
 import { and, asc, eq, isNull, lte } from "drizzle-orm";
 import { decryptSecret } from "./crypto";
 import { clinics, events, webhookDeliveries, webhookEndpoints, type Db } from "@aevia/db";
 
-export const MAX_ATTEMPTS = 3;
-/** Jeda sebelum percobaan ke-2 dan ke-3 (eksponensial: 1 menit, 5 menit). */
-export const RETRY_DELAYS_MS = [60_000, 300_000] as const;
+import { MAX_ATTEMPTS, RETRY_DELAYS_MS, signBody } from "./sign";
+import { attemptConnectorsDue, fanOutConnectors } from "../connectors/outbound";
+
+export { MAX_ATTEMPTS, RETRY_DELAYS_MS, signBody };
 const CLAIM_MS = 120_000;
 const TIMEOUT_MS = 10_000;
 
@@ -28,13 +28,9 @@ export interface DispatchResult {
 export function minimalPayload(p: Record<string, unknown>): Record<string, string | number | boolean> {
   const out: Record<string, string | number | boolean> = {};
   for (const [k, v] of Object.entries(p)) {
-    if ((k.endsWith("_id") || k === "version" || k === "flagged") && ["string", "number", "boolean"].includes(typeof v)) out[k] = v as string | number | boolean;
+    if ((k.endsWith("_id") || k === "version" || k === "flagged" || k === "status") && ["string", "number", "boolean"].includes(typeof v)) out[k] = v as string | number | boolean;
   }
   return out;
-}
-
-export function signBody(secret: string, timestamp: number, body: string): string {
-  return `t=${timestamp},v1=${createHmac("sha256", secret).update(`${timestamp}.${body}`).digest("hex")}`;
 }
 
 async function fanOut(d: DispatchDeps, clinicId: string): Promise<number> {
@@ -43,6 +39,7 @@ async function fanOut(d: DispatchDeps, clinicId: string): Promise<number> {
     const pending = await tx.select().from(events).where(isNull(events.deliveredAt)).orderBy(asc(events.createdAt)).limit(200);
     if (!pending.length) return 0;
     const eps = await tx.select().from(webhookEndpoints).where(eq(webhookEndpoints.active, true));
+    await fanOutConnectors(tx, clinicId, pending, now);
     for (const ev of pending) {
       for (const ep of eps.filter((e) => e.events.includes("*") || e.events.includes(ev.type))) {
         await tx.insert(webhookDeliveries).values({ clinicId, eventId: ev.id, endpointId: ep.id, nextAttemptAt: now, createdAt: now }).onConflictDoNothing();
@@ -127,6 +124,7 @@ export async function dispatchOnce(d: DispatchDeps): Promise<DispatchResult> {
   for (const { id } of all) {
     res.fanned_out += await fanOut(d, id);
     await attemptDue(d, id, res);
+    await attemptConnectorsDue(d, id, res);
   }
   return res;
 }

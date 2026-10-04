@@ -1,9 +1,9 @@
-import { SCOPES, SCOPE_LABELS, deliveryViewSchema, integrationOverviewSchema } from "@aevia/core";
+import { SCOPES, SCOPE_LABELS, connectorOverviewSchema, deliveryViewSchema, integrationOverviewSchema } from "@aevia/core";
 import { z } from "zod";
 import { fmtDate, requireStaff, staffFetch } from "@/lib/api";
 import { PageHead, ActionForm, Submit, inputCls, labelCls, primaryCls, ghostCls } from "@/components/Ui";
 import { SettingsTabs } from "@/components/SettingsTabs";
-import { createApiKey, createOauthClient, createWebhook, deleteWebhook, revokeApiKey, revokeOauthClient, testWebhook, toggleWebhook } from "../actions";
+import { saveBeautycode, saveKliniksistem, testKliniksistem, createApiKey, createOauthClient, createWebhook, deleteWebhook, revokeApiKey, revokeOauthClient, testWebhook, toggleWebhook } from "../actions";
 
 const deliveryStatus = { pending: "Menunggu percobaan ulang", delivered: "Terkirim", failed: "Belum berhasil" } as const;
 
@@ -33,6 +33,10 @@ export default async function Integrasi() {
     const r = await staffFetch(`/v1/staff/integrations/webhooks/${w.id}/deliveries`);
     deliveries.set(w.id, r.ok ? z.object({ deliveries: z.array(deliveryViewSchema) }).parse(await r.json()).deliveries : []);
   }
+  const cr = await staffFetch("/v1/staff/connectors");
+  const con = cr.ok ? connectorOverviewSchema.parse(await cr.json()) : { connectors: [], deliveries: [] };
+  const ks = con.connectors.find((c) => c.kind === "kliniksistem");
+  const bc = con.connectors.find((c) => c.kind === "beautycode");
   return (
     <main className="mx-auto max-w-3xl px-4 py-10 md:px-8">
       <PageHead eyebrow="Pengaturan" title="Integrasi" lead="Hubungkan sistem lain ke klinik Anda dengan kunci API, klien OAuth, dan webhook. Rahasia hanya tampil sekali saat dibuat." />
@@ -170,6 +174,63 @@ export default async function Integrasi() {
             ))}
           </fieldset>
           <Submit className={primaryCls}>Tambah webhook</Submit>
+        </ActionForm>
+      </section>
+
+      <section aria-labelledby="konektor" className="mt-6 rounded-lg border border-line bg-white p-6 shadow-soft">
+        <h2 id="konektor" className="text-xl font-semibold text-navy">Konektor</h2>
+        <p className="mt-2 text-base text-body">Hubungkan KlinikSistem (jadwal dan kunjungan) dan Beauty Code (catatan harian pasien). Kontrak lengkap ada di docs/integrasi.</p>
+
+        <h3 className="mt-6 text-lg font-semibold text-navy">KlinikSistem</h3>
+        <p className="mt-1 text-[13px] font-medium text-body">
+          {ks?.configured ? (ks.enabled ? "Aktif" : "Dinonaktifkan") : "Belum diatur"}
+          {ks?.last_sync_at ? ` · sinkron terakhir ${fmtDate(ks.last_sync_at)}` : ""}
+        </p>
+        <ActionForm action={saveKliniksistem} className="mt-3 space-y-3">
+          <label htmlFor="ksurl" className={labelCls}>Alamat dasar KlinikSistem (https)</label>
+          <input id="ksurl" name="base_url" type="url" required pattern="https://.*" defaultValue={ks?.base_url ?? ""} placeholder="https://kliniksistem.klinikanda.id" className={inputCls} />
+          <p className="text-[13px] font-medium text-body">Booking dikirim ke <code>/aevia/bookings</code> dengan tanda tangan <code>X-Aevia-Signature</code>.</p>
+          <label className="flex items-center gap-3 text-base text-body"><input type="checkbox" name="enabled" defaultChecked={ks?.enabled ?? true} className="h-5 w-5" /> Aktifkan pengiriman booking</label>
+          <label className="flex items-center gap-3 text-base text-body"><input type="checkbox" name="push_requested" defaultChecked={ks?.push_requested ?? false} className="h-5 w-5" /> Kirim juga saat permintaan konsultasi masuk (sebelum dijadwalkan)</label>
+          {ks?.has_secret && <label className="flex items-center gap-3 text-base text-body"><input type="checkbox" name="rotate_secret" className="h-5 w-5" /> Putar rahasia penandatangan (rahasia lama tidak berlaku lagi)</label>}
+          <Submit className={primaryCls}>Simpan konektor</Submit>
+        </ActionForm>
+        {ks?.configured && (
+          <ActionForm action={testKliniksistem} className="mt-3 space-y-0">
+            <Submit className={ghostCls}>Uji koneksi</Submit>
+          </ActionForm>
+        )}
+        {con.deliveries.length > 0 && (
+          <div className="mt-4 overflow-x-auto">
+            <table className="w-full min-w-[520px] text-left text-base">
+              <caption className="sr-only">Pengiriman ke KlinikSistem</caption>
+              <thead className="text-[13px] font-medium text-body">
+                <tr>
+                  <th scope="col" className="py-2 pr-3">Waktu</th>
+                  <th scope="col" className="py-2 pr-3">Kejadian</th>
+                  <th scope="col" className="py-2 pr-3">Status</th>
+                  <th scope="col" className="py-2">Booking</th>
+                </tr>
+              </thead>
+              <tbody>
+                {con.deliveries.map((d) => (
+                  <tr key={d.id} className="border-t border-line">
+                    <td className="py-2 pr-3 text-body">{fmtDate(d.created_at)}</td>
+                    <td className="py-2 pr-3 text-body">{d.event_type}</td>
+                    <td className="py-2 pr-3 text-body">{deliveryStatus[d.status]}{d.last_status_code ? ` (HTTP ${d.last_status_code})` : ""}</td>
+                    <td className="py-2 text-body">{d.external_ref ?? "-"}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        <h3 className="mt-8 text-lg font-semibold text-navy">Beauty Code</h3>
+        <p className="mt-1 text-base text-body">Beauty Code mengirim catatan lewat kunci API dengan cakupan <code>integrations:write</code> (buat di bagian Kunci API). Data hanya diterima untuk pasien yang menyetujui konteks eksternal.</p>
+        <ActionForm action={saveBeautycode} className="mt-3 space-y-3">
+          <label className="flex items-center gap-3 text-base text-body"><input type="checkbox" name="enabled" defaultChecked={bc?.enabled ?? true} className="h-5 w-5" /> Terima data dari Beauty Code</label>
+          <Submit className={primaryCls}>Simpan</Submit>
         </ActionForm>
       </section>
     </main>

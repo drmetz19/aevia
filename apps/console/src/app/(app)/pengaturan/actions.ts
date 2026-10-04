@@ -184,3 +184,28 @@ export async function testWebhook(_p: SettingsState, fd: FormData): Promise<Sett
     ? { ok: `Uji berhasil: endpoint membalas HTTP ${d.last_status_code}.` }
     : { error: `Uji belum berhasil. ${d.last_error ?? ""} Periksa alamat dan pastikan endpoint membalas 2xx.`.trim() };
 }
+
+// ---------- Konektor ----------
+export async function saveKliniksistem(_p: SettingsState, fd: FormData): Promise<SettingsState> {
+  const r = await call("PUT", "/v1/staff/connectors/kliniksistem", {
+    base_url: str(fd, "base_url"),
+    enabled: str(fd, "enabled") === "on",
+    push_requested: str(fd, "push_requested") === "on",
+    rotate_secret: str(fd, "rotate_secret") === "on",
+  });
+  if (!r.ok) return { error: r.error, problems: r.problems };
+  revalidatePath("/pengaturan/integrasi");
+  const secret = r.data.secret ? String(r.data.secret) : null;
+  return secret
+    ? { ok: "Konektor tersimpan. Salin rahasia penandatangan sekarang dan pasang di KlinikSistem: rahasia ini tidak akan ditampilkan lagi.", secrets: [{ label: "Rahasia penandatangan", value: secret }] }
+    : { ok: "Konektor KlinikSistem tersimpan." };
+}
+export async function testKliniksistem(): Promise<SettingsState> {
+  const r = await call("POST", "/v1/staff/connectors/kliniksistem/test");
+  if (!r.ok) return { error: r.error };
+  const d = r.data as { ok?: boolean; message?: string };
+  return d.ok ? { ok: d.message } : { error: d.message };
+}
+export async function saveBeautycode(_p: SettingsState, fd: FormData): Promise<SettingsState> {
+  return done(await call("PUT", "/v1/staff/connectors/beautycode", { enabled: str(fd, "enabled") === "on" }), "Pengaturan Beauty Code tersimpan.", "/pengaturan/integrasi");
+}

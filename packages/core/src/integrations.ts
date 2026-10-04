@@ -26,6 +26,7 @@ export const WEBHOOK_EVENTS = [
   "assessment.completed",
   "consultation.requested",
   "consultation.accepted",
+  "consultation.status_changed",
   "plan.approved",
   "checkin.submitted",
   "progress.updated",

@@ -1,22 +1,25 @@
 import { and, desc, eq } from "drizzle-orm";
-import { draftPrep, prepSchema, resultSchema, type ConsultationRequestView, type Prep, type StoredAnswer } from "@aevia/core";
+import { beautyContextLine, draftPrep, prepSchema, resultSchema, type ConsultationRequestView, type Prep, type StoredAnswer } from "@aevia/core";
 import { assessmentAnswers, assessments, consultationRequests, consultations, events, programs, type Db, type Tx } from "@aevia/db";
 import { AuthError } from "../auth/otp";
+import { beautySnapshotFor } from "../connectors/context";
 
 type Ctx = { db: Db; clinicId: string; patientId: string; now: Date };
 
 export async function buildDraft(c: Ctx): Promise<{ prep: Prep; status: "draft"; from_assessment: boolean }> {
   return c.db.withTenant(c.clinicId, async (tx) => {
+    const ext = await beautySnapshotFor(tx, c.patientId);
+    const extra = ext.beautycode ? beautyContextLine(ext.beautycode) : "";
     const [a] = await tx
       .select()
       .from(assessments)
       .where(and(eq(assessments.patientId, c.patientId), eq(assessments.status, "completed")))
       .orderBy(desc(assessments.completedAt))
       .limit(1);
-    if (!a?.result) return { prep: draftPrep(null, []), status: "draft" as const, from_assessment: false };
+    if (!a?.result) return { prep: draftPrep(null, [], extra), status: "draft" as const, from_assessment: false };
     const rows = await tx.select().from(assessmentAnswers).where(eq(assessmentAnswers.assessmentId, a.id));
     const answers: StoredAnswer[] = rows.map((r) => ({ question_id: r.questionId, value: r.value, text: r.text }));
-    return { prep: draftPrep(resultSchema.parse(a.result), answers), status: "draft" as const, from_assessment: true };
+    return { prep: draftPrep(resultSchema.parse(a.result), answers, extra), status: "draft" as const, from_assessment: true };
   });
 }
 

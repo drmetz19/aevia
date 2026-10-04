@@ -7,6 +7,7 @@
   "scripts": {
     "dev": "tsx watch src/server.ts",
     "dispatch": "tsx src/dispatch-cli.ts",
+    "mock:kliniksistem": "tsx src/testing/mock-kliniksistem-cli.ts",
     "build": "tsc -p .",
     "typecheck": "tsc -p .",
     "test": "vitest run"

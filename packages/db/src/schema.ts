@@ -167,6 +167,9 @@ export const consultations = pgTable("consultations", {
   scheduledAt: timestamp("scheduled_at", { withTimezone: true }).notNull(),
   meetingUrl: text("meeting_url").notNull(),
   status: text("status", { enum: ["scheduled", "completed", "no_show", "cancelled"] }).notNull().default("scheduled"),
+  externalRef: text("external_ref"),
+  paymentStatus: text("payment_status", { enum: ["paid", "unpaid"] }),
+  externalUpdatedAt: timestamp("external_updated_at", { withTimezone: true }),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
@@ -325,4 +328,59 @@ export const webhookDeliveries = pgTable("webhook_deliveries", {
   nextAttemptAt: timestamp("next_attempt_at", { withTimezone: true }),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   deliveredAt: timestamp("delivered_at", { withTimezone: true }),
+});
+
+export const clinicConnectors = pgTable(
+  "clinic_connectors",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    clinicId: uuid("clinic_id").notNull().references(() => clinics.id, { onDelete: "cascade" }),
+    kind: text("kind", { enum: ["kliniksistem", "beautycode"] }).notNull(),
+    config: jsonb("config").$type<Record<string, unknown>>().notNull().default({}),
+    lastSyncAt: timestamp("last_sync_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [unique().on(t.clinicId, t.kind)],
+);
+
+export const connectorDeliveries = pgTable(
+  "connector_deliveries",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    clinicId: uuid("clinic_id").notNull().references(() => clinics.id, { onDelete: "cascade" }),
+    connectorId: uuid("connector_id").notNull().references(() => clinicConnectors.id, { onDelete: "cascade" }),
+    eventId: uuid("event_id").notNull().references(() => events.id, { onDelete: "cascade" }),
+    status: text("status", { enum: ["pending", "delivered", "failed"] }).notNull().default("pending"),
+    attempts: integer("attempts").notNull().default(0),
+    lastStatusCode: integer("last_status_code"),
+    lastError: text("last_error"),
+    externalRef: text("external_ref"),
+    nextAttemptAt: timestamp("next_attempt_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    deliveredAt: timestamp("delivered_at", { withTimezone: true }),
+  },
+  (t) => [unique().on(t.eventId, t.connectorId)],
+);
+
+export const inboundEvents = pgTable(
+  "inbound_events",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    clinicId: uuid("clinic_id").notNull().references(() => clinics.id, { onDelete: "cascade" }),
+    source: text("source").notNull(),
+    eventId: text("event_id").notNull(),
+    result: jsonb("result").$type<Record<string, unknown>>().notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [unique().on(t.clinicId, t.source, t.eventId)],
+);
+
+export const externalContext = pgTable("external_context", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  clinicId: uuid("clinic_id").notNull().references(() => clinics.id, { onDelete: "cascade" }),
+  patientId: uuid("patient_id").notNull().references(() => patients.id, { onDelete: "cascade" }),
+  source: text("source", { enum: ["beautycode"] }).notNull(),
+  data: jsonb("data").$type<Record<string, unknown>>().notNull(),
+  recordedAt: timestamp("recorded_at", { withTimezone: true }).notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });

@@ -125,6 +125,29 @@ export default async function Pasien({ params, searchParams }: Props) {
             </article>
           ))}
         </section>
+
+        <section aria-labelledby="bc" className="rounded-lg border border-line bg-white p-6 shadow-soft lg:col-span-2">
+          <h2 id="bc" className="text-xl font-semibold leading-7 text-navy">Beauty Code snapshot</h2>
+          {!d.external_context.consent_active ? (
+            <p className="mt-3 flex gap-2 text-base text-body"><EyeOff aria-hidden="true" size={20} strokeWidth={1.5} className="mt-0.5 shrink-0" />Pasien belum memberi persetujuan untuk membagikan konteks dari aplikasi lain, jadi data ini disembunyikan.</p>
+          ) : !d.external_context.beautycode ? (
+            <p className="mt-3 text-base text-body">Belum ada catatan Beauty Code untuk pasien ini.</p>
+          ) : (
+            <>
+              <p className="mt-1 text-[13px] font-medium text-body">Dicatat {fmtDate(d.external_context.beautycode.recorded_at)}</p>
+              <dl className="mt-3 grid gap-4 sm:grid-cols-3">
+                <div><dt className="text-[13px] font-medium text-body">Skin barrier</dt><dd className="font-serif text-3xl text-navy">{d.external_context.beautycode.skin_barrier ?? "-"}</dd></div>
+                <div><dt className="text-[13px] font-medium text-body">Tidur (jam)</dt><dd className="font-serif text-3xl text-navy">{d.external_context.beautycode.sleep_hours !== null ? String(d.external_context.beautycode.sleep_hours).replace(".", ",") : "-"}</dd></div>
+                <div>
+                  <dt className="text-[13px] font-medium text-body">Pemicu makanan</dt>
+                  <dd className="mt-1 flex flex-wrap gap-2">
+                    {d.external_context.beautycode.diet_triggers.length ? d.external_context.beautycode.diet_triggers.map((t) => <span key={t} className="rounded-pill border border-line px-3 py-1 text-base text-navy">{t}</span>) : <span className="text-base text-body">Tidak ada</span>}
+                  </dd>
+                </div>
+              </dl>
+            </>
+          )}
+        </section>
       </div>}
     </main>
   );
