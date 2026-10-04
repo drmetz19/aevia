@@ -5,8 +5,9 @@ import { brandStyle, fetchClinic } from "@/lib/api";
 import { getConsents, requirePatient } from "@/lib/session";
 import { saveConsents } from "../actions";
 
-export default async function Consent({ params }: { params: Promise<{ slug: string }> }) {
+export default async function Consent({ params, searchParams }: { params: Promise<{ slug: string }>; searchParams: Promise<{ dari?: string }> }) {
   const { slug } = await params;
+  const { dari } = await searchParams;
   const clinic = await fetchClinic(slug);
   if (!clinic) notFound();
   await requirePatient(slug);
@@ -22,6 +23,7 @@ export default async function Consent({ params }: { params: Promise<{ slug: stri
         </p>
         <form action={saveConsents} className="mt-8 space-y-4">
           <input type="hidden" name="slug" value={clinic.slug} />
+          {dari === "assessment" && <input type="hidden" name="dari" value="assessment" />}
           {consentScopes.map((scope) => {
             const st = current.find((c) => c.scope === scope);
             return (

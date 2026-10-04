@@ -85,3 +85,37 @@ export const otpCodes = pgTable("otp_codes", {
   consumedAt: timestamp("consumed_at", { withTimezone: true }),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
+
+export const assessments = pgTable("assessments", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  clinicId: uuid("clinic_id").notNull().references(() => clinics.id, { onDelete: "cascade" }),
+  patientId: uuid("patient_id").notNull().references(() => patients.id, { onDelete: "cascade" }),
+  status: text("status", { enum: ["in_progress", "completed"] }).notNull().default("in_progress"),
+  flagged: boolean("flagged").notNull().default(false),
+  result: jsonb("result").$type<unknown>(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  completedAt: timestamp("completed_at", { withTimezone: true }),
+});
+
+export const assessmentAnswers = pgTable(
+  "assessment_answers",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    clinicId: uuid("clinic_id").notNull().references(() => clinics.id, { onDelete: "cascade" }),
+    assessmentId: uuid("assessment_id").notNull().references(() => assessments.id, { onDelete: "cascade" }),
+    questionId: text("question_id").notNull(),
+    value: integer("value"),
+    text: text("text"),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [unique().on(t.assessmentId, t.questionId)],
+);
+
+export const events = pgTable("events", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  clinicId: uuid("clinic_id").notNull().references(() => clinics.id, { onDelete: "cascade" }),
+  type: text("type").notNull(),
+  payload: jsonb("payload").$type<Record<string, unknown>>().notNull().default({}),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  deliveredAt: timestamp("delivered_at", { withTimezone: true }),
+});

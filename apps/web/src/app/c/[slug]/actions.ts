@@ -71,5 +71,48 @@ export async function saveConsents(fd: FormData) {
     });
     if (!res || !res.ok) redirect(`/c/${slug}/masuk?sesi=berakhir`);
   }
-  redirect(`/c/${slug}/beranda`);
+  redirect(fd.get("dari") === "assessment" ? `/c/${slug}/assessment` : `/c/${slug}/beranda`);
+}
+
+const sessionEnded = (slug: string) => `/c/${slug}/masuk?sesi=berakhir`;
+
+export async function startAssessmentAction(fd: FormData) {
+  const slug = String(fd.get("slug") ?? "");
+  if (!SLUG_RE.test(slug)) redirect("/");
+  const res = await apiAuthed(slug, "/v1/assessments", { method: "POST" });
+  if (!res || !res.ok) redirect(sessionEnded(slug));
+  redirect(`/c/${slug}/assessment`);
+}
+
+export async function answerAction(fd: FormData) {
+  const slug = String(fd.get("slug") ?? "");
+  const id = String(fd.get("assessment_id") ?? "");
+  const questionId = String(fd.get("question_id") ?? "");
+  if (!SLUG_RE.test(slug) || !/^[0-9a-f-]{36}$/.test(id)) redirect("/");
+  const skipped = fd.get("skip") !== null;
+  const raw = fd.get("value");
+  const body: { question_id: string; value?: number; text?: string } = { question_id: questionId };
+  if (raw !== null && String(raw) !== "") body.value = Number(raw);
+  if (fd.get("text") !== null && !skipped) body.text = String(fd.get("text")).slice(0, 500);
+  const res = await apiAuthed(slug, `/v1/assessments/${id}/answers`, { method: "POST", body: JSON.stringify(body) });
+  if (!res) redirect(sessionEnded(slug));
+  if (res.status === 401 || res.status === 403) redirect(sessionEnded(slug));
+  if (res.status === 400) redirect(`/c/${slug}/assessment?pesan=${encodeURIComponent("Ada satu bagian yang belum terisi. Silakan pilih salah satu jawaban.")}`);
+  redirect(`/c/${slug}/assessment`);
+}
+
+export async function completeAction(fd: FormData) {
+  const slug = String(fd.get("slug") ?? "");
+  const id = String(fd.get("assessment_id") ?? "");
+  if (!SLUG_RE.test(slug) || !/^[0-9a-f-]{36}$/.test(id)) redirect("/");
+  const res = await apiAuthed(slug, `/v1/assessments/${id}/complete`, { method: "POST" });
+  if (!res) redirect(sessionEnded(slug));
+  if (res.status === 403) {
+    const body = (await res.json().catch(() => ({}))) as { error?: string };
+    if (body.error === "consent_required") redirect(`/c/${slug}/consent?dari=assessment`);
+    redirect(sessionEnded(slug));
+  }
+  if (res.status === 401) redirect(sessionEnded(slug));
+  if (!res.ok) redirect(`/c/${slug}/assessment?pesan=${encodeURIComponent("Ada beberapa pertanyaan yang belum terisi. Silakan lengkapi dulu ya.")}`);
+  redirect(`/c/${slug}/assessment/hasil`);
 }

@@ -99,6 +99,55 @@ try {
   const other = await fetch(`${API}/v1/clinics/demo-partner/me`, { headers: { authorization: `Bearer ${token}` } });
   check(other.status === 403, "token klinik A → 403 di klinik B");
 
+  // --- Phase 3: assessment Sovia ---
+  const noAuth = await fetch(`${WEB}/c/drmetz/assessment`, { redirect: "manual" });
+  check((noAuth.headers.get("location") ?? "").endsWith("/c/drmetz/masuk"), "assessment tanpa sesi → masuk");
+  const intro = (await (await fetch(`${WEB}/c/drmetz/assessment`, { headers: cookie })).text()).replace(/<!-- -->/g, "");
+  check(intro.includes("Sovia · AI Guide by AEVIA"), "cobrand: header 'Sovia · AI Guide by AEVIA'");
+  check(intro.includes("Sovia adalah AI"), "chat: label 'Sovia adalah AI'");
+  check(intro.includes("Mari mulai dengan memahami kondisi Anda saat ini"), "intro Sovia (Verbal Identity)");
+  check(intro.includes("Mulai assessment"), "tombol Mulai assessment (form)");
+
+  const st1 = await (await post(`${API}/v1/assessments`, {}, token)).json();
+  const mid = (await (await fetch(`${WEB}/c/drmetz/assessment`, { headers: cookie })).text()).replace(/<!-- -->/g, "");
+  check(mid.includes('role="progressbar"') && mid.includes("Pertanyaan 1 dari 20"), "chat: progress bar + satu pertanyaan per langkah");
+  check(mid.includes('type="radio"') && mid.includes("Lanjut"), "pertanyaan pilihan berupa form radio (no-JS)");
+  check(!/aevia/i.test(text(mid).replace(/Sovia · AI Guide by AEVIA|powered by AEVIA/g, "")), "tidak ada AEVIA selain header/badge cobrand");
+
+  const emerg = await post(`${API}/v1/assessments/${st1.id}/answers`, { question_id: "tujuan-t", text: "kadang nyeri dada" }, token);
+  const eb = await emerg.json();
+  check(eb.flagged === true && /IGD/.test(eb.emergency_message), "teks darurat → flagged + rujukan IGD/119");
+  const flaggedPage = await (await fetch(`${WEB}/c/drmetz/assessment`, { headers: cookie })).text();
+  check(flaggedPage.includes('role="alert"') && flaggedPage.includes("119"), "chat menampilkan pesan darurat");
+
+  const answered = await post(`${API}/v1/assessments/${st1.id}/answers`, { question_id: "tujuan-1", value: 3 }, token);
+  check(answered.status === 200, "API: jawab pertanyaan pertama");
+  const QS = JSON.parse((await import("node:fs")).readFileSync(new URL("../../../packages/core/src/questions.v0.json", import.meta.url), "utf8")).questions;
+  for (const q of QS) {
+    if (q.id === "tujuan-1" || q.id === "tujuan-t") continue;
+    await post(`${API}/v1/assessments/${st1.id}/answers`, q.type === "choice" ? { question_id: q.id, value: q.area === "tidur" ? 4 : 2 } : { question_id: q.id, text: "" }, token);
+  }
+  const fin = (await (await fetch(`${WEB}/c/drmetz/assessment`, { headers: cookie })).text()).replace(/<!-- -->/g, "");
+  check(fin.includes("Lihat hasil"), "semua terjawab → tombol Lihat hasil");
+  const doneRes = await post(`${API}/v1/assessments/${st1.id}/complete`, {}, token);
+  check(doneRes.status === 200, "API: selesai (consent assessment aktif)");
+  const hasil = (await (await fetch(`${WEB}/c/drmetz/assessment/hasil`, { headers: cookie })).text()).replace(/<!-- -->/g, "");
+  check(hasil.includes("Hasil assessment bukan diagnosis."), "hasil: disclaimer 'bukan diagnosis'");
+  check(hasil.includes("Prioritas untuk dibahas") && hasil.includes("Relatif stabil"), "hasil: label tenang per area");
+  check(hasil.includes("Siapkan konsultasi"), "hasil: CTA Siapkan konsultasi");
+  check((await fetch(`${WEB}/c/drmetz/konsultasi`)).status === 200, "/c/drmetz/konsultasi (stub) 200");
+
+  // tanpa consent → 403 manusiawi
+  const em2 = `smoke2-${Date.now()}@contoh.test`;
+  await post(`${API}/v1/clinics/demo-partner/auth/otp`, { email: em2 });
+  const t2 = (await (await post(`${API}/v1/clinics/demo-partner/auth/verify`, { email: em2, code: await otpCode(em2) })).json()).token;
+  const s2 = await (await post(`${API}/v1/assessments`, {}, t2)).json();
+  const wlChat = (await (await fetch(`${WEB}/c/demo-partner/assessment`, { headers: { cookie: `aevia_session_demo-partner=${t2}` } })).text()).replace(/<!-- -->/g, "");
+  check(!/aevia/i.test(text(wlChat)), "whitelabel: chat tanpa kata AEVIA");
+  check(wlChat.includes("Sovia · AI Guide") && !wlChat.includes("by AEVIA"), "whitelabel: header '<nama> · AI Guide'");
+  const noConsent = await post(`${API}/v1/assessments/${s2.id}/complete`, {}, t2);
+  check(noConsent.status === 403, "complete tanpa consent → 403");
+
   // Console staf
   check((await fetch(`${CON}/masuk`)).status === 200, "console /masuk 200");
   const se = "dr.metz@drmetz.test";

@@ -1,0 +1,416 @@
+{
+ "version": "v0",
+ "areas": [
+  {
+   "id": "tujuan",
+   "label": "Tujuan"
+  },
+  {
+   "id": "tidur",
+   "label": "Tidur"
+  },
+  {
+   "id": "energi",
+   "label": "Energi"
+  },
+  {
+   "id": "aktivitas",
+   "label": "Aktivitas"
+  },
+  {
+   "id": "stres",
+   "label": "Stres"
+  },
+  {
+   "id": "kulit",
+   "label": "Kulit"
+  },
+  {
+   "id": "nutrisi",
+   "label": "Nutrisi"
+  }
+ ],
+ "questions": [
+  {
+   "id": "tujuan-1",
+   "area": "tujuan",
+   "type": "choice",
+   "scored": false,
+   "text": "Apa yang paling ingin Anda dukung saat ini?",
+   "options": [
+    {
+     "value": 1,
+     "label": "Menjaga kondisi yang sudah baik"
+    },
+    {
+     "value": 2,
+     "label": "Memperbaiki kualitas tidur dan energi"
+    },
+    {
+     "value": 3,
+     "label": "Merawat kulit dan penampilan"
+    },
+    {
+     "value": 4,
+     "label": "Menjaga berat badan dan metabolisme"
+    }
+   ]
+  },
+  {
+   "id": "tujuan-t",
+   "area": "tujuan",
+   "type": "text",
+   "scored": false,
+   "text": "Adakah hal lain tentang tujuan Anda yang ingin disampaikan? Boleh dilewati.",
+   "options": []
+  },
+  {
+   "id": "tidur-1",
+   "area": "tidur",
+   "type": "choice",
+   "scored": true,
+   "text": "Dalam sebulan terakhir, bagaimana Anda menilai kualitas tidur Anda?",
+   "options": [
+    {
+     "value": 1,
+     "label": "Nyenyak dan terasa segar saat bangun"
+    },
+    {
+     "value": 2,
+     "label": "Cukup baik, sesekali terbangun"
+    },
+    {
+     "value": 3,
+     "label": "Sering terbangun atau sulit tertidur"
+    },
+    {
+     "value": 4,
+     "label": "Hampir setiap malam sulit tidur"
+    }
+   ]
+  },
+  {
+   "id": "tidur-2",
+   "area": "tidur",
+   "type": "choice",
+   "scored": true,
+   "text": "Berapa jam rata-rata Anda tidur dalam semalam?",
+   "options": [
+    {
+     "value": 1,
+     "label": "7–9 jam"
+    },
+    {
+     "value": 2,
+     "label": "6–7 jam"
+    },
+    {
+     "value": 3,
+     "label": "5–6 jam"
+    },
+    {
+     "value": 4,
+     "label": "Kurang dari 5 jam"
+    }
+   ]
+  },
+  {
+   "id": "tidur-t",
+   "area": "tidur",
+   "type": "text",
+   "scored": false,
+   "text": "Adakah hal lain tentang tidur Anda yang ingin disampaikan? Boleh dilewati.",
+   "options": []
+  },
+  {
+   "id": "energi-1",
+   "area": "energi",
+   "type": "choice",
+   "scored": true,
+   "text": "Bagaimana tingkat energi Anda sepanjang hari?",
+   "options": [
+    {
+     "value": 1,
+     "label": "Stabil sepanjang hari"
+    },
+    {
+     "value": 2,
+     "label": "Menurun di sore hari"
+    },
+    {
+     "value": 3,
+     "label": "Sering terasa lelah"
+    },
+    {
+     "value": 4,
+     "label": "Hampir selalu terasa lelah"
+    }
+   ]
+  },
+  {
+   "id": "energi-2",
+   "area": "energi",
+   "type": "choice",
+   "scored": true,
+   "text": "Seberapa sering Anda merasa sulit berkonsentrasi?",
+   "options": [
+    {
+     "value": 1,
+     "label": "Jarang"
+    },
+    {
+     "value": 2,
+     "label": "Kadang-kadang"
+    },
+    {
+     "value": 3,
+     "label": "Sering"
+    },
+    {
+     "value": 4,
+     "label": "Hampir setiap hari"
+    }
+   ]
+  },
+  {
+   "id": "energi-t",
+   "area": "energi",
+   "type": "text",
+   "scored": false,
+   "text": "Adakah hal lain tentang energi Anda yang ingin disampaikan? Boleh dilewati.",
+   "options": []
+  },
+  {
+   "id": "aktivitas-1",
+   "area": "aktivitas",
+   "type": "choice",
+   "scored": true,
+   "text": "Berapa kali Anda berolahraga dalam seminggu?",
+   "options": [
+    {
+     "value": 1,
+     "label": "4 kali atau lebih"
+    },
+    {
+     "value": 2,
+     "label": "2–3 kali"
+    },
+    {
+     "value": 3,
+     "label": "Sekali"
+    },
+    {
+     "value": 4,
+     "label": "Hampir tidak pernah"
+    }
+   ]
+  },
+  {
+   "id": "aktivitas-2",
+   "area": "aktivitas",
+   "type": "choice",
+   "scored": true,
+   "text": "Berapa lama Anda duduk dalam sehari?",
+   "options": [
+    {
+     "value": 1,
+     "label": "Kurang dari 4 jam"
+    },
+    {
+     "value": 2,
+     "label": "4–6 jam"
+    },
+    {
+     "value": 3,
+     "label": "6–8 jam"
+    },
+    {
+     "value": 4,
+     "label": "Lebih dari 8 jam"
+    }
+   ]
+  },
+  {
+   "id": "aktivitas-t",
+   "area": "aktivitas",
+   "type": "text",
+   "scored": false,
+   "text": "Adakah hal lain tentang aktivitas Anda yang ingin disampaikan? Boleh dilewati.",
+   "options": []
+  },
+  {
+   "id": "stres-1",
+   "area": "stres",
+   "type": "choice",
+   "scored": true,
+   "text": "Seberapa sering Anda merasa tertekan atau kewalahan?",
+   "options": [
+    {
+     "value": 1,
+     "label": "Jarang"
+    },
+    {
+     "value": 2,
+     "label": "Kadang-kadang"
+    },
+    {
+     "value": 3,
+     "label": "Sering"
+    },
+    {
+     "value": 4,
+     "label": "Hampir setiap hari"
+    }
+   ]
+  },
+  {
+   "id": "stres-2",
+   "area": "stres",
+   "type": "choice",
+   "scored": true,
+   "text": "Seberapa mudah Anda menenangkan diri setelah hari yang berat?",
+   "options": [
+    {
+     "value": 1,
+     "label": "Mudah"
+    },
+    {
+     "value": 2,
+     "label": "Cukup mudah"
+    },
+    {
+     "value": 3,
+     "label": "Cukup sulit"
+    },
+    {
+     "value": 4,
+     "label": "Sulit"
+    }
+   ]
+  },
+  {
+   "id": "stres-t",
+   "area": "stres",
+   "type": "text",
+   "scored": false,
+   "text": "Adakah hal lain tentang stres Anda yang ingin disampaikan? Boleh dilewati.",
+   "options": []
+  },
+  {
+   "id": "kulit-1",
+   "area": "kulit",
+   "type": "choice",
+   "scored": true,
+   "text": "Bagaimana Anda menilai kondisi kulit Anda saat ini?",
+   "options": [
+    {
+     "value": 1,
+     "label": "Sehat dan nyaman"
+    },
+    {
+     "value": 2,
+     "label": "Cukup baik, ada keluhan ringan"
+    },
+    {
+     "value": 3,
+     "label": "Ada keluhan yang cukup mengganggu"
+    },
+    {
+     "value": 4,
+     "label": "Keluhan sangat mengganggu aktivitas"
+    }
+   ]
+  },
+  {
+   "id": "kulit-2",
+   "area": "kulit",
+   "type": "choice",
+   "scored": true,
+   "text": "Seberapa konsisten Anda merawat dan melindungi kulit, termasuk memakai tabir surya?",
+   "options": [
+    {
+     "value": 1,
+     "label": "Setiap hari"
+    },
+    {
+     "value": 2,
+     "label": "Sebagian besar hari"
+    },
+    {
+     "value": 3,
+     "label": "Kadang-kadang"
+    },
+    {
+     "value": 4,
+     "label": "Hampir tidak pernah"
+    }
+   ]
+  },
+  {
+   "id": "kulit-t",
+   "area": "kulit",
+   "type": "text",
+   "scored": false,
+   "text": "Adakah hal lain tentang kulit Anda yang ingin disampaikan? Boleh dilewati.",
+   "options": []
+  },
+  {
+   "id": "nutrisi-1",
+   "area": "nutrisi",
+   "type": "choice",
+   "scored": true,
+   "text": "Seberapa teratur pola makan Anda?",
+   "options": [
+    {
+     "value": 1,
+     "label": "Teratur"
+    },
+    {
+     "value": 2,
+     "label": "Cukup teratur"
+    },
+    {
+     "value": 3,
+     "label": "Sering terlewat"
+    },
+    {
+     "value": 4,
+     "label": "Sangat tidak teratur"
+    }
+   ]
+  },
+  {
+   "id": "nutrisi-2",
+   "area": "nutrisi",
+   "type": "choice",
+   "scored": true,
+   "text": "Seberapa sering Anda mengonsumsi sayur, buah, dan cukup air putih?",
+   "options": [
+    {
+     "value": 1,
+     "label": "Setiap hari"
+    },
+    {
+     "value": 2,
+     "label": "Sebagian besar hari"
+    },
+    {
+     "value": 3,
+     "label": "Kadang-kadang"
+    },
+    {
+     "value": 4,
+     "label": "Jarang"
+    }
+   ]
+  },
+  {
+   "id": "nutrisi-t",
+   "area": "nutrisi",
+   "type": "text",
+   "scored": false,
+   "text": "Adakah hal lain tentang nutrisi Anda yang ingin disampaikan? Boleh dilewati.",
+   "options": []
+  }
+ ]
+}
