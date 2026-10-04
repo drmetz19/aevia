@@ -117,7 +117,7 @@ try {
   const ver = await post(`${API}/v1/clinics/drmetz/auth/verify`, { email, code });
   check(ver.status === 200, "API: verifikasi OTP → token");
   const { token } = await ver.json();
-  const cookie = { cookie: `aevia_session_drmetz=${token}` };
+  const cookie = { cookie: `sid_drmetz=${token}` };
 
   const toConsent = await fetch(`${WEB}/c/drmetz/beranda`, { headers: cookie, redirect: "manual" });
   check((toConsent.headers.get("location") ?? "").includes("/c/drmetz/consent"), "sesi baru tanpa keputusan → diarahkan ke consent");
@@ -178,7 +178,7 @@ try {
   await post(`${API}/v1/clinics/demo-partner/auth/otp`, { email: em2 });
   const t2 = (await (await post(`${API}/v1/clinics/demo-partner/auth/verify`, { email: em2, code: await otpCode(em2) })).json()).token;
   const s2 = await (await post(`${API}/v1/assessments`, {}, t2)).json();
-  const wlChat = (await (await fetch(`${WEB}/c/demo-partner/assessment`, { headers: { cookie: `aevia_session_demo-partner=${t2}` } })).text()).replace(/<!-- -->/g, "");
+  const wlChat = (await (await fetch(`${WEB}/c/demo-partner/assessment`, { headers: { cookie: `sid_demo-partner=${t2}` } })).text()).replace(/<!-- -->/g, "");
   check(!/aevia/i.test(text(wlChat)), "whitelabel: chat tanpa kata AEVIA");
   check(wlChat.includes("Sovia · AI Guide") && !wlChat.includes("by AEVIA"), "whitelabel: header '<nama> · AI Guide'");
   const noConsent = await post(`${API}/v1/assessments/${s2.id}/complete`, {}, t2);
@@ -200,7 +200,7 @@ try {
   const sEmail = "dr.metz@drmetz.test";
   await post(`${API}/v1/staff/auth/otp`, { email: sEmail });
   const sTok = (await (await post(`${API}/v1/staff/auth/verify`, { email: sEmail, code: await otpCode(sEmail) })).json()).token;
-  const sCookie = { cookie: `aevia_staff_session=${sTok}` };
+  const sCookie = { cookie: `ssid=${sTok}` };
   const antrean = await (await fetch(`${CON}/antrean`, { headers: sCookie })).text();
   check(antrean.includes(email) && antrean.includes("Menunggu ditinjau"), "console /antrean memuat permintaan");
   const qItems = (await (await fetch(`${API}/v1/staff/queue`, { headers: { authorization: `Bearer ${sTok}` } })).json()).items;
@@ -211,7 +211,7 @@ try {
   check(acc.status === 200, "API: terima permintaan");
   const stepper2 = (await (await fetch(`${WEB}/c/drmetz/beranda`, { headers: cookie })).text()).replace(/<!-- -->/g, "");
   check(/Terjadwal/.test(stepper2) && stepper2.includes("meet.google.com/smoke-test"), "stepper beranda: Terjadwal + tautan");
-  const wlProg = (await (await fetch(`${WEB}/c/demo-partner/program`, { headers: { cookie: `aevia_session_demo-partner=${t2}` } })).text()).replace(/<!-- -->/g, "");
+  const wlProg = (await (await fetch(`${WEB}/c/demo-partner/program`, { headers: { cookie: `sid_demo-partner=${t2}` } })).text()).replace(/<!-- -->/g, "");
   check(wlProg.includes("Konsultasi Awal") && !wlProg.includes("Healthy Aging") && !/aevia/i.test(text(wlProg)), "whitelabel: katalog klinik sendiri, tanpa AEVIA");
 
   // --- Phase 5: SOAP, skin, foto, audit ---
@@ -270,7 +270,7 @@ try {
   check((await (await fetch(`${WEB}/c/drmetz/beranda`, { headers: cookie })).text()).includes("Lihat rencana"), "beranda: tombol Lihat rencana");
   const aud = (await (await fetch(`${CON}/konsultasi/${kid}?tab=audit`, { headers: sCookie })).text()).replace(/<!-- -->/g, "");
   check(aud.includes("Rencana ditandatangani") && aud.includes("Resep diterbitkan") && aud.includes("Subjective (S)"), "audit: label manusiawi (S/O/A/P, rencana, resep)");
-  const wlPlan = (await (await fetch(`${WEB}/c/demo-partner/rencana`, { headers: { cookie: `aevia_session_demo-partner=${t2}` } })).text()).replace(/<!-- -->/g, "");
+  const wlPlan = (await (await fetch(`${WEB}/c/demo-partner/rencana`, { headers: { cookie: `sid_demo-partner=${t2}` } })).text()).replace(/<!-- -->/g, "");
   check(wlPlan.includes("Rencana akan tersedia") && !/aevia/i.test(text(wlPlan)), "whitelabel: rencana tanpa AEVIA");
 
   // --- Phase 7: check-in, progres, pengingat ---
@@ -312,7 +312,7 @@ try {
   const sv = await post(`${API}/v1/staff/auth/verify`, { email: se, code: await otpCode(se) });
   check(sv.status === 200, "API: staf masuk");
   const st = (await sv.json()).token;
-  const ch = await fetch(`${CON}/beranda`, { headers: { cookie: `aevia_staff_session=${st}` } });
+  const ch = await fetch(`${CON}/beranda`, { headers: { cookie: `ssid=${st}` } });
   check(ch.status === 200 && (await ch.text()).includes("dr. Metz"), "console beranda memuat dr. Metz");
   const cn = await fetch(`${CON}/beranda`, { redirect: "manual" });
   check(cn.status >= 300 && cn.status < 400, "console beranda tanpa sesi → redirect");
@@ -325,8 +325,8 @@ try {
   const put = (url, body, tok) => fetch(url, { method: "PUT", headers: { "content-type": "application/json", authorization: `Bearer ${tok}` }, body: JSON.stringify(body) });
   const ca = await stafToken("admin@demo-partner.test");
   const pa = await stafToken("admin@aevia.test");
-  const caC = { cookie: `aevia_staff_session=${ca}` };
-  const paC = { cookie: `aevia_staff_session=${pa}` };
+  const caC = { cookie: `ssid=${ca}` };
+  const paC = { cookie: `ssid=${pa}` };
   const palette = { primary: "#1F4D3F", accent: "#B5542F", background: "#F5F7F3", surface: "#FFFFFF" };
   const lowC = await put(`${API}/v1/staff/brand`, { brand_mode: "whitelabel", colors: { ...palette, primary: "#AAAAAA" }, font: null, custom_domain: null }, ca);
   const lowB = await lowC.json();
@@ -379,6 +379,28 @@ try {
   await new Promise((r) => setTimeout(r, 2500)); // cache negatif proxy 2 dtk
   const dom = await hostGet("sehat.lumina.id", "/");
   check(dom.status === 200 && dom.body.includes("Lumina Skin Studio"), "domain terverifikasi → proxy memetakan host ke klinik");
+
+  // Phase 9: API publik integrasi
+  const ik = await post(`${API}/v1/staff/integrations/api-keys`, { name: "Smoke", scopes: ["read:patients", "webhooks:manage"] }, ca);
+  const ikb = await ik.json();
+  check(ik.status === 201 && /^aev_live_/.test(ikb.secret), "integrasi: kunci API dibuat (rahasia tampil sekali)");
+  const me9 = await fetch(`${API}/v1/integrations/me`, { headers: { authorization: `Bearer ${ikb.secret}` } });
+  check(me9.status === 200 && (await me9.json()).scopes.includes("read:patients"), "integrasi: kunci API dipakai di /v1/integrations/me");
+  const sum9 = await fetch(`${API}/v1/integrations/patients/${mine.patient_id}/summary`, { headers: { authorization: `Bearer ${ikb.secret}` } });
+  check(sum9.status === 404, "integrasi: pasien klinik lain tak terjangkau (404)");
+  const oc = await (await post(`${API}/v1/staff/integrations/oauth-clients`, { name: "Smoke OAuth", scopes: ["read:patients"] }, ca)).json();
+  const tokForm = await fetch(`${API}/v1/oauth/token`, { method: "POST", headers: { "content-type": "application/x-www-form-urlencoded" }, body: `grant_type=client_credentials&client_id=${oc.client_id}&client_secret=${oc.client_secret}` });
+  const tokB = await tokForm.json();
+  check(tokForm.status === 200 && tokB.expires_in === 900, "OAuth: token client-credentials 15 menit (form)");
+  check((await fetch(`${API}/v1/integrations/me`, { headers: { authorization: `Bearer ${tokB.access_token}` } })).status === 200, "OAuth: token dipakai di route integrasi");
+  const intPage = await (await fetch(`${CON}/pengaturan/integrasi`, { headers: caC })).text();
+  check(intPage.includes("Kunci API") && intPage.includes("aev_live_") && !intPage.includes(ikb.secret), "console /pengaturan/integrasi: daftar kunci, rahasia tidak tampil ulang");
+  const spec9 = await (await fetch(`${API}/v1/openapi.json`)).json();
+  check(spec9.openapi === "3.1.0" && Boolean(spec9.paths["/v1/integrations/patients/{id}/summary"]), "OpenAPI 3.1 memuat route integrasi");
+  const docs9 = await fetch(`${API}/docs/`);
+  check(docs9.status === 200 && !/https?:\/\/(cdn|unpkg|cdnjs)/i.test(await docs9.text()), "/docs dilayani tanpa CDN");
+  const cronNo = await fetch(`${API}/v1/internal/dispatch`, { method: "POST" });
+  check(cronNo.status === 401 || cronNo.status === 503, "dispatcher tanpa CRON_SECRET tidak terbuka");
 } catch (e) {
   console.error(e);
   fails.push(String(e));

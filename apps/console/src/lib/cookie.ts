@@ -1,1 +1,1 @@
-export const STAFF_COOKIE = "aevia_staff_session";
+export const STAFF_COOKIE = "ssid";

@@ -8,6 +8,8 @@ import { STAFF_COOKIE } from "@/lib/cookie";
 
 export interface SettingsState {
   ok?: string;
+  /** Rahasia yang hanya tampil sekali (kunci API, rahasia klien, rahasia webhook). */
+  secrets?: { label: string; value: string }[];
   error?: string;
   problems?: string[];
 }
@@ -131,4 +133,54 @@ export async function verifyDomain(_p: SettingsState, fd: FormData): Promise<Set
 export async function reviewAssistant(_p: SettingsState, fd: FormData): Promise<SettingsState> {
   const r = await call("POST", `/v1/admin/assistants/${str(fd, "id")}/review`, { decision: str(fd, "decision"), note: str(fd, "note") });
   return done(r, str(fd, "decision") === "approve" ? "Usulan disetujui." : "Usulan ditolak.", "/admin/asisten");
+}
+
+// ---------- Integrasi ----------
+const list = (fd: FormData, k: string) => fd.getAll(k).map(String).filter(Boolean);
+
+export async function createApiKey(_p: SettingsState, fd: FormData): Promise<SettingsState> {
+  const r = await call("POST", "/v1/staff/integrations/api-keys", { name: str(fd, "name"), mode: str(fd, "mode") || "live", scopes: list(fd, "scopes") });
+  if (!r.ok) return { error: r.error };
+  revalidatePath("/pengaturan/integrasi");
+  return { ok: "Kunci API dibuat. Salin sekarang: rahasia ini tidak akan ditampilkan lagi.", secrets: [{ label: "Kunci API", value: String(r.data.secret) }] };
+}
+export async function revokeApiKey(_p: SettingsState, fd: FormData): Promise<SettingsState> {
+  return done(await call("DELETE", `/v1/staff/integrations/api-keys/${str(fd, "id")}`), "Kunci API dicabut.", "/pengaturan/integrasi");
+}
+export async function createOauthClient(_p: SettingsState, fd: FormData): Promise<SettingsState> {
+  const r = await call("POST", "/v1/staff/integrations/oauth-clients", { name: str(fd, "name"), scopes: list(fd, "scopes") });
+  if (!r.ok) return { error: r.error };
+  revalidatePath("/pengaturan/integrasi");
+  return {
+    ok: "Klien OAuth dibuat. Salin rahasianya sekarang: rahasia ini tidak akan ditampilkan lagi.",
+    secrets: [
+      { label: "Client ID", value: String(r.data.client_id) },
+      { label: "Client secret", value: String(r.data.client_secret) },
+    ],
+  };
+}
+export async function revokeOauthClient(_p: SettingsState, fd: FormData): Promise<SettingsState> {
+  return done(await call("DELETE", `/v1/staff/integrations/oauth-clients/${str(fd, "id")}`), "Klien OAuth dicabut.", "/pengaturan/integrasi");
+}
+export async function createWebhook(_p: SettingsState, fd: FormData): Promise<SettingsState> {
+  const r = await call("POST", "/v1/staff/integrations/webhooks", { url: str(fd, "url"), events: list(fd, "events") });
+  if (!r.ok) return { error: r.error };
+  revalidatePath("/pengaturan/integrasi");
+  return { ok: "Endpoint webhook dibuat. Salin rahasia penandatangan sekarang: rahasia ini tidak akan ditampilkan lagi.", secrets: [{ label: "Rahasia webhook", value: String(r.data.secret) }] };
+}
+export async function toggleWebhook(_p: SettingsState, fd: FormData): Promise<SettingsState> {
+  const active = str(fd, "active") === "true";
+  return done(await call("PUT", `/v1/staff/integrations/webhooks/${str(fd, "id")}`, { active }), active ? "Webhook diaktifkan." : "Webhook dinonaktifkan.", "/pengaturan/integrasi");
+}
+export async function deleteWebhook(_p: SettingsState, fd: FormData): Promise<SettingsState> {
+  return done(await call("DELETE", `/v1/staff/integrations/webhooks/${str(fd, "id")}`), "Endpoint webhook dihapus.", "/pengaturan/integrasi");
+}
+export async function testWebhook(_p: SettingsState, fd: FormData): Promise<SettingsState> {
+  const r = await call("POST", `/v1/staff/integrations/webhooks/${str(fd, "id")}/test`);
+  if (!r.ok) return { error: r.error };
+  revalidatePath("/pengaturan/integrasi");
+  const d = r.data as { status?: string; last_status_code?: number | null; last_error?: string | null };
+  return d.status === "delivered"
+    ? { ok: `Uji berhasil: endpoint membalas HTTP ${d.last_status_code}.` }
+    : { error: `Uji belum berhasil. ${d.last_error ?? ""} Periksa alamat dan pastikan endpoint membalas 2xx.`.trim() };
 }

@@ -1,6 +1,7 @@
 import Fastify from "fastify";
 import cors from "@fastify/cors";
 import swagger from "@fastify/swagger";
+import swaggerUi from "@fastify/swagger-ui";
 import {
   hasZodFastifySchemaValidationErrors,
   jsonSchemaTransform,
@@ -8,6 +9,7 @@ import {
   validatorCompiler,
   type ZodTypeProvider,
 } from "fastify-type-provider-zod";
+import { SCOPES, SCOPE_LABELS } from "@aevia/core";
 import type { Db } from "@aevia/db";
 import { clinicRoutes } from "./modules/clinics/routes";
 import { authRoutes } from "./modules/auth/routes";
@@ -25,6 +27,8 @@ import { progressRoutes } from "./modules/progress/routes";
 import { settingsRoutes } from "./modules/settings/routes";
 import { isStaffActive } from "./modules/settings/team";
 import { consentRoutes } from "./modules/consents/routes";
+import { integrationRoutes } from "./modules/integrations/routes";
+import type { RateLimitConfig } from "./modules/integrations/rate-limit";
 
 export interface AppDeps {
   db: Db;
@@ -34,10 +38,16 @@ export interface AppDeps {
   /** Kunci layanan LLM platform; default dari env ANTHROPIC_API_KEY. Kosong → mode LLM tidak dapat dinyalakan. */
   anthropicApiKey?: string;
   now?: () => Date;
+  /** Untuk pengujian dispatcher webhook; default fetch global. */
+  fetchFn?: typeof fetch;
+  /** Batas permintaan per kredensial integrasi (token bucket di memori). */
+  rateLimit?: RateLimitConfig;
+  /** Rahasia untuk /v1/internal/dispatch; default env CRON_SECRET. */
+  cronSecret?: string;
 }
 
 /** Dipakai server lokal dan (nanti) Vercel Function: tidak membuka port di sini. */
-export async function buildApp({ db, otpSender = consoleOtpSender, jwtSecret, now = () => new Date(), storage, anthropicApiKey = process.env.ANTHROPIC_API_KEY }: AppDeps) {
+export async function buildApp({ db, otpSender = consoleOtpSender, jwtSecret, now = () => new Date(), storage, anthropicApiKey = process.env.ANTHROPIC_API_KEY, fetchFn, rateLimit, cronSecret }: AppDeps) {
   const ctx = { db, secret: resolveSecret(jwtSecret), sender: otpSender, now };
   const files = storage ?? storageFromEnv(ctx.secret);
   const app = Fastify({ logger: false }).withTypeProvider<ZodTypeProvider>();
@@ -69,9 +79,36 @@ export async function buildApp({ db, otpSender = consoleOtpSender, jwtSecret, no
 
   await app.register(cors, { origin: true });
   await app.register(swagger, {
-    openapi: { info: { title: "AEVIA API", version: "0.1.0" } },
-    transform: jsonSchemaTransform,
+    openapi: {
+      openapi: "3.1.0",
+      info: {
+        title: "AEVIA API",
+        version: "0.1.0",
+        description:
+          "API AEVIA. Integrasi pihak ketiga memakai kunci API (Bearer aev_live_… / aev_test_…) atau token OAuth client-credentials. Panduan: docs/integrasi/README.md.",
+      },
+      servers: [{ url: "/" }],
+      components: {
+        securitySchemes: {
+          apiKey: { type: "http", scheme: "bearer", description: "Kunci API klinik (aev_live_… atau aev_test_…)." },
+          oauth2: {
+            type: "oauth2",
+            flows: { clientCredentials: { tokenUrl: "/v1/oauth/token", scopes: Object.fromEntries(SCOPES.map((k) => [k, SCOPE_LABELS[k]])) } },
+          },
+          staffToken: { type: "http", scheme: "bearer", bearerFormat: "JWT", description: "Token sesi staf konsol." },
+          patientToken: { type: "http", scheme: "bearer", bearerFormat: "JWT", description: "Token sesi pasien." },
+          cronSecret: { type: "http", scheme: "bearer", description: "CRON_SECRET untuk dispatcher." },
+        },
+      },
+    },
+    transform: (arg) => {
+      const r = jsonSchemaTransform(arg);
+      const sch = r.schema as { tags?: string[] } | undefined;
+      if (sch && !sch.tags) sch.tags = [arg.url.split("/")[2] ?? "umum"];
+      return r;
+    },
   });
+  await app.register(swaggerUi, { routePrefix: "/docs", staticCSP: true, uiConfig: { docExpansion: "list", deepLinking: false } });
 
   app.get("/health", async () => ({ status: "ok" }));
   app.get("/v1/openapi.json", { schema: { hide: true } }, async () => app.swagger());
@@ -86,6 +123,7 @@ export async function buildApp({ db, otpSender = consoleOtpSender, jwtSecret, no
   await app.register(planRoutes, { ctx });
   await app.register(settingsRoutes, { ctx, storage: files, llmAvailable: () => Boolean(anthropicApiKey) });
   await app.register(progressRoutes, { ctx });
+  await app.register(integrationRoutes, { ctx, fetchFn, rateLimit, cronSecret });
 
   return app;
 }

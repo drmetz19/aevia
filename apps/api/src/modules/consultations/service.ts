@@ -38,7 +38,8 @@ export function toView(
   };
 }
 
-export async function createRequest(c: Ctx, programId: string, prep: Prep) {
+/** `audit` (opsional) dijalankan di transaksi yang sama, mis. untuk permintaan lewat API integrasi. */
+export async function createRequest(c: Ctx, programId: string, prep: Prep, audit?: (tx: Tx, row: typeof consultationRequests.$inferSelect) => Promise<void>) {
   return c.db.withTenant(c.clinicId, async (tx) => {
     const [p] = await tx.select().from(programs).where(and(eq(programs.id, programId), eq(programs.active, true)));
     if (!p) throw new AuthError(404, "program_not_found", "Program yang Anda pilih belum ditemukan di klinik ini.");
@@ -71,6 +72,7 @@ export async function createRequest(c: Ctx, programId: string, prep: Prep) {
       payload: { request_id: row!.id, patient_id: c.patientId, program_id: programId },
       createdAt: c.now,
     });
+    if (audit) await audit(tx, row!);
     return toView(row!, p.name, null);
   });
 }

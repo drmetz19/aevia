@@ -12,7 +12,17 @@ export const ghostCls = "rounded-pill border border-navy px-5 py-2 text-base fon
 export function Notice({ s }: { s: SettingsState }) {
   return (
     <>
-      {s.ok && <p role="status" className="rounded-md bg-sand px-4 py-3 text-base text-navy">{s.ok}</p>}
+      {s.ok && (
+        <div role="status" className="rounded-md bg-sand px-4 py-3 text-base text-navy">
+          <p>{s.ok}</p>
+          {s.secrets?.map((x) => (
+            <p key={x.label} className="mt-2">
+              <span className="block text-[13px] font-semibold">{x.label}</span>
+              <code className="block break-all rounded-md bg-white px-3 py-2 text-base text-navy select-all">{x.value}</code>
+            </p>
+          ))}
+        </div>
+      )}
       {s.error && (
         <div role="alert" className="rounded-md border border-critical px-4 py-3 text-base text-critical">
           <p>{s.error}</p>

@@ -6,6 +6,7 @@
   "main": "src/app.ts",
   "scripts": {
     "dev": "tsx watch src/server.ts",
+    "dispatch": "tsx src/dispatch-cli.ts",
     "build": "tsc -p .",
     "typecheck": "tsc -p .",
     "test": "vitest run"
@@ -15,12 +16,13 @@
     "@aevia/db": "workspace:*",
     "@fastify/cors": "11.3.0",
     "@fastify/swagger": "9.9.1",
+    "@fastify/swagger-ui": "^5.2.6",
+    "@supabase/supabase-js": "2.117.2",
+    "drizzle-orm": "0.45.3",
     "fastify": "5.12.5",
     "fastify-type-provider-zod": "7.0.0",
-    "zod": "4.6.5",
     "jose": "6.2.12",
-    "drizzle-orm": "0.45.3",
-    "@supabase/supabase-js": "2.117.2"
+    "zod": "4.6.5"
   },
   "devDependencies": {
     "@types/node": "22.20.5",

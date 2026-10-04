@@ -174,7 +174,7 @@ export async function signPlan(c: Ctx, id: string) {
 // ---------- Pasien (hanya yang signed / issued) ----------
 type PCtx = { db: Db; clinicId: string; patientId: string };
 
-async function patientPlanFrom(tx: Tx, c: PCtx, p: PlanRow): Promise<PatientPlan> {
+export async function patientPlanFrom(tx: Tx, c: PCtx, p: PlanRow): Promise<PatientPlan> {
   const [clinic] = await tx.select().from(clinics).where(eq(clinics.id, c.clinicId));
   const [rx] = await tx
     .select()
@@ -200,16 +200,18 @@ async function patientPlanFrom(tx: Tx, c: PCtx, p: PlanRow): Promise<PatientPlan
   };
 }
 
+export async function currentPlanIn(tx: Tx, c: PCtx) {
+  const [p] = await tx
+    .select()
+    .from(carePlans)
+    .where(and(eq(carePlans.patientId, c.patientId), eq(carePlans.status, "signed")))
+    .orderBy(desc(carePlans.signedAt))
+    .limit(1);
+  return p ? patientPlanFrom(tx, c, p) : null;
+}
+
 export async function currentPlan(c: PCtx) {
-  return c.db.withTenant(c.clinicId, async (tx) => {
-    const [p] = await tx
-      .select()
-      .from(carePlans)
-      .where(and(eq(carePlans.patientId, c.patientId), eq(carePlans.status, "signed")))
-      .orderBy(desc(carePlans.signedAt))
-      .limit(1);
-    return p ? patientPlanFrom(tx, c, p) : null;
-  });
+  return c.db.withTenant(c.clinicId, (tx) => currentPlanIn(tx, c));
 }
 
 export async function consultationSummary(c: PCtx, consultationId: string) {

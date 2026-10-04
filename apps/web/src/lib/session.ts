@@ -4,7 +4,7 @@ import { consentListSchema, patientMeSchema, type ConsentStatus } from "@aevia/c
 
 export const API_URL = process.env.API_URL ?? "http://localhost:4000";
 export const SLUG_RE = /^[a-z0-9-]{1,64}$/;
-export const cookieName = (slug: string) => `aevia_session_${slug}`;
+export const cookieName = (slug: string) => `sid_${slug}`;
 
 export async function getToken(slug: string): Promise<string | undefined> {
   return (await cookies()).get(cookieName(slug))?.value;

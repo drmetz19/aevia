@@ -55,7 +55,7 @@ export const settingsRoutes: FastifyPluginAsyncZod<{ ctx: AuthCtx; storage: Stor
   const assetBody = { bodyLimit: MAX_BRAND_ASSET_BYTES + 1024 };
 
   // ---- Publik ----
-  app.get("/v1/clinics/:slug/assets/:kind", { schema: { params: slugParam.extend({ kind: z.enum(["logo", "avatar"]) }), hide: true } }, async (req, reply) => {
+  app.get("/v1/clinics/:slug/assets/:kind", { schema: { params: slugParam.extend({ kind: z.enum(["logo", "avatar"]) }) } }, async (req, reply) => {
     const a = await brand.publicAsset(ctx.db, storage, req.params.slug, req.params.kind);
     if (!a) throw new AuthError(404, "asset_not_found", "Gambar ini belum ditemukan.");
     return reply
@@ -82,7 +82,7 @@ export const settingsRoutes: FastifyPluginAsyncZod<{ ctx: AuthCtx; storage: Stor
   app.delete("/v1/staff/brand/logo", { schema: { response: { 200: brandSettingsSchema } }, preHandler: clinicAdmin }, async (req) => brand.removeLogo(sc(req)));
   app.put("/v1/staff/brand/assistant", { schema: { body: assistantNameSchema, response: { 200: brandSettingsSchema } }, preHandler: clinicAdmin }, async (req) => brand.proposeAssistantName(sc(req), req.body.name));
   app.post("/v1/staff/brand/assistant-avatar", { ...assetBody, schema: { response: { 200: brandSettingsSchema } }, preHandler: clinicAdmin }, async (req) => brand.proposeAssistantAvatar(sc(req), bin(req)));
-  app.get("/v1/staff/brand/pending-avatar", { schema: { hide: true }, preHandler: clinicAdmin }, async (req, reply) => {
+  app.get("/v1/staff/brand/pending-avatar", { schema: { summary: "Berkas avatar usulan (admin klinik)." }, preHandler: clinicAdmin }, async (req, reply) => {
     const a = await brand.pendingAvatarBytes({ db: ctx.db, storage }, req.principal!.clinic_id!);
     return reply.header("content-type", a.contentType).header("cache-control", "private, no-store").header("x-content-type-options", "nosniff").send(a.data);
   });
@@ -120,7 +120,7 @@ export const settingsRoutes: FastifyPluginAsyncZod<{ ctx: AuthCtx; storage: Stor
     admin.verifyDomain(ac(req), req.params.id, req.body.verified),
   );
   app.get("/v1/admin/assistants", { schema: { response: { 200: assistantQueueSchema } }, preHandler: platformAdmin }, async () => ({ items: await admin.assistantQueue(ctx.db) }));
-  app.get("/v1/admin/assistants/:id/avatar", { schema: { params: idParam, hide: true }, preHandler: platformAdmin }, async (req, reply) => {
+  app.get("/v1/admin/assistants/:id/avatar", { schema: { params: idParam, summary: "Berkas avatar usulan (admin platform)." }, preHandler: platformAdmin }, async (req, reply) => {
     const a = await brand.pendingAvatarBytes({ db: ctx.db, storage }, req.params.id);
     return reply.header("content-type", a.contentType).header("cache-control", "private, no-store").header("x-content-type-options", "nosniff").send(a.data);
   });

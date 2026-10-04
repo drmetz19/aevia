@@ -85,7 +85,7 @@ export const clinicalRoutes: FastifyPluginAsyncZod<{ ctx: AuthCtx; storage: Stor
   // Berkas lokal bertanda tangan. Consent `photos` dicek SAAT permintaan: pencabutan langsung menutup akses.
   app.get(
     "/v1/files/:id",
-    { schema: { params: idParam, querystring: z.object({ c: z.uuid(), e: z.coerce.number(), s: z.string().min(10).max(100) }), hide: true } },
+    { schema: { params: idParam, querystring: z.object({ c: z.uuid(), e: z.coerce.number(), s: z.string().min(10).max(100) }) } },
     async (req, reply) => {
       const { c: clinicId, e, s } = req.query;
       if (!verifyFileToken(ctx.secret, req.params.id, clinicId, e, s, ctx.now())) {
