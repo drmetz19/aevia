@@ -53,11 +53,11 @@ Monorepo berjalan; DB (PGlite dev/test, pg prod) dengan migrasi `clinics` + RLS 
 Bank pertanyaan v0 (JSON di core), SoviaEngine mode script, Guardrail (kata terlarang, larangan diagnosis, deteksi darurat). `POST /v1/assessments` · `POST /v1/assessments/:id/answers` · `POST /v1/assessments/:id/complete` → hasil per area (skor + label tenang) + disclaimer. Web: layar chat Sovia satu pertanyaan per langkah, progress bar, layar hasil.
 
 ### Acceptance criteria
-- [ ] Assessment selesai menghasilkan skor per area & teks "Hasil assessment bukan diagnosis."
-- [ ] Teks bebas berisi kata darurat (mis. "nyeri dada", "sesak napas") → respon rujukan ke layanan medis, assessment ditandai `flagged`
-- [ ] Unit test guardrail: kalimat dengan "wajib/gagal/permanen/diagnosis Anda" diganti kalimat aman
-- [ ] Label "Sovia adalah AI" tampil di layar chat
-- [ ] Event internal `assessment.completed` tercatat (outbox)
+- [x] Assessment selesai menghasilkan skor per area & teks "Hasil assessment bukan diagnosis."
+- [x] Teks bebas berisi kata darurat (mis. "nyeri dada", "sesak napas") → respon rujukan ke layanan medis, assessment ditandai `flagged`
+- [x] Unit test guardrail: kalimat dengan "wajib/gagal/permanen/diagnosis Anda" diganti kalimat aman
+- [x] Label "Sovia adalah AI" tampil di layar chat
+- [x] Event internal `assessment.completed` tercatat (outbox)
 
 ---
 
