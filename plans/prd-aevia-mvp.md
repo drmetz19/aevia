@@ -83,3 +83,4 @@ Pembayaran/checkout, video call bawaan (cukup link Meet/Zoom per konsultasi), an
 ## Changelog
 - 2026-10-04 · Phase 1 · Smoke UI memakai skrip fetch HTML (Playwright spec tetap ada) — alasan: unduhan Chromium diblokir kebijakan egress sandbox. `clinics` tanpa RLS (direktori brand publik, read-only untuk aevia_app); RLS di tabel klinis.
 - 2026-10-04 · Phase 1–3 · Font self-hosted @fontsource (Google Fonts diblokir egress & lebih andal untuk white-label); token `body` #3A4A5E & `copper-ink` ditambah demi WCAG AA — alasan: slate/copper di ivory < 4.5:1. Skor hasil assessment ditampilkan sebagai level, bukan angka /100 (Progress, Not Perfection).
+- 2026-10-04 · Phase 7 · progress_metrics tidak disimpan; progres dihitung dari checkins + monitor[] rencana. Semua skala check-in 1–5 = paling baik (stres → "Ketenangan"). Smoke memakai build produksi + port acak + data sementara — alasan: smoke flaky dengan next dev.

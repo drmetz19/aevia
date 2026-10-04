@@ -114,10 +114,10 @@ Bank pertanyaan v0 (JSON di core), SoviaEngine mode script, Guardrail (kata terl
 `checkins`, `progress_metrics` (dari rencana: area + target), `reminders`. Web: check-in (skala 1–5 per area yang dipantau + catatan), halaman progres (kartu per metrik: current/previous/target/trend + sparkline + delta %), empty state. Console: tab progres pasien. Pengingat check-in terjadwal tersimpan & tampil sebagai notifikasi in-app.
 
 ### Acceptance criteria
-- [ ] Check-in kedua menghitung delta % vs sebelumnya ("Naik 8% sejak check-in terakhir")
-- [ ] Belum ada check-in → "Belum ada data progres. Setelah check-in pertama, perkembangan Anda akan mulai terlihat di sini."
-- [ ] Profesional melihat grafik progres pasien yang sama
-- [ ] Event `checkin.submitted` & `progress.updated` tercatat
+- [x] Check-in kedua menghitung delta % vs sebelumnya ("Naik 8% sejak check-in terakhir")
+- [x] Belum ada check-in → "Belum ada data progres. Setelah check-in pertama, perkembangan Anda akan mulai terlihat di sini."
+- [x] Profesional melihat grafik progres pasien yang sama
+- [x] Event `checkin.submitted` & `progress.updated` tercatat
 
 ---
 
