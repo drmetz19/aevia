@@ -69,10 +69,10 @@ Bank pertanyaan v0 (JSON di core), SoviaEngine mode script, Guardrail (kata terl
 `programs` (per klinik, harga, durasi, deskripsi), `consultation_requests`, `consultations`. Pasien pilih program/konsultasi → Sovia membuat draft prep (tujuan, keluhan, pertanyaan untuk dokter dari assessment) → pasien edit & kirim. Console: antrean permintaan, detail pasien (assessment + prep hanya bila consent assessment aktif), terima → jadwal + link Meet/Zoom.
 
 ### Acceptance criteria
-- [ ] Katalog web menampilkan program milik klinik itu saja dengan harga dari DB
-- [ ] Draft prep terisi otomatis dari assessment & bisa diedit sebelum dikirim
-- [ ] Profesional melihat permintaan di antrean; tanpa consent assessment → isi assessment tersembunyi + keterangan
-- [ ] Terima permintaan membuat `consultation` berjadwal dengan link meeting; pasien melihat status di stepper
+- [x] Katalog web menampilkan program milik klinik itu saja dengan harga dari DB
+- [x] Draft prep terisi otomatis dari assessment & bisa diedit sebelum dikirim
+- [x] Profesional melihat permintaan di antrean; tanpa consent assessment → isi assessment tersembunyi + keterangan
+- [x] Terima permintaan membuat `consultation` berjadwal dengan link meeting; pasien melihat status di stepper
 
 ---
 
