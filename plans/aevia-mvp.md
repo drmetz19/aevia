@@ -84,10 +84,10 @@ Bank pertanyaan v0 (JSON di core), SoviaEngine mode script, Guardrail (kata terl
 `soap_notes`, `skin_analyses`, `skin_photos`, `audit_logs`; StorageProvider (local/supabase). Console tab SOAP (S/O/A/P) dan Skin (skor per parameter default klinik, upload foto, anotasi titik/area di atas foto, heatmap overlay sederhana), tab Audit. Semua tulis via service yang mencatat audit (before/after).
 
 ### Acceptance criteria
-- [ ] Profesional menyimpan SOAP; edit kedua tercatat di audit dengan before/after
-- [ ] Upload foto (jpg/png ≤10MB) tersimpan & tampil via URL bertanda tangan; consent foto dicabut → foto tidak bisa diakses
-- [ ] Anotasi tersimpan & tampil kembali di posisi yang sama
-- [ ] Pasien (token patient) ditolak mengakses endpoint SOAP/skin
+- [x] Profesional menyimpan SOAP; edit kedua tercatat di audit dengan before/after
+- [x] Upload foto (jpg/png ≤10MB) tersimpan & tampil via URL bertanda tangan; consent foto dicabut → foto tidak bisa diakses
+- [x] Anotasi tersimpan & tampil kembali di posisi yang sama
+- [x] Pasien (token patient) ditolak mengakses endpoint SOAP/skin
 
 ---
 
