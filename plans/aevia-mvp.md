@@ -22,10 +22,10 @@
 Monorepo berjalan; DB (PGlite dev/test, pg prod) dengan migrasi `clinics` + RLS + role `aevia_app`; seed 2 klinik; API `GET /health`, `GET /v1/clinics/:slug/public` (brand publik); web `/c/:slug` landing klinik dengan header cobrand/whitelabel sesuai data, token AEVIA, copy Verbal Identity, CTA "Mulai assessment"; console placeholder `/masuk`.
 
 ### Acceptance criteria
-- [ ] `pnpm install && pnpm typecheck && pnpm test` hijau dari root
-- [ ] `GET /v1/clinics/drmetz/public` → 200 berisi brand_mode cobrand; slug tak dikenal → 404 dengan pesan manusiawi
-- [ ] `/c/drmetz` menampilkan nama DrMetz + "powered by AEVIA"; `/c/demo-partner` tidak menampilkan kata AEVIA
-- [ ] Test DB membuktikan role `aevia_app` dengan `app.clinic_id`=A tidak bisa membaca baris klinik B
+- [x] `pnpm install && pnpm typecheck && pnpm test` hijau dari root
+- [x] `GET /v1/clinics/drmetz/public` → 200 berisi brand_mode cobrand; slug tak dikenal → 404 dengan pesan manusiawi
+- [x] `/c/drmetz` menampilkan nama DrMetz + "powered by AEVIA"; `/c/demo-partner` tidak menampilkan kata AEVIA
+- [x] Test DB membuktikan role `aevia_app` dengan `app.clinic_id`=A tidak bisa membaca baris klinik B
 
 ---
 

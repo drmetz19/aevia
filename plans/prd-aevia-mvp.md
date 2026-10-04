@@ -81,3 +81,4 @@ Pembayaran/checkout, video call bawaan (cukup link Meet/Zoom per konsultasi), an
 - Pertanyaan terbuka (Master Blueprint §7): kriteria verifikasi profesional, paket & harga awal DrMetz, standar minimum lintas klinik, model afiliasi.
 
 ## Changelog
+- 2026-10-04 · Phase 1 · Smoke UI memakai skrip fetch HTML (Playwright spec tetap ada) — alasan: unduhan Chromium diblokir kebijakan egress sandbox. `clinics` tanpa RLS (direktori brand publik, read-only untuk aevia_app); RLS di tabel klinis.
