@@ -53,8 +53,9 @@ Untuk tiap project: Import repo, set **Root Directory** sesuai tabel, dan biarka
 | `SUPABASE_URL` | ✔ | | | | `https://xxxx.supabase.co` |
 | `SUPABASE_SERVICE_ROLE_KEY` | ✔ | | | | Rahasia server; jangan di klien |
 | `SUPABASE_BUCKET` | ✔ | | | | Default `skin-photos` |
-| `RESEND_API_KEY` | ✔ | | | | Pengirim email OTP. **Wajib di produksi**: tanpa ini API menolak start |
-| `OTP_FROM_EMAIL` | ✔ | | | | Mis. `Klinik Anda <masuk@domain.id>` (domain terverifikasi di Resend) |
+| `MAILKETING_API_TOKEN` | ✔ | | | | Pengirim email OTP (diutamakan). Token dari menu Integrasi Mailketing. **Produksi wajib salah satu: Mailketing atau Resend** |
+| `RESEND_API_KEY` | | | | | Alternatif bila tidak memakai Mailketing |
+| `OTP_FROM_EMAIL` | ✔ | | | | Mis. `Klinik Anda <masuk@domain.id>`; email harus terdaftar di menu Add Domain Mailketing (atau terverifikasi di Resend) |
 | `API_URL` | | ✔ | ✔ | | URL API dari server Next.js (mis. `https://api.domain.id`) |
 | `API_PUBLIC_URL` | | | ✔ | | URL API yang dapat dijangkau browser (foto di konsol) |
 | `PLATFORM_HOSTS` | | ✔ | | | Host platform yang bukan domain klinik, mis. `app.domain.id` |

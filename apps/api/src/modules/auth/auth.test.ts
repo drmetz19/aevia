@@ -205,8 +205,32 @@ describe("pengirim email OTP", () => {
     const bad = (async () => new Response("no", { status: 422 })) as unknown as typeof fetch;
     await expect(resendOtpSender({ apiKey: "k", from: "f", fetchFn: bad }).send({ email: "a@b.id", code: "1", purpose: "staff" })).rejects.toThrow(/gagal/);
     expect(otpSenderFromEnv({ NODE_ENV: "development" } as NodeJS.ProcessEnv)).toBe(consoleOtpSender);
-    expect(() => otpSenderFromEnv({ NODE_ENV: "production" } as NodeJS.ProcessEnv)).toThrow(/RESEND_API_KEY/);
+    expect(() => otpSenderFromEnv({ NODE_ENV: "production" } as NodeJS.ProcessEnv)).toThrow(/MAILKETING_API_TOKEN/);
     expect(() => otpSenderFromEnv({ RESEND_API_KEY: "k" } as NodeJS.ProcessEnv)).toThrow(/OTP_FROM_EMAIL/);
     expect(otpSenderFromEnv({ RESEND_API_KEY: "k", OTP_FROM_EMAIL: "f" } as NodeJS.ProcessEnv)).not.toBe(consoleOtpSender);
+  });
+
+  it("Mailketing: form-urlencoded ke /api/v1/send; status 'failed' dengan HTTP 200 tetap dianggap gagal; diprioritaskan di env", async () => {
+    const { mailketingOtpSender, otpSenderFromEnv, parseFrom } = await import("./otp-sender");
+    const seen: { url: string; body: URLSearchParams; ct: string }[] = [];
+    const ok = (async (url: string, init: { body: string; headers: Record<string, string> }) => {
+      seen.push({ url, body: new URLSearchParams(init.body), ct: init.headers["content-type"]! });
+      return new Response(JSON.stringify({ status: "success", response: "Mail Sent" }), { status: 200 });
+    }) as unknown as typeof fetch;
+    await mailketingOtpSender({ apiToken: "tok", from: "Klinik DrMetz <masuk@drmetz.id>", fetchFn: ok }).send({ email: "a@b.id", code: "654321", purpose: "patient" });
+    expect(seen[0]!.url).toBe("https://api.mailketing.co.id/api/v1/send");
+    expect(seen[0]!.ct).toBe("application/x-www-form-urlencoded");
+    const b = seen[0]!.body;
+    expect([b.get("api_token"), b.get("from_name"), b.get("from_email"), b.get("recipient")]).toEqual(["tok", "Klinik DrMetz", "masuk@drmetz.id", "a@b.id"]);
+    expect(b.get("content")).toContain("654321");
+    expect(b.toString()).not.toMatch(/aevia/i);
+    const failed = (async () => new Response(JSON.stringify({ status: "failed", response: "No Credits, Please Top Up" }), { status: 200 })) as unknown as typeof fetch;
+    await expect(mailketingOtpSender({ apiToken: "t", from: "x@y.id", fetchFn: failed }).send({ email: "a@b.id", code: "1", purpose: "staff" })).rejects.toThrow(/No Credits/);
+    expect(parseFrom("masuk@k.id")).toEqual({ name: "masuk@k.id", email: "masuk@k.id" });
+    expect(() => otpSenderFromEnv({ MAILKETING_API_TOKEN: "t" } as NodeJS.ProcessEnv)).toThrow(/OTP_FROM_EMAIL/);
+    const viaEnv = otpSenderFromEnv({ MAILKETING_API_TOKEN: "t", RESEND_API_KEY: "r", OTP_FROM_EMAIL: "A <a@k.id>" } as NodeJS.ProcessEnv, ok);
+    seen.length = 0;
+    await viaEnv.send({ email: "z@b.id", code: "111111", purpose: "staff" });
+    expect(seen[0]!.url).toContain("mailketing");
   });
 });
