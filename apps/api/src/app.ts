@@ -21,6 +21,7 @@ import { staffRoutes } from "./modules/staff/routes";
 import { clinicalRoutes } from "./modules/clinical/routes";
 import { storageFromEnv, type StorageProvider } from "./storage";
 import { planRoutes } from "./modules/plans/routes";
+import { progressRoutes } from "./modules/progress/routes";
 import { consentRoutes } from "./modules/consents/routes";
 
 export interface AppDeps {
@@ -73,6 +74,7 @@ export async function buildApp({ db, otpSender = consoleOtpSender, jwtSecret, no
   await app.register(staffRoutes, { ctx });
   await app.register(clinicalRoutes, { ctx, storage: files });
   await app.register(planRoutes, { ctx });
+  await app.register(progressRoutes, { ctx });
 
   return app;
 }

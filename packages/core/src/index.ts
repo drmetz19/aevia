@@ -6,3 +6,4 @@ export * from "./assessment";
 export * from "./consultation";
 export * from "./clinical";
 export * from "./plan";
+export * from "./progress";

@@ -1,7 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { eq, sql } from "drizzle-orm";
 import { createDb, type Db } from "./client";
-import { clinics, clinicSettings, consents, events, patients, programs, auditLogs } from "./schema";
+import { clinics, clinicSettings, consents, events, patients, programs, auditLogs, checkins, reminders } from "./schema";
 import { seed } from "./seed";
 
 let d: Db;
@@ -85,5 +85,15 @@ describe("isolasi tenant (RLS, role aevia_app)", () => {
     await d.withTenant(a, (tx) => tx.insert(auditLogs).values({ clinicId: a, actorType: "system", entity: "x", entityId: a, action: "t" }));
     expect(await d.withTenant(b, (tx) => tx.select().from(auditLogs))).toEqual([]);
     await expect(d.withTenant(a, (tx) => tx.delete(auditLogs))).rejects.toThrow();
+  });
+
+  it("checkins & reminders terisolasi per klinik", async () => {
+    const [pa] = await d.withTenant(a, (tx) => tx.select().from(patients).limit(1));
+    const patientId = pa?.id ?? (await d.withTenant(a, (tx) => tx.insert(patients).values({ clinicId: a, email: "ci@y.test" }).returning()))[0]!.id;
+    await d.withTenant(a, (tx) => tx.insert(checkins).values({ clinicId: a, patientId, values: { tidur: 3 } }));
+    await d.withTenant(a, (tx) => tx.insert(reminders).values({ clinicId: a, patientId, kind: "checkin", message: "m", dueAt: new Date() }));
+    expect(await d.withTenant(b, (tx) => tx.select().from(checkins))).toEqual([]);
+    expect(await d.withTenant(b, (tx) => tx.select().from(reminders))).toEqual([]);
+    await expect(d.withTenant(a, (tx) => tx.delete(checkins))).rejects.toThrow();
   });
 });

@@ -3,8 +3,9 @@ import { notFound, redirect } from "next/navigation";
 import { ArrowRight } from "lucide-react";
 import { ClinicHeader } from "@/components/ClinicHeader";
 import { brandStyle, fetchClinic } from "@/lib/api";
-import { getConsents, getCurrentPlan, getLatestAssessment, getMyRequests, requirePatient } from "@/lib/session";
-import { logout } from "../actions";
+import { REMINDER_CTA } from "@aevia/core";
+import { getConsents, getCurrentPlan, getLatestAssessment, getMyRequests, getReminders, requirePatient } from "@/lib/session";
+import { logout, markReminderReadAction } from "../actions";
 
 
 export default async function Beranda({ params, searchParams }: { params: Promise<{ slug: string }>; searchParams: Promise<{ info?: string }> }) {
@@ -19,6 +20,8 @@ export default async function Beranda({ params, searchParams }: { params: Promis
   const assessment = await getLatestAssessment(slug);
   const requests = await getMyRequests(slug);
   const plan = await getCurrentPlan(slug);
+  const reminders = await getReminders(slug);
+  const target = { checkin: "checkin", review: "rencana", plan: "rencana" } as const;
   const accepted = requests.find((r) => r.status === "accepted" && r.consultation);
   const pending = requests.find((r) => r.status === "submitted");
   const fmt = (iso: string) => new Date(iso).toLocaleString("id-ID", { dateStyle: "long", timeStyle: "short", timeZone: "Asia/Jakarta" }) + " WIB";
@@ -38,7 +41,7 @@ export default async function Beranda({ params, searchParams }: { params: Promis
       status: plan ? `Siap dilihat · versi ${plan.version}` : accepted ? "Menunggu tinjauan profesional" : "Tersedia setelah konsultasi",
       state: plan ? "done" : accepted ? "wait" : "todo",
     },
-    { title: "Follow-up & progres", status: "Belum dimulai", state: "todo" },
+    { title: "Follow-up & progres", status: plan ? "Check-in tersedia" : "Belum dimulai", state: plan ? "wait" : "todo" },
   ];
 
   return (
@@ -67,6 +70,25 @@ export default async function Beranda({ params, searchParams }: { params: Promis
           </p>
         )}
 
+        {reminders.length > 0 && (
+          <section aria-labelledby="notif" className="mt-8">
+            <h2 id="notif" className="text-xl font-semibold leading-7 text-navy">Pemberitahuan</h2>
+            <ul className="mt-3 space-y-3">
+              {reminders.map((r) => (
+                <li key={r.id} className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-copper bg-white p-4 shadow-soft">
+                  <p className="text-base text-navy">{r.message}</p>
+                  <form action={markReminderReadAction} className="flex items-center gap-3">
+                    <input type="hidden" name="slug" value={clinic.slug} />
+                    <input type="hidden" name="reminder_id" value={r.id} />
+                    <input type="hidden" name="next" value={target[r.kind]} />
+                    <button type="submit" className="rounded-pill bg-navy px-5 py-2 text-base font-semibold text-white">{REMINDER_CTA[r.kind]}</button>
+                  </form>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+
         <ol className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4" aria-label="Perjalanan Anda">
           {steps.map((st, i) => (
             <li
@@ -92,6 +114,14 @@ export default async function Beranda({ params, searchParams }: { params: Promis
               Lihat rencana
             </Link>
           )}
+          <>
+              <Link href={`/c/${clinic.slug}/checkin`} className="inline-flex items-center rounded-pill border border-navy px-7 py-3 text-lg font-semibold text-navy">
+                Mulai check-in
+              </Link>
+              <Link href={`/c/${clinic.slug}/progres`} className="inline-flex items-center rounded-pill border border-navy px-7 py-3 text-lg font-semibold text-navy">
+                Cek progres
+              </Link>
+          </>
           <Link
             href={`/c/${clinic.slug}/program`}
             className="inline-flex items-center rounded-pill border border-navy px-7 py-3 text-lg font-semibold text-navy"

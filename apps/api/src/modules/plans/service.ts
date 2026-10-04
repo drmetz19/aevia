@@ -15,6 +15,7 @@ import {
 } from "@aevia/core";
 import { carePlans, clinics, consultations, events, prescriptions, staff, writeAudit, type Db, type Tx } from "@aevia/db";
 import { AuthError } from "../auth/otp";
+import { remindersAfterSign } from "../progress/service";
 
 export type Ctx = { db: Db; clinicId: string; staffId: string; now: Date };
 
@@ -159,6 +160,7 @@ export async function signPlan(c: Ctx, id: string) {
       .where(eq(carePlans.id, id))
       .returning();
     await audit(tx, c, "care_plan", id, "plan.sign", { status: "draft" }, { status: "signed", version: p.version, signature_hash: hash });
+    await remindersAfterSign(tx, c.clinicId, p.patientId, c.now, content.review_at);
     await tx.insert(events).values({
       clinicId: c.clinicId,
       type: "plan.approved",

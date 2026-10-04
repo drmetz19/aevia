@@ -106,7 +106,7 @@ export function AnnotationEditor({ photoId, src, angle, initial }: { photoId: st
         <span
           key={i}
           aria-hidden="true"
-          className="absolute flex h-6 min-w-6 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-pill border-2 border-white px-1 text-xs font-bold text-white"
+          className="absolute flex h-6 min-w-6 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-pill border-2 border-white px-1 text-[13px] font-semibold text-white"
           style={{ left: `${a.x * 100}%`, top: `${a.y * 100}%`, background: SEV_COLOR[a.severity] }}
         >
           {i + 1}{SEVERITY_INITIAL[a.severity]}
@@ -208,7 +208,7 @@ export function AnnotationEditor({ photoId, src, angle, initial }: { photoId: st
               <li key={i} className="flex items-center justify-between gap-3 rounded-md border border-line bg-white px-3 py-2 text-base text-navy">
                 <span>
                   <strong className="font-semibold">{i + 1}. {a.label}</strong> · {a.type === "point" ? "Titik" : "Area"} ·{" "}
-                  <span className="inline-flex items-center gap-1 rounded-pill px-2 text-xs font-bold text-white" style={{ background: SEV_COLOR[a.severity] }}><span aria-hidden="true">{SEVERITY_INITIAL[a.severity]}</span>{SEVERITY_LABEL[a.severity]}</span>
+                  <span className="inline-flex items-center gap-1 rounded-pill px-2 text-[13px] font-semibold text-white" style={{ background: SEV_COLOR[a.severity] }}><span aria-hidden="true">{SEVERITY_INITIAL[a.severity]}</span>{SEVERITY_LABEL[a.severity]}</span>
                   <span className="block text-[13px] font-medium text-body">
                     kiri {pct(a.x)}%, atas {pct(a.y)}%{a.type === "area" ? `, lebar ${pct(a.w ?? 0)}%, tinggi ${pct(a.h ?? 0)}%` : ""}
                   </span>

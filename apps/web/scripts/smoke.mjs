@@ -237,6 +237,37 @@ try {
   const wlPlan = (await (await fetch(`${WEB}/c/demo-partner/rencana`, { headers: { cookie: `aevia_session_demo-partner=${t2}` } })).text()).replace(/<!-- -->/g, "");
   check(wlPlan.includes("Rencana akan tersedia") && !/aevia/i.test(text(wlPlan)), "whitelabel: rencana tanpa AEVIA");
 
+  // --- Phase 7: check-in, progres, pengingat ---
+  const flat = (h) => h.replace(/<!-- -->/g, "");
+  const prog0 = flat(await (await fetch(`${WEB}/c/drmetz/progres`, { headers: cookie })).text());
+  check(prog0.includes("Belum ada data progres. Setelah check-in pertama, perkembangan Anda akan mulai terlihat di sini."), "progres: empty state §29");
+  const home7 = flat(await (await fetch(`${WEB}/c/drmetz/beranda`, { headers: cookie })).text());
+  check(home7.includes("Pemberitahuan") && home7.includes("Rencana Anda sudah diperbarui.") && home7.includes("Lihat perubahan terbaru"), "beranda: notifikasi in-app konteks + aksi (§31)");
+  check(home7.includes("Cek progres") && home7.includes("Mulai check-in"), "beranda: CTA check-in & progres");
+  const ci = flat(await (await fetch(`${WEB}/c/drmetz/checkin`, { headers: cookie })).text());
+  check(ci.includes("Kualitas tidur") && ci.includes('type="radio"') && ci.includes("Simpan check-in"), "check-in: metrik dari rencana signed (form no-JS)");
+  const c1 = await post(`${API}/v1/checkins`, { values: { tidur: 2 }, note: "awal" }, token);
+  check(c1.status === 201, "API: check-in pertama");
+  const c2 = await post(`${API}/v1/checkins`, { values: { tidur: 3 } }, token);
+  const c2b = await c2.json();
+  check(c2.status === 201 && c2b.metrics[0].delta_text === "Naik 50% sejak check-in terakhir", "check-in kedua: 'Naik 50% sejak check-in terakhir'");
+  const prog1 = flat(await (await fetch(`${WEB}/c/drmetz/progres`, { headers: cookie })).text());
+  check(["Saat ini", "Sebelumnya", "Target", "Tren"].every((w) => prog1.includes(w)), "progres: Saat ini / Sebelumnya / Target / Tren");
+  check(prog1.includes("<svg") && prog1.includes("Naik 50% sejak check-in terakhir") && prog1.includes("Ada perubahan positif pada area ini."), "progres: sparkline SVG + delta + status §25");
+  check(!/buruk|gagal/i.test(text(prog1)), "progres: tanpa kata buruk/gagal");
+  check(flat(await (await fetch(`${WEB}/c/drmetz/rencana`, { headers: cookie })).text()).includes("Saat ini 2"), "rencana: baris metrik 'Saat ini'/'Target' (§37)");
+  const homeAfter = flat(await (await fetch(`${WEB}/c/drmetz/beranda`, { headers: cookie })).text());
+  check(!homeAfter.includes("Waktunya check-in singkat."), "pengingat check-in belum jatuh tempo tidak tampil");
+  await fetch(`${API}/v1/me/consents`, { method: "PUT", headers: hdr, body: JSON.stringify({ scope: "medical_record", granted: false }) });
+  const hiddenProg = flat(await (await fetch(`${CON}/pasien/${mine.patient_id}?tab=progres`, { headers: sCookie })).text());
+  check(hiddenProg.includes("persetujuan akses rekam medis"), "console: progres disembunyikan tanpa consent rekam medis");
+  await fetch(`${API}/v1/me/consents`, { method: "PUT", headers: hdr, body: JSON.stringify({ scope: "medical_record", granted: true }) });
+  const conProg = flat(await (await fetch(`${CON}/pasien/${mine.patient_id}?tab=progres`, { headers: sCookie })).text());
+  check(conProg.includes("Naik 50% sejak check-in terakhir") && conProg.includes("Tren") && conProg.includes("<svg"), "console: tab Progres dengan kartu yang sama");
+  await fetch(`${API}/v1/staff/consultations/${kid}/care-plans`, { method: "PUT", headers: jh, body: JSON.stringify({ content: { focus: ["Hasil permanen"], next_steps: ["Rutinitas"], monitor: [], review_at: null }, summary: { discussed: "", priorities: [] } }) });
+  const warn = flat(await (await fetch(`${CON}/konsultasi/${kid}?tab=rencana`, { headers: sCookie })).text());
+  check(warn.includes("Perhatian:") && warn.includes("permanen") && warn.includes("Tandatangani rencana"), "console: peringatan non-blocking untuk istilah terlarang");
+
   // Console staf
   check((await fetch(`${CON}/masuk`)).status === 200, "console /masuk 200");
   const se = "dr.metz@drmetz.test";

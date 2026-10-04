@@ -144,3 +144,34 @@ export async function submitRequestAction(fd: FormData) {
   }
   redirect(`/c/${slug}/beranda?info=terkirim`);
 }
+
+export async function submitCheckinAction(fd: FormData) {
+  const slug = String(fd.get("slug") ?? "");
+  if (!SLUG_RE.test(slug)) redirect("/");
+  const values: Record<string, number> = {};
+  for (const [k, v] of fd.entries()) {
+    if (!k.startsWith("v:") || String(v).trim() === "") continue;
+    const n = Number(String(v).replace(",", "."));
+    if (Number.isFinite(n)) values[k.slice(2)] = n;
+  }
+  if (!Object.keys(values).length) {
+    redirect(`/c/${slug}/checkin?pesan=${encodeURIComponent("Ada satu bagian yang belum terisi. Isi minimal satu penilaian.")}`);
+  }
+  const note = String(fd.get("note") ?? "").trim().slice(0, 500);
+  const res = await apiAuthed(slug, "/v1/checkins", { method: "POST", body: JSON.stringify({ values, ...(note ? { note } : {}) }) });
+  if (!res || res.status === 401 || res.status === 403) redirect(sessionEnded(slug));
+  if (!res.ok) {
+    const b = (await res.json().catch(() => ({}))) as { message?: string };
+    redirect(`/c/${slug}/checkin?pesan=${encodeURIComponent(b.message ?? "Terjadi kendala di sisi kami. Silakan coba lagi sebentar lagi.")}`);
+  }
+  redirect(`/c/${slug}/progres?info=tersimpan`);
+}
+
+export async function markReminderReadAction(fd: FormData) {
+  const slug = String(fd.get("slug") ?? "");
+  const id = String(fd.get("reminder_id") ?? "");
+  if (!SLUG_RE.test(slug) || !/^[0-9a-f-]{36}$/.test(id)) redirect("/");
+  await apiAuthed(slug, `/v1/reminders/${id}/read`, { method: "POST" });
+  const next = String(fd.get("next") ?? "");
+  redirect(["checkin", "rencana", "progres"].includes(next) ? `/c/${slug}/${next}` : `/c/${slug}/beranda`);
+}

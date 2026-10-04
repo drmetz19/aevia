@@ -1,4 +1,4 @@
-import { PLAN_HEADINGS, SUMMARY_HEADINGS, formatDateId, planListSchema, prescriptionListSchema, type PlanView, type PrescriptionView } from "@aevia/core";
+import { PLAN_HEADINGS, SUMMARY_HEADINGS, findForbidden, formatDateId, planListSchema, prescriptionListSchema, type PlanView, type PrescriptionView } from "@aevia/core";
 import { fmtDate, staffFetch } from "@/lib/api";
 import { issueRxAction, savePlanAction, saveRxAction, signPlanAction } from "./actions";
 
@@ -8,8 +8,20 @@ const input = "mt-1 w-full rounded-md border border-line bg-ivory px-3 py-2 text
 const lab = "block text-[13px] font-medium text-navy";
 const STATUS = { draft: "Draf", issued: "Diterbitkan", superseded: "Digantikan", signed: "Ditandatangani" } as const;
 
+/** Peringatan non-blocking: profesional yang memutuskan, kami hanya mengingatkan istilah di luar bahasa AEVIA. */
+function Warning({ texts }: { texts: string[] }) {
+  const terms = [...new Set(texts.flatMap((t) => findForbidden(t)))];
+  if (!terms.length) return null;
+  return (
+    <p role="status" className="rounded-md border border-warning bg-white px-4 py-3 text-base text-navy">
+      <strong className="font-semibold">Perhatian: </strong>
+      teks memuat istilah yang sebaiknya dihindari dalam bahasa AEVIA ({terms.map((t) => `"${t}"`).join(", ")}). Anda tetap dapat menyimpan dan menandatangani; keputusan ada pada profesional.
+    </p>
+  );
+}
+
 const Status = ({ s }: { s: keyof typeof STATUS }) => (
-  <span className="inline-flex items-center gap-2 rounded-pill border border-line px-3 py-0.5 text-xs font-bold text-navy">
+  <span className="inline-flex items-center gap-2 rounded-pill border border-line px-3 py-0.5 text-[13px] font-semibold text-navy">
     <span aria-hidden="true" className={`h-2 w-2 rounded-pill ${s === "issued" || s === "signed" ? "bg-success" : s === "draft" ? "bg-warning" : "bg-slate"}`} />
     {STATUS[s]}
   </span>
@@ -28,6 +40,7 @@ export async function RxTab({ id }: { id: string }) {
     <div className="mt-6 space-y-6">
       <form action={saveRxAction} className={`space-y-4 ${card}`}>
         <input type="hidden" name="consultation_id" value={id} />
+        <Warning texts={(draft?.items ?? []).flatMap((i) => [i.name, i.notes, i.dose, i.frequency])} />
         <h2 className={h2}>{draft ? `Resep (draf versi ${draft.version})` : base ? `Versi baru dari resep versi ${base.version}` : "Resep baru"}</h2>
         <p className="text-base text-body">Resep hanya dibuat oleh profesional. Resep yang sudah diterbitkan tidak dapat diubah; perubahan membuat versi baru.</p>
         {rows.map((r, i) => (
@@ -89,6 +102,7 @@ export async function PlanTab({ id }: { id: string }) {
     <div className="mt-6 space-y-6">
       <form action={savePlanAction} className={`space-y-5 ${card}`}>
         <input type="hidden" name="consultation_id" value={id} />
+        <Warning texts={draft ? [draft.summary.discussed, ...draft.summary.priorities, ...draft.content.focus, ...draft.content.next_steps, ...draft.content.monitor.map((m) => m.label)] : []} />
         <h2 className={h2}>{draft ? `Rencana personal (draf versi ${draft.version})` : base ? `Versi baru dari rencana versi ${base.version}` : "Rencana personal baru"}</h2>
         <p className="text-base text-body">Rencana yang sudah ditandatangani terkunci. Mengubahnya membuat versi baru yang perlu ditandatangani lagi.</p>
         <div>
@@ -114,7 +128,7 @@ export async function PlanTab({ id }: { id: string }) {
               <div key={i} className="grid gap-3 rounded-md border border-line p-3 sm:grid-cols-5">
                 <div className="sm:col-span-2"><label htmlFor={`m${i}-label`} className={lab}>Metrik {i + 1}</label><input id={`m${i}-label`} name={`m${i}-label`} defaultValue={m.label} maxLength={80} className={input} /></div>
                 <div><label htmlFor={`m${i}-unit`} className={lab}>Satuan</label><input id={`m${i}-unit`} name={`m${i}-unit`} defaultValue={m.unit} maxLength={20} className={input} /></div>
-                <div><label htmlFor={`m${i}-baseline`} className={lab}>Awal</label><input id={`m${i}-baseline`} name={`m${i}-baseline`} inputMode="decimal" defaultValue={m.baseline ?? ""} className={input} /></div>
+                <div><label htmlFor={`m${i}-baseline`} className={lab}>Saat ini</label><input id={`m${i}-baseline`} name={`m${i}-baseline`} inputMode="decimal" defaultValue={m.baseline ?? ""} className={input} /></div>
                 <div><label htmlFor={`m${i}-target`} className={lab}>Target</label><input id={`m${i}-target`} name={`m${i}-target`} inputMode="decimal" defaultValue={m.target ?? ""} className={input} /></div>
                 <div className="sm:col-span-2">
                   <label htmlFor={`m${i}-direction`} className={lab}>Arah yang diharapkan</label>

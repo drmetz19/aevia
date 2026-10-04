@@ -88,7 +88,7 @@ export default async function Rencana({ params }: { params: Promise<{ slug: stri
                     <li key={m.metric_key} className="rounded-md bg-ivory px-4 py-3 text-base text-navy">
                       <span className="font-semibold">{m.label}</span>
                       <span className="block text-[13px] font-medium text-body">
-                        Awal {m.baseline ?? "-"} → Target {m.target ?? "-"} {m.unit} · {m.direction === "up" ? "Diharapkan naik" : "Diharapkan turun"}
+                        Saat ini {m.baseline ?? "-"} · Target {m.target ?? "-"} {m.unit} · {m.direction === "up" ? "Diharapkan naik" : "Diharapkan turun"}
                       </span>
                     </li>
                   ))}

@@ -1,16 +1,18 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { EyeOff } from "lucide-react";
-import { areaLabel, patientDetailSchema, resultSchema } from "@aevia/core";
+import { PROGRESS_EMPTY, areaLabel, patientDetailSchema, progressSchema, resultSchema } from "@aevia/core";
+import { ProgressCard } from "@aevia/ui/progress";
+import { z } from "zod";
 import { fmtDate, requireStaff, staffFetch } from "@/lib/api";
 import { AcceptDialog } from "./AcceptDialog";
 
-type Props = { params: Promise<{ id: string }>; searchParams: Promise<{ info?: string }> };
+type Props = { params: Promise<{ id: string }>; searchParams: Promise<{ info?: string; tab?: string }> };
 const statusLabel = { submitted: "Menunggu ditinjau", accepted: "Diterima", declined: "Ditolak" } as const;
 
 export default async function Pasien({ params, searchParams }: Props) {
   const { id } = await params;
-  const { info } = await searchParams;
+  const { info, tab } = await searchParams;
   const me = await requireStaff();
   if (me.role === "aevia_admin") redirect("/beranda");
   if (!/^[0-9a-f-]{36}$/.test(id)) notFound();
@@ -18,6 +20,11 @@ export default async function Pasien({ params, searchParams }: Props) {
   if (res.status === 404) notFound();
   if (!res.ok) throw new Error(`API pasien gagal (${res.status})`);
   const d = patientDetailSchema.parse(await res.json());
+  const showProgress = tab === "progres";
+  const pRes = showProgress ? await staffFetch(`/v1/staff/patients/${id}/progress`) : null;
+  const prog = pRes?.ok
+    ? z.object({ progress_visible: z.boolean(), hidden_reason: z.string().nullable(), progress: progressSchema.nullable() }).parse(await pRes.json())
+    : null;
   const result = d.assessment ? resultSchema.safeParse(d.assessment.result) : null;
 
   return (
@@ -30,7 +37,34 @@ export default async function Pasien({ params, searchParams }: Props) {
         <p role="status" className="mt-4 rounded-md bg-sand px-4 py-3 text-base text-navy">Selesai. Konsultasi sudah dijadwalkan dan pasien dapat melihatnya.</p>
       )}
 
-      <div className="mt-8 grid gap-6 lg:grid-cols-2">
+      <nav aria-label="Bagian pasien" className="mt-6 flex gap-2">
+        {([["ringkasan", "Ringkasan"], ["progres", "Progres"]] as const).map(([k, l]) => (
+          <Link key={k} href={`/pasien/${id}${k === "progres" ? "?tab=progres" : ""}`} aria-current={(showProgress ? "progres" : "ringkasan") === k ? "page" : undefined}
+            className={`rounded-pill px-5 py-2 text-base font-semibold ${(showProgress ? "progres" : "ringkasan") === k ? "bg-navy text-white" : "border border-line bg-white text-navy"}`}>
+            {l}
+          </Link>
+        ))}
+      </nav>
+
+      {showProgress && (
+        <section aria-labelledby="pg" className="mt-6">
+          <h2 id="pg" className="sr-only">Progres pasien</h2>
+          {!prog ? (
+            <p className="text-base text-body">Data progres belum dapat dimuat. Silakan coba lagi.</p>
+          ) : !prog.progress_visible ? (
+            <p className="flex gap-2 rounded-lg border border-line bg-white p-6 text-base text-body shadow-soft"><EyeOff aria-hidden="true" size={20} strokeWidth={1.5} className="mt-0.5 shrink-0" />{prog.hidden_reason}</p>
+          ) : prog.progress && prog.progress.checkin_count > 0 ? (
+            <>
+              <p className="mb-4 text-base text-body">{prog.progress.checkin_count} check-in · terakhir {fmtDate(prog.progress.last_checkin_at!)}{prog.progress.general ? " · metrik umum (belum ada rencana ditandatangani)" : ""}</p>
+              <div className="grid gap-4 md:grid-cols-2">{prog.progress.metrics.map((m) => <ProgressCard key={m.key} metric={m} />)}</div>
+            </>
+          ) : (
+            <p className="rounded-lg border border-line bg-white p-6 text-base text-body shadow-soft">{PROGRESS_EMPTY}</p>
+          )}
+        </section>
+      )}
+
+      {!showProgress && <div className="mt-8 grid gap-6 lg:grid-cols-2">
         <section aria-labelledby="as" className="rounded-lg border border-line bg-white p-6 shadow-soft">
           <h2 id="as" className="text-xl font-semibold leading-7 text-navy">Assessment</h2>
           {!d.assessment_visible ? (
@@ -91,7 +125,7 @@ export default async function Pasien({ params, searchParams }: Props) {
             </article>
           ))}
         </section>
-      </div>
+      </div>}
     </main>
   );
 }

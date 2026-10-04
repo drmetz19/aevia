@@ -81,3 +81,25 @@ export async function getCurrentPlan(slug: string): Promise<PatientPlan | null> 
   if (!res.ok) throw new Error(`API rencana gagal (${res.status})`);
   return patientPlanSchema.parse(await res.json());
 }
+
+import { checkinFormSchema, progressSchema, reminderListSchema, type CheckinForm, type Progress } from "@aevia/core";
+
+export async function getCheckinForm(slug: string): Promise<CheckinForm> {
+  const res = await apiAuthed(slug, "/v1/checkins/form");
+  if (!res || res.status === 401 || res.status === 403) redirect(sessionEndedUrl(slug));
+  if (!res.ok) throw new Error(`API check-in gagal (${res.status})`);
+  return checkinFormSchema.parse(await res.json());
+}
+
+export async function getProgress(slug: string): Promise<Progress> {
+  const res = await apiAuthed(slug, "/v1/progress");
+  if (!res || res.status === 401 || res.status === 403) redirect(sessionEndedUrl(slug));
+  if (!res.ok) throw new Error(`API progres gagal (${res.status})`);
+  return progressSchema.parse(await res.json());
+}
+
+export async function getReminders(slug: string) {
+  const res = await apiAuthed(slug, "/v1/reminders");
+  if (!res || !res.ok) return [];
+  return reminderListSchema.parse(await res.json()).reminders;
+}

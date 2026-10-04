@@ -23,6 +23,17 @@ const DIAGNOSIS_PATTERNS: RegExp[] = [
   /\bsembuh\s+total\b/i,
 ];
 
+/** Istilah yang memicu guardrail pada teks tertentu (untuk peringatan non-blocking di console). */
+export function findForbidden(text: string): string[] {
+  const out = new Set<string>();
+  for (const m of text.matchAll(new RegExp(forbiddenRe.source, "giu"))) out.add(m[0].toLowerCase());
+  for (const p of DIAGNOSIS_PATTERNS) {
+    const m = text.match(p);
+    if (m) out.add(m[0].toLowerCase());
+  }
+  return [...out];
+}
+
 const forbiddenRe = new RegExp(`(?<![\\p{L}])(?:${FORBIDDEN_WORDS.join("|")})(?![\\p{L}])`, "iu");
 
 export const SAFE_SENTENCE = "Bagian ini sebaiknya dibahas langsung dengan profesional Anda.";
