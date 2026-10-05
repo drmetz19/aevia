@@ -1,6 +1,6 @@
 # Deploy: Supabase + Vercel
 
-Panduan langkah demi langkah. Belum ada deploy sungguhan yang dijalankan dari repo ini: konfigurasi (`vercel.json`) disiapkan dan alur database sudah diuji terhadap Postgres 16 sungguhan (role pemilik non-superuser), tetapi build Vercel itu sendiri belum dicoba.
+Panduan langkah demi langkah. Web dan console sudah ter-deploy di Vercel. Project API memakai `framework: null` + `outputDirectory: public` (folder kosong dibuat saat build) karena seluruh lalu lintas diarahkan ke fungsi `api/index.ts`; tanpa itu Vercel gagal dengan "No Output Directory named public".
 
 Arsitektur: 4 project Vercel dari satu repo (root directory berbeda) + 1 project Supabase.
 

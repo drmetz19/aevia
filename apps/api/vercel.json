@@ -1,8 +1,25 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
   "installCommand": "cd ../.. && pnpm install --frozen-lockfile",
-  "buildCommand": "cd ../.. && pnpm turbo run typecheck --filter=@aevia/api",
-  "rewrites": [{ "source": "/(.*)", "destination": "/api" }],
-  "functions": { "api/index.ts": { "maxDuration": 30, "includeFiles": "../../packages/db/migrations/**" } },
-  "crons": [{ "path": "/v1/internal/dispatch", "schedule": "* * * * *" }]
+  "buildCommand": "cd ../.. && pnpm turbo run typecheck --filter=@aevia/api && mkdir -p apps/api/public",
+  "outputDirectory": "public",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/api"
+    }
+  ],
+  "functions": {
+    "api/index.ts": {
+      "maxDuration": 30,
+      "includeFiles": "../../packages/db/migrations/**"
+    }
+  },
+  "crons": [
+    {
+      "path": "/v1/internal/dispatch",
+      "schedule": "* * * * *"
+    }
+  ]
 }
