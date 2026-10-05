@@ -17,7 +17,8 @@ export async function apiAuthed(slug: string, path: string, init: RequestInit = 
   return fetch(`${API_URL}${path}`, {
     ...init,
     cache: "no-store",
-    headers: { ...(init.headers ?? {}), authorization: `Bearer ${token}`, "content-type": "application/json" },
+    // content-type JSON hanya bila ada body: Fastify menolak (400) JSON kosong, mis. POST /v1/assessments.
+    headers: { ...(init.headers ?? {}), authorization: `Bearer ${token}`, ...(init.body != null ? { "content-type": "application/json" } : {}) },
   });
 }
 

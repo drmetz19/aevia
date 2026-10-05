@@ -11,7 +11,8 @@ export async function staffFetch(path: string, init: RequestInit = {}): Promise<
   const res = await fetch(`${API_URL}${path}`, {
     ...init,
     cache: "no-store",
-    headers: { ...(init.headers ?? {}), authorization: `Bearer ${token}`, "content-type": "application/json" },
+    // content-type JSON hanya bila ada body: Fastify menolak (400) JSON kosong, mis. POST .../issue.
+    headers: { ...(init.headers ?? {}), authorization: `Bearer ${token}`, ...(init.body != null ? { "content-type": "application/json" } : {}) },
   });
   if (res.status === 401) redirect("/masuk?sesi=berakhir");
   return res;

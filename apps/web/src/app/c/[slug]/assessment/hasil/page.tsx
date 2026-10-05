@@ -1,16 +1,17 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-import { AlertTriangle, CheckCircle2, CircleDot } from "lucide-react";
+import { AlertTriangle, ArrowRight, CheckCircle2, CircleDot } from "lucide-react";
 import { COMPLETION_LINE, RESULT_LINES, areaLabel, type Level } from "@aevia/core";
-import { ClinicHeader } from "@/components/ClinicHeader";
+import { PatientShell } from "@/components/PatientShell";
+import { PageIntro, btnPrimary, card, linkCls } from "@/components/PageIntro";
 import { SoviaHeader } from "@/components/SoviaHeader";
-import { brandStyle, fetchClinic } from "@/lib/api";
+import { fetchClinic } from "@/lib/api";
 import { getLatestAssessment, requirePatient } from "@/lib/session";
 
-const levelIcon: Record<Level, { Icon: typeof CheckCircle2; cls: string }> = {
-  stable: { Icon: CheckCircle2, cls: "text-success" },
-  attention: { Icon: CircleDot, cls: "text-warning" },
-  priority: { Icon: AlertTriangle, cls: "text-critical" },
+const levelIcon: Record<Level, { Icon: typeof CheckCircle2; cls: string; bar: string }> = {
+  stable: { Icon: CheckCircle2, cls: "text-success", bar: "border-l-success" },
+  attention: { Icon: CircleDot, cls: "text-warning", bar: "border-l-warning" },
+  priority: { Icon: AlertTriangle, cls: "text-critical", bar: "border-l-critical" },
 };
 
 export default async function Hasil({ params }: { params: Promise<{ slug: string }> }) {
@@ -23,21 +24,17 @@ export default async function Hasil({ params }: { params: Promise<{ slug: string
   const r = state.result;
 
   return (
-    <div style={brandStyle(clinic)} className="min-h-screen bg-ivory">
-      <ClinicHeader clinic={clinic} />
-      <main className="mx-auto max-w-3xl px-4 py-8 sm:py-10">
-        <div className="mb-6 overflow-hidden rounded-lg border border-line bg-surface">
+    <PatientShell clinic={clinic} active="assessment" width="max-w-3xl">
+        <div className="reveal mb-7 overflow-hidden rounded-lg border border-line bg-surface shadow-soft">
           <SoviaHeader clinic={clinic} />
         </div>
-        <p className="text-[13px] font-semibold uppercase tracking-[0.12em] text-copper-ink">Hasil assessment</p>
-        <h1 className="mt-1 font-serif text-[28px] leading-[1.2] sm:text-4xl sm:leading-tight text-navy">Gambaran awal kondisi Anda</h1>
-        <p className="mt-2 text-base text-body">
-          {COMPLETION_LINE}
-        </p>
-        <p className="mt-2 text-base text-body">{RESULT_LINES[0]}</p>
-        <p className="mt-2 text-base text-body">
-          {RESULT_LINES[1]} <strong className="font-semibold text-navy">{r.disclaimer}</strong>
-        </p>
+        <PageIntro eyebrow="Hasil assessment" title="Gambaran awal kondisi Anda">
+          <p>{COMPLETION_LINE}</p>
+          <p>{RESULT_LINES[0]}</p>
+          <p>
+            {RESULT_LINES[1]} <strong className="font-semibold text-navy">{r.disclaimer}</strong>
+          </p>
+        </PageIntro>
         {state.flagged && state.emergency_message && (
           <div role="alert" className="mt-4 flex gap-3 rounded-lg border border-critical bg-surface p-4 text-base text-navy">
             <AlertTriangle aria-hidden="true" className="mt-0.5 shrink-0 text-critical" size={22} strokeWidth={1.5} />
@@ -45,52 +42,55 @@ export default async function Hasil({ params }: { params: Promise<{ slug: string
           </div>
         )}
         {r.goal && (
-          <p className="mt-4 text-base text-body">
+          <p className="mt-5 inline-flex flex-wrap items-center gap-2 rounded-pill border border-line bg-surface px-4 py-2 text-[15px] text-body shadow-soft">
             Fokus yang Anda pilih: <strong className="font-semibold text-navy">{r.goal}</strong>
           </p>
         )}
 
-        <section aria-labelledby="prioritas" className="mt-8 rounded-lg border border-line bg-surface p-5 shadow-soft sm:p-6">
-          <h2 id="prioritas" className="text-xl font-semibold leading-7 text-navy">
+        <section aria-labelledby="prioritas" className="hero-atmos panel-deep reveal mt-8 p-6 text-white sm:p-8">
+          <h2 id="prioritas" className="text-balance font-serif text-2xl leading-tight sm:text-[28px]">
             Tiga area yang layak dibahas lebih dulu
           </h2>
-          <ol className="mt-3 list-inside list-decimal space-y-1 text-base text-navy">
-            {r.priorities.map((p) => (
-              <li key={p}>{areaLabel(p)}</li>
+          <ol className="mt-5 grid gap-3 sm:grid-cols-3">
+            {r.priorities.map((p, i) => (
+              <li key={p} className="flex items-center gap-3 rounded-md border border-white/12 bg-white/[0.06] px-4 py-3 sm:flex-col sm:items-start">
+                <span aria-hidden="true" className="font-serif text-3xl leading-none text-copper-light">{i + 1}</span>
+                <span className="text-base font-semibold">{areaLabel(p)}</span>
+              </li>
             ))}
           </ol>
         </section>
 
-        <ul className="mt-6 grid gap-4 sm:grid-cols-2">
-          {r.areas.map((a) => {
-            const { Icon, cls } = levelIcon[a.level];
+        <h2 className="mt-10 text-xl font-semibold leading-7 text-navy">Per area</h2>
+        <ul className="mt-4 grid gap-3 sm:grid-cols-2">
+          {r.areas.map((a, i) => {
+            const { Icon, cls, bar } = levelIcon[a.level];
             return (
-              <li key={a.area} className="rounded-lg border border-line bg-surface p-5 shadow-soft">
+              <li key={a.area} style={{ "--d": i } as React.CSSProperties} className={`reveal card-lift rounded-lg border border-line border-l-4 ${bar} bg-surface p-5 shadow-soft`}>
                 <p className="text-[13px] font-semibold uppercase tracking-[0.12em] text-copper-ink">{a.label}</p>
                 <p className="mt-2 flex items-center gap-2 text-base font-semibold text-navy">
                   <Icon aria-hidden="true" className={cls} size={20} strokeWidth={1.5} />
                   {a.level_label}
                 </p>
                 <div aria-hidden="true" className="mt-3 h-1.5 overflow-hidden rounded-pill bg-sand">
-                  <div className="h-full bg-copper" style={{ width: `${Math.max(a.score, 6)}%` }} />
+                  <div className="progress-glow h-full rounded-pill" style={{ width: `${Math.max(a.score, 6)}%` }} />
                 </div>
               </li>
             );
           })}
         </ul>
 
-        <div className="mt-8 flex flex-wrap items-center gap-4">
-          <Link href={`/c/${slug}/program`} className="inline-flex justify-center rounded-pill bg-copper w-full text-center px-6 py-3.5 text-base font-semibold sm:px-7 sm:text-lg sm:w-auto text-white shadow-soft">
-            Siapkan konsultasi
+        <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row">
+          <Link href={`/c/${slug}/program`} className={btnPrimary}>
+            Siapkan konsultasi <ArrowRight aria-hidden="true" size={18} strokeWidth={1.75} />
           </Link>
-          <Link href={`/c/${slug}/beranda`} className="text-base font-semibold text-navy underline underline-offset-4">
+          <Link href={`/c/${slug}/beranda`} className={linkCls}>
             Kembali ke beranda
           </Link>
         </div>
-        <p className="mt-6 text-[13px] font-medium text-body">
+        <p className="mt-8 border-t border-line pt-4 text-[13px] font-medium text-body">
           {clinic.assistant_name} adalah AI. {r.disclaimer}
         </p>
-      </main>
-    </div>
+    </PatientShell>
   );
 }
