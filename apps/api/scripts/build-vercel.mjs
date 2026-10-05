@@ -1,7 +1,7 @@
 // Build untuk Vercel (Build Output API v3): bundel seluruh API (termasuk paket workspace @aevia/* yang
 // berupa TypeScript mentah) menjadi satu file ESM, karena runtime Vercel tidak bisa memuat .ts dari node_modules.
 import { build } from "esbuild";
-import { cpSync, mkdirSync, rmSync, writeFileSync, readFileSync } from "node:fs";
+import { cpSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 
 const root = fileURLToPath(new URL("..", import.meta.url));
@@ -25,7 +25,7 @@ const pgliteStub = {
 };
 
 await build({
-  entryPoints: [`${root}api/index.ts`],
+  entryPoints: [`${root}src/vercel.ts`],
   outfile: `${fn}/index.mjs`,
   bundle: true,
   platform: "node",
@@ -39,6 +39,7 @@ await build({
   banner: { js: "import { createRequire as __cr } from 'node:module'; const require = __cr(import.meta.url);" },
 });
 
+// Cron didefinisikan di vercel.json (Vercel menggabungkannya); jangan diulang di config.json.
 // Migrasi SQL ikut disalin (dibaca relatif terhadap bundel bila dipakai).
 cpSync(fileURLToPath(new URL("../../../packages/db/migrations", import.meta.url)), `${fn}/migrations`, { recursive: true });
 
@@ -49,9 +50,8 @@ writeFileSync(
 writeFileSync(`${fn}/package.json`, JSON.stringify({ type: "module" }));
 writeFileSync(`${out}/static/robots.txt`, "User-agent: *\nDisallow: /\n");
 
-const vercel = JSON.parse(readFileSync(`${root}vercel.json`, "utf8"));
 writeFileSync(
   `${out}/config.json`,
-  JSON.stringify({ version: 3, routes: [{ handle: "filesystem" }, { src: "/(.*)", dest: "/api" }], crons: vercel.crons ?? [] }, null, 2),
+  JSON.stringify({ version: 3, routes: [{ handle: "filesystem" }, { src: "/(.*)", dest: "/api" }], }, null, 2),
 );
 console.log("Vercel build output siap:", out);

@@ -75,7 +75,7 @@ Tambahkan domain klinik ke project `aevia-web` di Vercel (Domains). Admin klinik
 
 ### API sebagai Vercel Function
 
-`apps/api/api/index.ts` membungkus Fastify (satu app per instance, tanpa migrasi saat start). Semua path dialihkan ke sana oleh `vercel.json`. Bila build Vercel gagal menelusuri paket workspace TypeScript, jalankan API sebagai proses Node biasa (`pnpm --filter @aevia/api dev` untuk dev; produksi: `tsx src/server.ts` dengan `DATABASE_URL` diisi) di Fly/Render/VM, dan sisanya tetap di Vercel.
+`apps/api/src/vercel.ts` membungkus Fastify (satu app per instance, tanpa migrasi saat start). Saat build, `scripts/build-vercel.mjs` membundelnya dengan esbuild ke `.vercel/output` (Build Output API v3); semua path diarahkan ke fungsi itu. Cron tetap didefinisikan di `vercel.json`.
 
 ## 3. Urutan deploy pertama
 

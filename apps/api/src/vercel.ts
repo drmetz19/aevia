@@ -1,6 +1,6 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { createDb } from "@aevia/db";
-import { buildApp } from "../src/app";
+import { buildApp } from "./app";
 
 /**
  * Vercel Function untuk seluruh API (semua path dialihkan ke sini lewat vercel.json).
