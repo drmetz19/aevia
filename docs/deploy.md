@@ -17,7 +17,7 @@ Arsitektur: 4 project Vercel dari satu repo (root directory berbeda) + 1 project
 2. Ambil connection string (Project Settings → Database):
    - **Migrasi dan seed**: koneksi langsung (`:5432`) atau Session pooler.
    - **Runtime API (Vercel)**: Transaction pooler (`:6543`). Aman untuk AEVIA karena `SET LOCAL ROLE` dan `set_config(…, true)` hanya berlaku di dalam transaksi.
-   - Tambahkan `?sslmode=require` pada URL.
+   - Tambahkan `?sslmode=require` pada URL (terenkripsi, tanpa verifikasi rantai sertifikat seperti libpq). Untuk verifikasi penuh, isi `DATABASE_SSL_CA` dengan sertifikat CA Supabase (PEM).
 3. **Role aplikasi `aevia_app`.** Migrasi 0001 membuatnya otomatis (`CREATE ROLE aevia_app NOLOGIN NOSUPERUSER NOBYPASSRLS` lalu `GRANT aevia_app TO CURRENT_USER`). Syarat: role yang dipakai di `DATABASE_URL` (di Supabase biasanya `postgres`) boleh `CREATE ROLE`. Bila ditolak, buat manual sekali dari SQL Editor lalu jalankan ulang migrasi:
    ```sql
    CREATE ROLE aevia_app NOLOGIN NOSUPERUSER NOBYPASSRLS;

@@ -33,6 +33,21 @@ export interface CreateDbOptions {
   dataDir?: string;
 }
 
+/**
+ * Opsi koneksi pg. `sslmode=require` mengikuti semantik libpq: terenkripsi tanpa verifikasi rantai sertifikat
+ * (pg ≥8 memperlakukannya sebagai verify-full sehingga sertifikat Supabase ditolak: SELF_SIGNED_CERT_IN_CHAIN).
+ * Untuk verifikasi penuh: isi DATABASE_SSL_CA dengan sertifikat CA Supabase (PEM).
+ */
+export function pgPoolConfig(url: string): pg.PoolConfig {
+  const u = new URL(url);
+  const mode = u.searchParams.get("sslmode");
+  if (!mode || mode === "disable") return { connectionString: url };
+  u.searchParams.delete("sslmode");
+  const ca = process.env.DATABASE_SSL_CA?.replace(/\\n/g, "\n");
+  const verify = Boolean(ca) || mode === "verify-full" || mode === "verify-ca";
+  return { connectionString: u.toString(), ssl: verify ? { rejectUnauthorized: true, ...(ca ? { ca } : {}) } : { rejectUnauthorized: false } };
+}
+
 const migrationsDir = fileURLToPath(new URL("../migrations/", import.meta.url));
 
 function loadMigrations(): { name: string; sql: string }[] {
@@ -72,7 +87,7 @@ export async function createDb(opts: CreateDbOptions = {}): Promise<Db> {
   }
 
   if (url) {
-    const pool = new pg.Pool({ connectionString: url });
+    const pool = new pg.Pool(pgPoolConfig(url));
     db = drizzlePg(pool, { schema }) as unknown as DrizzleDb;
     run = async (text) => void (await pool.query(text));
     close = async () => {
