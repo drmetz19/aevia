@@ -49,7 +49,7 @@ export default async function Beranda({ params, searchParams }: { params: Promis
       <ClinicHeader clinic={clinic} />
       <main className="mx-auto max-w-3xl px-4 py-8 sm:py-12">
         <p className="text-[13px] font-semibold uppercase tracking-[0.12em] text-copper-ink">Beranda</p>
-        <h1 className="mt-1 font-serif text-[28px] leading-[1.2] sm:text-4xl sm:leading-tight text-navy">Selamat datang di {clinic.name}</h1>
+        <h1 className="reveal mt-1 font-serif text-[28px] leading-[1.2] sm:text-4xl sm:leading-tight text-navy">Selamat datang di {clinic.name}</h1>
         <p className="mt-2 text-base text-body">Masuk sebagai {me.email}</p>
         {info === "terkirim" && (
           <p role="status" className="mt-4 rounded-md bg-sand px-4 py-3 text-base text-navy">
@@ -93,7 +93,8 @@ export default async function Beranda({ params, searchParams }: { params: Promis
           {steps.map((st, i) => (
             <li
               key={st.title}
-              className={`rounded-lg border bg-surface p-4 ${st.state === "todo" ? "border-line" : "border-copper"}`}
+              style={{ "--d": i + 1 } as React.CSSProperties}
+              className={`reveal card-lift rounded-lg border bg-surface p-4 ${st.state === "todo" ? "border-line" : "border-copper"} ${st.state === "done" ? "bg-gradient-to-br from-surface to-sand/60" : ""}`}
             >
               <span className="block text-[13px] font-medium text-body">Langkah {i + 1}</span>
               <span className="block text-base font-semibold text-navy">{st.title}</span>

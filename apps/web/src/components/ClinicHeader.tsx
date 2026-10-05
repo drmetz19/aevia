@@ -2,7 +2,7 @@ import type { PublicClinic } from "@aevia/core";
 
 export function ClinicHeader({ clinic }: { clinic: PublicClinic }) {
   return (
-    <header className="border-b border-line bg-surface">
+    <header className="glass-bar border-b border-line">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-2.5 sm:py-3 md:px-8">
         <div className="flex min-w-0 items-center gap-3">
           {clinic.logo_url ? (

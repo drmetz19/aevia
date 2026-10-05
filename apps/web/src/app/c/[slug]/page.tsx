@@ -35,17 +35,20 @@ export default async function ClinicLanding({ params }: Props) {
     <div style={brandStyle(clinic)} className="min-h-screen bg-ivory">
       <ClinicHeader clinic={clinic} />
       <main>
-        <section className="bg-deep text-white">
+        <section className="hero-atmos text-white">
+          <div aria-hidden="true" className="orb" />
           <div className="mx-auto max-w-6xl px-4 py-10 md:px-8 md:py-24">
-            <p className="text-[13px] font-semibold uppercase tracking-[0.12em] text-copper-light">{eyebrow}</p>
-            <h1 className="mt-4 max-w-3xl font-serif text-[32px] leading-[1.15] sm:text-4xl md:text-5xl md:leading-[56px]">
-              Pendampingan kesehatan yang tenang, terarah, dan personal.
+            <p className="reveal inline-flex items-center gap-3 text-[13px] font-semibold uppercase tracking-[0.14em] text-copper-light">
+              <span aria-hidden="true" className="h-px w-8 bg-copper-light" />{eyebrow}
+            </p>
+            <h1 style={{ "--d": 1 } as React.CSSProperties} className="reveal mt-5 max-w-3xl font-serif text-[32px] leading-[1.15] sm:text-4xl md:text-5xl md:leading-[56px]">
+              Pendampingan kesehatan yang <em className="text-gradient-copper">tenang</em>, terarah, dan personal.
             </h1>
-            <p className="mt-5 max-w-xl text-base text-white/80">
+            <p style={{ "--d": 2 } as React.CSSProperties} className="reveal mt-5 max-w-xl text-base text-white/80 sm:text-lg">
               Mulai dari memahami kondisi Anda hari ini, lalu berjalan bersama tim profesional {clinic.name} menuju
               rencana yang sesuai untuk Anda.
             </p>
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
+            <div style={{ "--d": 3 } as React.CSSProperties} className="reveal mt-9 flex flex-col gap-3 sm:flex-row sm:items-center">
             <Link
               href={`/c/${clinic.slug}/assessment`}
               className="inline-flex justify-center items-center gap-2 rounded-pill bg-copper w-full text-center px-6 py-3.5 text-base font-semibold sm:px-7 sm:text-lg sm:w-auto text-white shadow-soft"
@@ -69,14 +72,15 @@ export default async function ClinicLanding({ params }: Props) {
           </h2>
           <ol className="mt-8 grid gap-4 md:grid-cols-4">
             {steps.map(({ title, desc, Icon }, i) => (
-              <li key={title} className="rounded-lg border border-line bg-surface p-5 shadow-soft">
+              <li key={title} style={{ "--d": i + 2 } as React.CSSProperties} className="reveal card-lift relative overflow-hidden rounded-lg border border-line bg-surface p-5 shadow-soft">
+                <span aria-hidden="true" className="numeral pointer-events-none absolute -right-1 -top-2 text-[88px]">{i + 1}</span>
                 <div className="flex items-center gap-3">
-                  <span className="flex h-8 w-8 items-center justify-center rounded-pill bg-sand text-sm font-semibold text-navy">
-                    {i + 1}
+                  <span className="flex h-11 w-11 items-center justify-center rounded-pill bg-sand text-copper-ink">
+                    <Icon aria-hidden="true" size={22} strokeWidth={1.5} />
                   </span>
-                  <Icon aria-hidden="true" className="text-copper-ink" size={22} strokeWidth={1.5} />
+                  <span className="sr-only">Langkah {i + 1}</span>
                 </div>
-                <h3 className="mt-4 text-xl font-semibold leading-7 text-navy">{title}</h3>
+                <h3 className="mt-5 text-xl font-semibold leading-7 text-navy">{title}</h3>
                 <p className="mt-1 text-base text-body">{desc}</p>
               </li>
             ))}
@@ -90,7 +94,7 @@ export default async function ClinicLanding({ params }: Props) {
               alt={`Avatar ${assistant}, asisten AI`}
               width={88}
               height={88}
-              className="h-[88px] w-[88px] shrink-0 rounded-pill object-cover"
+              className="h-[88px] w-[88px] shrink-0 rounded-pill object-cover ring-4 ring-sand ring-offset-2 ring-offset-surface"
               unoptimized={Boolean(clinic.avatar_url)}
             />
             <div>
