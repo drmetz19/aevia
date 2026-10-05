@@ -2,7 +2,7 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": null,
   "installCommand": "cd ../.. && pnpm install --frozen-lockfile",
-  "buildCommand": "cd ../.. && pnpm turbo run typecheck --filter=@aevia/api && mkdir -p apps/api/public",
+  "buildCommand": "cd ../.. && pnpm turbo run typecheck --filter=@aevia/api && mkdir -p apps/api/public && echo AEVIA API > apps/api/public/robots.txt",
   "outputDirectory": "public",
   "rewrites": [
     {
