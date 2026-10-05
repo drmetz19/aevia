@@ -28,9 +28,9 @@ export default async function Konsultasi({ params, searchParams }: Props) {
   return (
     <div style={brandStyle(clinic)} className="min-h-screen bg-ivory">
       <ClinicHeader clinic={clinic} />
-      <main className="mx-auto max-w-5xl px-4 py-10">
+      <main className="mx-auto max-w-5xl px-4 py-8 sm:py-10">
         <p className="text-[13px] font-semibold uppercase tracking-[0.12em] text-copper-ink">Siapkan konsultasi</p>
-        <h1 className="mt-1 font-serif text-4xl leading-tight text-navy">Hal yang ingin dibahas bersama profesional</h1>
+        <h1 className="mt-1 font-serif text-[28px] leading-[1.2] sm:text-4xl sm:leading-tight text-navy">Hal yang ingin dibahas bersama profesional</h1>
 
         <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_320px]">
           <section aria-labelledby="form-prep">
@@ -54,7 +54,7 @@ export default async function Konsultasi({ params, searchParams }: Props) {
                 </Link>
               </p>
             ) : (
-              <form action={submitRequestAction} className="mt-6 space-y-5 rounded-lg border border-line bg-surface p-6 shadow-soft">
+              <form action={submitRequestAction} className="mt-6 space-y-5 rounded-lg border border-line bg-surface p-5 shadow-soft sm:p-6">
                 <input type="hidden" name="slug" value={slug} />
                 <input type="hidden" name="program_id" value={program.id} />
                 {pesan && (
@@ -78,14 +78,14 @@ export default async function Konsultasi({ params, searchParams }: Props) {
                   <label htmlFor="konteks" className={label}>Konteks dari assessment</label>
                   <textarea id="konteks" name="konteks_assessment" rows={3} maxLength={1200} defaultValue={prep.konteks_assessment} className={`mt-1 ${field}`} />
                 </div>
-                <button type="submit" className="w-full rounded-pill bg-copper px-7 py-3 text-lg font-semibold text-white shadow-soft sm:w-auto">
+                <button type="submit" className="rounded-pill bg-copper w-full text-center px-6 py-3.5 text-base font-semibold sm:px-7 sm:text-lg sm:w-auto text-white shadow-soft">
                   Kirim permintaan konsultasi
                 </button>
               </form>
             )}
           </section>
 
-          <aside aria-label="Program yang dipilih" className="h-fit rounded-lg border border-line bg-surface p-6 shadow-soft">
+          <aside aria-label="Program yang dipilih" className="h-fit rounded-lg border border-line bg-surface p-5 shadow-soft sm:p-6">
             <p className="text-[13px] font-semibold uppercase tracking-[0.12em] text-copper-ink">Program dipilih</p>
             <h2 className="mt-1 text-xl font-semibold leading-7 text-navy">{program.name}</h2>
             <p className="mt-2 text-base text-body">{program.summary}</p>

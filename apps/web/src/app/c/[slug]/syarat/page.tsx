@@ -10,8 +10,8 @@ export default async function Syarat({ params }: { params: Promise<{ slug: strin
   return (
     <div style={brandStyle(clinic)} className="min-h-screen bg-ivory">
       <ClinicHeader clinic={clinic} />
-      <main className="mx-auto max-w-2xl px-4 py-10">
-        <h1 className="font-serif text-4xl leading-tight text-navy">Syarat &amp; ketentuan</h1>
+      <main className="mx-auto max-w-2xl px-4 py-8 sm:py-10">
+        <h1 className="font-serif text-[28px] leading-[1.2] sm:text-4xl sm:leading-tight text-navy">Syarat &amp; ketentuan</h1>
         <p className="mt-3 text-base text-body">
           Layanan ini dijalankan oleh {clinic.name} dengan teknologi dari AEVIA. Berikut hal-hal yang perlu Anda ketahui.
         </p>

@@ -47,9 +47,9 @@ export default async function Beranda({ params, searchParams }: { params: Promis
   return (
     <div style={brandStyle(clinic)} className="min-h-screen bg-ivory">
       <ClinicHeader clinic={clinic} />
-      <main className="mx-auto max-w-3xl px-4 py-12">
+      <main className="mx-auto max-w-3xl px-4 py-8 sm:py-12">
         <p className="text-[13px] font-semibold uppercase tracking-[0.12em] text-copper-ink">Beranda</p>
-        <h1 className="mt-1 font-serif text-4xl leading-tight text-navy">Selamat datang di {clinic.name}</h1>
+        <h1 className="mt-1 font-serif text-[28px] leading-[1.2] sm:text-4xl sm:leading-tight text-navy">Selamat datang di {clinic.name}</h1>
         <p className="mt-2 text-base text-body">Masuk sebagai {me.email}</p>
         {info === "terkirim" && (
           <p role="status" className="mt-4 rounded-md bg-sand px-4 py-3 text-base text-navy">
@@ -77,11 +77,11 @@ export default async function Beranda({ params, searchParams }: { params: Promis
               {reminders.map((r) => (
                 <li key={r.id} className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-copper bg-surface p-4 shadow-soft">
                   <p className="text-base text-navy">{r.message}</p>
-                  <form action={markReminderReadAction} className="flex items-center gap-3">
+                  <form action={markReminderReadAction} className="w-full sm:w-auto">
                     <input type="hidden" name="slug" value={clinic.slug} />
                     <input type="hidden" name="reminder_id" value={r.id} />
                     <input type="hidden" name="next" value={target[r.kind]} />
-                    <button type="submit" className="rounded-pill bg-navy px-5 py-2 text-base font-semibold text-white">{REMINDER_CTA[r.kind]}</button>
+                    <button type="submit" className="w-full rounded-pill bg-navy px-5 py-3 text-base font-semibold text-white sm:w-auto">{REMINDER_CTA[r.kind]}</button>
                   </form>
                 </li>
               ))}
@@ -89,7 +89,7 @@ export default async function Beranda({ params, searchParams }: { params: Promis
           </section>
         )}
 
-        <ol className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4" aria-label="Perjalanan Anda">
+        <ol className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4" aria-label="Perjalanan Anda">
           {steps.map((st, i) => (
             <li
               key={st.title}
@@ -102,35 +102,35 @@ export default async function Beranda({ params, searchParams }: { params: Promis
           ))}
         </ol>
 
-        <div className="mt-8 flex flex-wrap gap-3">
+        <div className="mt-8 grid gap-3 sm:flex sm:flex-wrap">
           <Link
             href={`/c/${clinic.slug}/assessment`}
-            className="inline-flex items-center gap-2 rounded-pill bg-copper px-7 py-3 text-lg font-semibold text-white shadow-soft"
+            className="inline-flex justify-center items-center gap-2 rounded-pill bg-copper w-full text-center px-6 py-3.5 text-base font-semibold sm:px-7 sm:text-lg sm:w-auto text-white shadow-soft"
           >
             {assessment?.status === "completed" ? "Ulangi assessment" : "Mulai assessment"} <ArrowRight aria-hidden="true" size={18} strokeWidth={1.5} />
           </Link>
           {plan && (
-            <Link href={`/c/${clinic.slug}/rencana`} className="inline-flex items-center rounded-pill bg-navy px-7 py-3 text-lg font-semibold text-white">
+            <Link href={`/c/${clinic.slug}/rencana`} className="inline-flex justify-center items-center rounded-pill bg-navy w-full text-center px-6 py-3.5 text-base font-semibold sm:px-7 sm:text-lg sm:w-auto text-white">
               Lihat rencana
             </Link>
           )}
           <>
-              <Link href={`/c/${clinic.slug}/checkin`} className="inline-flex items-center rounded-pill border border-navy px-7 py-3 text-lg font-semibold text-navy">
+              <Link href={`/c/${clinic.slug}/checkin`} className="inline-flex justify-center items-center rounded-pill border border-navy w-full text-center px-6 py-3.5 text-base font-semibold sm:px-7 sm:text-lg sm:w-auto text-navy">
                 Mulai check-in
               </Link>
-              <Link href={`/c/${clinic.slug}/progres`} className="inline-flex items-center rounded-pill border border-navy px-7 py-3 text-lg font-semibold text-navy">
+              <Link href={`/c/${clinic.slug}/progres`} className="inline-flex justify-center items-center rounded-pill border border-navy w-full text-center px-6 py-3.5 text-base font-semibold sm:px-7 sm:text-lg sm:w-auto text-navy">
                 Cek progres
               </Link>
           </>
           <Link
             href={`/c/${clinic.slug}/program`}
-            className="inline-flex items-center rounded-pill border border-navy px-7 py-3 text-lg font-semibold text-navy"
+            className="inline-flex justify-center items-center rounded-pill border border-navy w-full text-center px-6 py-3.5 text-base font-semibold sm:px-7 sm:text-lg sm:w-auto text-navy"
           >
             Siapkan konsultasi
           </Link>
         </div>
 
-        <section className="mt-10 rounded-lg border border-line bg-surface p-6 shadow-soft" aria-labelledby="pers">
+        <section className="mt-10 rounded-lg border border-line bg-surface p-5 shadow-soft sm:p-6" aria-labelledby="pers">
           <h2 id="pers" className="text-xl font-semibold leading-7 text-navy">
             Persetujuan data
           </h2>
@@ -142,7 +142,7 @@ export default async function Beranda({ params, searchParams }: { params: Promis
 
         <form action={logout} className="mt-8">
           <input type="hidden" name="slug" value={clinic.slug} />
-          <button type="submit" className="rounded-pill border border-navy px-6 py-3 text-base font-semibold text-navy">
+          <button type="submit" className="w-full rounded-pill border border-navy px-6 py-3.5 text-base font-semibold text-navy sm:w-auto">
             Keluar
           </button>
         </form>

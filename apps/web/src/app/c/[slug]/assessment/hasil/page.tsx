@@ -25,12 +25,12 @@ export default async function Hasil({ params }: { params: Promise<{ slug: string
   return (
     <div style={brandStyle(clinic)} className="min-h-screen bg-ivory">
       <ClinicHeader clinic={clinic} />
-      <main className="mx-auto max-w-3xl px-4 py-10">
+      <main className="mx-auto max-w-3xl px-4 py-8 sm:py-10">
         <div className="mb-6 overflow-hidden rounded-lg border border-line bg-surface">
           <SoviaHeader clinic={clinic} />
         </div>
         <p className="text-[13px] font-semibold uppercase tracking-[0.12em] text-copper-ink">Hasil assessment</p>
-        <h1 className="mt-1 font-serif text-4xl leading-tight text-navy">Gambaran awal kondisi Anda</h1>
+        <h1 className="mt-1 font-serif text-[28px] leading-[1.2] sm:text-4xl sm:leading-tight text-navy">Gambaran awal kondisi Anda</h1>
         <p className="mt-2 text-base text-body">
           {COMPLETION_LINE}
         </p>
@@ -50,7 +50,7 @@ export default async function Hasil({ params }: { params: Promise<{ slug: string
           </p>
         )}
 
-        <section aria-labelledby="prioritas" className="mt-8 rounded-lg border border-line bg-surface p-6 shadow-soft">
+        <section aria-labelledby="prioritas" className="mt-8 rounded-lg border border-line bg-surface p-5 shadow-soft sm:p-6">
           <h2 id="prioritas" className="text-xl font-semibold leading-7 text-navy">
             Tiga area yang layak dibahas lebih dulu
           </h2>
@@ -80,7 +80,7 @@ export default async function Hasil({ params }: { params: Promise<{ slug: string
         </ul>
 
         <div className="mt-8 flex flex-wrap items-center gap-4">
-          <Link href={`/c/${slug}/program`} className="inline-flex rounded-pill bg-copper px-7 py-3 text-lg font-semibold text-white shadow-soft">
+          <Link href={`/c/${slug}/program`} className="inline-flex justify-center rounded-pill bg-copper w-full text-center px-6 py-3.5 text-base font-semibold sm:px-7 sm:text-lg sm:w-auto text-white shadow-soft">
             Siapkan konsultasi
           </Link>
           <Link href={`/c/${slug}/beranda`} className="text-base font-semibold text-navy underline underline-offset-4">

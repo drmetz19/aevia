@@ -36,33 +36,35 @@ export default async function ClinicLanding({ params }: Props) {
       <ClinicHeader clinic={clinic} />
       <main>
         <section className="bg-deep text-white">
-          <div className="mx-auto max-w-6xl px-4 py-14 md:px-8 md:py-24">
+          <div className="mx-auto max-w-6xl px-4 py-10 md:px-8 md:py-24">
             <p className="text-[13px] font-semibold uppercase tracking-[0.12em] text-copper-light">{eyebrow}</p>
-            <h1 className="mt-4 max-w-3xl font-serif text-4xl leading-[1.15] md:text-5xl md:leading-[56px]">
+            <h1 className="mt-4 max-w-3xl font-serif text-[32px] leading-[1.15] sm:text-4xl md:text-5xl md:leading-[56px]">
               Pendampingan kesehatan yang tenang, terarah, dan personal.
             </h1>
             <p className="mt-5 max-w-xl text-base text-white/80">
               Mulai dari memahami kondisi Anda hari ini, lalu berjalan bersama tim profesional {clinic.name} menuju
               rencana yang sesuai untuk Anda.
             </p>
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
             <Link
               href={`/c/${clinic.slug}/assessment`}
-              className="mt-8 inline-flex items-center gap-2 rounded-pill bg-copper px-7 py-3 text-lg font-semibold text-white shadow-soft"
+              className="inline-flex justify-center items-center gap-2 rounded-pill bg-copper w-full text-center px-6 py-3.5 text-base font-semibold sm:px-7 sm:text-lg sm:w-auto text-white shadow-soft"
             >
               Mulai assessment <ArrowRight aria-hidden="true" size={18} strokeWidth={1.5} />
             </Link>
             <Link
               href={`/c/${clinic.slug}/masuk`}
-              className="ml-3 mt-8 inline-flex items-center rounded-pill border border-white/60 px-6 py-3 text-base font-semibold text-white"
+              className="inline-flex w-full items-center justify-center rounded-pill border border-white/60 px-6 py-3.5 text-base font-semibold text-white sm:w-auto"
             >
               Masuk
             </Link>
+            </div>
           </div>
         </section>
 
-        <section aria-labelledby="alur" className="mx-auto max-w-6xl px-4 py-12 md:px-8 md:py-16">
+        <section aria-labelledby="alur" className="mx-auto max-w-6xl px-4 py-10 md:px-8 md:py-16">
           <p className="text-[13px] font-semibold uppercase tracking-[0.12em] text-copper-ink">Alur pendampingan</p>
-          <h2 id="alur" className="mt-2 text-[28px] font-semibold leading-9 text-navy">
+          <h2 id="alur" className="mt-2 text-2xl font-semibold leading-8 sm:text-[28px] sm:leading-9 text-navy">
             Empat langkah, satu perjalanan
           </h2>
           <ol className="mt-8 grid gap-4 md:grid-cols-4">
@@ -82,7 +84,7 @@ export default async function ClinicLanding({ params }: Props) {
         </section>
 
         <section aria-labelledby="sovia" className="mx-auto max-w-6xl px-4 pb-16 md:px-8">
-          <div className="flex flex-col gap-5 rounded-lg border border-line bg-surface p-6 shadow-soft md:flex-row md:items-center">
+          <div className="flex flex-col gap-5 rounded-lg border border-line bg-surface p-5 shadow-soft sm:p-6 md:flex-row md:items-center">
             <Image
               src={clinic.avatar_url ?? "/sovia-avatar.png"}
               alt={`Avatar ${assistant}, asisten AI`}

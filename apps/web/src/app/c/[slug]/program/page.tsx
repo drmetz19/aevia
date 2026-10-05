@@ -14,18 +14,18 @@ export default async function Program({ params }: { params: Promise<{ slug: stri
   return (
     <div style={brandStyle(clinic)} className="min-h-screen bg-ivory">
       <ClinicHeader clinic={clinic} />
-      <main className="mx-auto max-w-5xl px-4 py-10">
+      <main className="mx-auto max-w-5xl px-4 py-8 sm:py-10">
         <p className="text-[13px] font-semibold uppercase tracking-[0.12em] text-copper-ink">Program</p>
-        <h1 className="mt-1 font-serif text-4xl leading-tight text-navy">Pilih pendampingan yang sesuai</h1>
+        <h1 className="mt-1 font-serif text-[28px] leading-[1.2] sm:text-4xl sm:leading-tight text-navy">Pilih pendampingan yang sesuai</h1>
         <p className="mt-2 max-w-xl text-base text-body">
           Biaya ditetapkan oleh {clinic.name}. Anda baru mengajukan permintaan; tim klinik akan meninjau dan menghubungi Anda.
         </p>
         {programs.length === 0 ? (
-          <p className="mt-8 rounded-lg border border-line bg-surface p-6 text-base text-body">Program akan segera tersedia di klinik ini.</p>
+          <p className="mt-8 rounded-lg border border-line bg-surface p-5 text-base sm:p-6 text-body">Program akan segera tersedia di klinik ini.</p>
         ) : (
           <ul className="mt-8 grid gap-4 md:grid-cols-3">
             {programs.map((p) => (
-              <li key={p.id} className="flex flex-col rounded-lg border border-line bg-surface p-6 shadow-soft">
+              <li key={p.id} className="flex flex-col rounded-lg border border-line bg-surface p-5 shadow-soft sm:p-6">
                 <p className="text-[13px] font-semibold uppercase tracking-[0.12em] text-copper-ink">
                   {p.duration_weeks ? `${p.duration_weeks} minggu` : "Konsultasi"}
                 </p>

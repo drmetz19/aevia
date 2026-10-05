@@ -16,7 +16,7 @@ import { SoviaAvatar } from "@/components/SoviaHeader";
 import { brandStyle, fetchClinic } from "@/lib/api";
 import { getCurrentPlan, requirePatient } from "@/lib/session";
 
-const card = "rounded-lg border border-line bg-surface p-6 shadow-soft";
+const card = "rounded-lg border border-line bg-surface p-5 shadow-soft sm:p-6";
 const h2 = "text-xl font-semibold leading-7 text-navy";
 const eyebrow = "text-[13px] font-semibold uppercase tracking-[0.12em] text-copper-ink";
 
@@ -39,9 +39,9 @@ export default async function Rencana({ params }: { params: Promise<{ slug: stri
   return (
     <div style={brandStyle(clinic)} className="min-h-screen bg-ivory">
       <ClinicHeader clinic={clinic} />
-      <main className="mx-auto max-w-3xl px-4 py-10">
+      <main className="mx-auto max-w-3xl px-4 py-8 sm:py-10">
         <p className={eyebrow}>Rencana personal</p>
-        <h1 className="mt-1 font-serif text-4xl leading-tight text-navy">Rencana Anda</h1>
+        <h1 className="mt-1 font-serif text-[28px] leading-[1.2] sm:text-4xl sm:leading-tight text-navy">Rencana Anda</h1>
 
         {!plan ? (
           <div className={`mt-6 ${card}`}>

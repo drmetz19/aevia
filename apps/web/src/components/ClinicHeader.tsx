@@ -3,7 +3,7 @@ import type { PublicClinic } from "@aevia/core";
 export function ClinicHeader({ clinic }: { clinic: PublicClinic }) {
   return (
     <header className="border-b border-line bg-surface">
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3 md:px-8">
+      <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-2.5 sm:py-3 md:px-8">
         <div className="flex min-w-0 items-center gap-3">
           {clinic.logo_url ? (
             // eslint-disable-next-line @next/next/no-img-element
@@ -22,14 +22,14 @@ export function ClinicHeader({ clinic }: { clinic: PublicClinic }) {
           </div>
         </div>
         {clinic.brand_mode === "cobrand" && (
-          <p className="flex shrink-0 items-center gap-2 text-[13px] font-medium text-slate">
+          <p aria-label="powered by AEVIA" className="flex shrink-0 items-center gap-2 text-[13px] font-medium text-slate">
             <span
               aria-hidden="true"
               className="flex h-6 w-6 items-center justify-center rounded-pill bg-navy font-serif text-xs text-white"
             >
               A
             </span>
-            <span>powered by AEVIA</span>
+            <span className="hidden sm:inline">powered by AEVIA</span>
           </p>
         )}
       </div>
