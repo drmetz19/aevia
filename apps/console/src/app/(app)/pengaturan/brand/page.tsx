@@ -73,7 +73,7 @@ export default async function Brand() {
         </p>
         <p className="mt-2 text-base text-body">Teks asisten dari AI hanya merapikan bahasa (konteks persiapan dan penjelasan rencana), selalu melewati pagar pengaman, dan kembali ke teks standar bila ada kendala. Isi rencana, resep, dan catatan klinis tidak pernah ditulis oleh AI.</p>
         {usage && (
-          <dl className="mt-3 grid gap-3 sm:grid-cols-3" aria-label="Pemakaian 30 hari terakhir">
+          <dl className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-3" aria-label="Pemakaian 30 hari terakhir">
             <div><dt className="text-[13px] font-medium text-body">Panggilan (30 hari)</dt><dd className="font-serif text-3xl text-navy">{usage.calls_30d}</dd></div>
             <div><dt className="text-[13px] font-medium text-body">Kembali ke teks standar</dt><dd className="font-serif text-3xl text-navy">{usage.fallbacks_30d}</dd></div>
             <div><dt className="text-[13px] font-medium text-body">Token masuk / keluar</dt><dd className="font-serif text-3xl text-navy">{usage.input_tokens_30d} / {usage.output_tokens_30d}</dd></div>

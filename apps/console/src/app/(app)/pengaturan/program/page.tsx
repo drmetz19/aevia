@@ -12,7 +12,7 @@ function ProgramFields({ p }: { p?: StaffProgram }) {
       <input id={`name-${p?.id ?? "new"}`} name="name" defaultValue={p?.name} required minLength={3} className={inputCls} />
       <label className={labelCls} htmlFor={`sum-${p?.id ?? "new"}`}>Ringkasan</label>
       <textarea id={`sum-${p?.id ?? "new"}`} name="summary" defaultValue={p?.summary} rows={2} maxLength={400} className={inputCls} />
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
           <label className={labelCls} htmlFor={`dur-${p?.id ?? "new"}`}>Durasi (minggu, boleh kosong)</label>
           <input id={`dur-${p?.id ?? "new"}`} name="duration_weeks" type="number" min={1} defaultValue={p?.duration_weeks ?? ""} className={inputCls} />

@@ -56,7 +56,7 @@ export default async function Pasien({ params, searchParams }: Props) {
           ) : prog.progress && prog.progress.checkin_count > 0 ? (
             <>
               <p className="mb-4 text-base text-body">{prog.progress.checkin_count} check-in · terakhir {fmtDate(prog.progress.last_checkin_at!)}{prog.progress.general ? " · metrik umum (belum ada rencana ditandatangani)" : ""}</p>
-              <div className="grid gap-4 md:grid-cols-2">{prog.progress.metrics.map((m) => <ProgressCard key={m.key} metric={m} />)}</div>
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">{prog.progress.metrics.map((m) => <ProgressCard key={m.key} metric={m} />)}</div>
             </>
           ) : (
             <p className="rounded-lg border border-line bg-white p-6 text-base text-body shadow-soft">{PROGRESS_EMPTY}</p>
@@ -64,7 +64,7 @@ export default async function Pasien({ params, searchParams }: Props) {
         </section>
       )}
 
-      {!showProgress && <div className="mt-8 grid gap-6 lg:grid-cols-2">
+      {!showProgress && <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
         <section aria-labelledby="as" className="rounded-lg border border-line bg-white p-6 shadow-soft">
           <h2 id="as" className="text-xl font-semibold leading-7 text-navy">Assessment</h2>
           {!d.assessment_visible ? (
@@ -135,7 +135,7 @@ export default async function Pasien({ params, searchParams }: Props) {
           ) : (
             <>
               <p className="mt-1 text-[13px] font-medium text-body">Dicatat {fmtDate(d.external_context.beautycode.recorded_at)}</p>
-              <dl className="mt-3 grid gap-4 sm:grid-cols-3">
+              <dl className="mt-3 grid grid-cols-1 gap-4 sm:grid-cols-3">
                 <div><dt className="text-[13px] font-medium text-body">Skin barrier</dt><dd className="font-serif text-3xl text-navy">{d.external_context.beautycode.skin_barrier ?? "-"}</dd></div>
                 <div><dt className="text-[13px] font-medium text-body">Tidur (jam)</dt><dd className="font-serif text-3xl text-navy">{d.external_context.beautycode.sleep_hours !== null ? String(d.external_context.beautycode.sleep_hours).replace(".", ",") : "-"}</dd></div>
                 <div>

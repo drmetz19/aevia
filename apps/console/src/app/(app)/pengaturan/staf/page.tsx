@@ -16,7 +16,7 @@ export default async function Staf() {
       <div className="mt-6" />
       <SettingsTabs current="/pengaturan/staf" />
       <div className="overflow-x-auto rounded-lg border border-line bg-white shadow-soft">
-        <table className="w-full min-w-[560px] text-left text-base">
+        <table className="table-stack w-full min-w-[560px] text-left text-base">
           <caption className="sr-only">Daftar staf klinik</caption>
           <thead className="border-b border-line text-[13px] font-medium text-body">
             <tr>
@@ -30,9 +30,9 @@ export default async function Staf() {
             {members.map((m) => (
               <tr key={m.id} className="border-b border-line last:border-0">
                 <td className="px-4 py-3"><span className="font-semibold text-navy">{m.name}</span><br /><span className="text-[13px] font-medium text-body">{m.email}</span></td>
-                <td className="px-4 py-3 text-body">{roleLabel[m.role]}</td>
-                <td className="px-4 py-3 text-body">{m.active ? "Aktif" : "Nonaktif"}</td>
-                <td className="px-4 py-3">
+                <td data-label="Peran" className="px-4 py-3 text-body">{roleLabel[m.role]}</td>
+                <td data-label="Status" className="px-4 py-3 text-body">{m.active ? "Aktif" : "Nonaktif"}</td>
+                <td data-label="Akses" className="px-4 py-3">
                   <ActionForm action={setStaffActive} className="space-y-2">
                                           <>
                         <input type="hidden" name="id" value={m.id} />

@@ -27,7 +27,7 @@ export function BrandForm({ b }: { b: BrandSettings }) {
             ))}
           </fieldset>
 
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             {(Object.keys(colorLabels) as K[]).map((k) => (
               <div key={k}>
                 <label htmlFor={k} className={labelCls}>{colorLabels[k]}</label>
@@ -51,7 +51,7 @@ export function BrandForm({ b }: { b: BrandSettings }) {
               </ul>
             )}
             {v.checks.length > 0 && (
-              <ul className="mt-3 grid gap-1 text-[13px] font-medium text-body sm:grid-cols-2">
+              <ul className="mt-3 grid grid-cols-1 gap-1 text-[13px] font-medium text-body sm:grid-cols-2">
                 {v.checks.map((k) => (
                   <li key={k.id}>
                     {k.label}: {String(k.ratio).replace(".", ",")}:1 (minimal {String(k.min).replace(".", ",")}:1)

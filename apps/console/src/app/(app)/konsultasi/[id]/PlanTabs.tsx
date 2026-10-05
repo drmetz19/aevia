@@ -46,7 +46,7 @@ export async function RxTab({ id }: { id: string }) {
         {rows.map((r, i) => (
           <fieldset key={i} className="rounded-md border border-line p-4">
             <legend className="px-2 text-[13px] font-medium text-body">Item {i + 1}</legend>
-            <div className="grid gap-3 sm:grid-cols-3">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
               {fields.map(([k, l]) => (
                 <div key={k} className={k === "name" || k === "notes" ? "sm:col-span-3" : ""}>
                   <label htmlFor={`i${i}-${k}`} className={lab}>{l}</label>
@@ -125,7 +125,7 @@ export async function PlanTab({ id }: { id: string }) {
           <legend className={lab}>{PLAN_HEADINGS.monitor} (metrik dan target)</legend>
           <div className="mt-2 space-y-3">
             {metrics.map((m, i) => (
-              <div key={i} className="grid gap-3 rounded-md border border-line p-3 sm:grid-cols-5">
+              <div key={i} className="grid grid-cols-1 gap-3 rounded-md border border-line p-3 sm:grid-cols-5">
                 <div className="sm:col-span-2"><label htmlFor={`m${i}-label`} className={lab}>Metrik {i + 1}</label><input id={`m${i}-label`} name={`m${i}-label`} defaultValue={m.label} maxLength={80} className={input} /></div>
                 <div><label htmlFor={`m${i}-unit`} className={lab}>Satuan</label><input id={`m${i}-unit`} name={`m${i}-unit`} defaultValue={m.unit} maxLength={20} className={input} /></div>
                 <div><label htmlFor={`m${i}-baseline`} className={lab}>Saat ini</label><input id={`m${i}-baseline`} name={`m${i}-baseline`} inputMode="decimal" defaultValue={m.baseline ?? ""} className={input} /></div>

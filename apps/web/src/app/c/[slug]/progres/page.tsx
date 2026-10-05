@@ -30,7 +30,7 @@ export default async function Progres({ params, searchParams }: { params: Promis
         ) : (
           <>
             {progress.general && <p className="mt-2 text-base text-body">Ini gambaran umum. Setelah rencana personal Anda ditandatangani, progres akan mengikuti hal yang perlu dipantau di sana.</p>}
-            <div className="mt-6 grid gap-4 sm:grid-cols-2">
+            <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
               {progress.metrics.map((m) => <ProgressCard key={m.key} metric={m} />)}
             </div>
             <div className="mt-8 flex flex-wrap items-center gap-4">

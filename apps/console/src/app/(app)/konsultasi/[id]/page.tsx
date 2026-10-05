@@ -105,8 +105,8 @@ export default async function Konsultasi({ params, searchParams }: Props) {
       <p className="mt-4 text-[13px] font-semibold uppercase tracking-[0.12em] text-copper-ink">Konsultasi</p>
       <h1 className="mt-1 font-serif text-4xl text-navy">{k.program_name}</h1>
 
-      <div className="mt-6 grid gap-6 lg:grid-cols-[320px_1fr]">
-        <aside aria-label="Ringkasan pasien" className="space-y-4">
+      <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-[320px_minmax(0,1fr)]">
+        <aside aria-label="Ringkasan pasien" className="order-last space-y-4 lg:order-none">
           <section className="rounded-lg border border-line bg-white p-5 shadow-soft">
             <p className="text-[13px] font-semibold uppercase tracking-[0.12em] text-copper-ink">Pasien</p>
             <p className="mt-1 text-base font-semibold text-navy">{k.patient.email}</p>
@@ -178,7 +178,7 @@ export default async function Konsultasi({ params, searchParams }: Props) {
                 {skin.parameters.map((p) => {
                   const v = skin.scores[p.key];
                   return (
-                    <li key={p.key} className="rounded-lg border border-line bg-white p-4 shadow-soft">
+                    <li key={p.key} className="min-w-0 rounded-lg border border-line bg-white p-4 shadow-soft">
                       <p className="text-[13px] font-medium text-body">{p.label}</p>
                       <p className="mt-1 font-serif text-4xl text-navy">{v ?? "–"}</p>
                       <div aria-hidden="true" className="mt-2 h-1.5 overflow-hidden rounded-pill bg-sand"><div className="h-full bg-copper" style={{ width: `${v ?? 0}%` }} /></div>
@@ -191,7 +191,7 @@ export default async function Konsultasi({ params, searchParams }: Props) {
                 <input type="hidden" name="consultation_id" value={id} />
                 <h2 className="text-xl font-semibold leading-7 text-navy">Skor per parameter (0–100)</h2>
                 <p className="text-base text-body">Skor diisi manual oleh profesional berdasarkan pemeriksaan.</p>
-                <div className="grid gap-4 sm:grid-cols-2">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   {skin.parameters.map((p) => (
                     <div key={p.key}>
                       <label htmlFor={`s-${p.key}`} className="block text-[13px] font-medium text-navy">{p.label}</label>

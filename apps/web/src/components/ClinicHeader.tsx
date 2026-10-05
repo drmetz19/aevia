@@ -7,7 +7,7 @@ export function ClinicHeader({ clinic }: { clinic: PublicClinic }) {
         <div className="flex min-w-0 items-center gap-3">
           {clinic.logo_url ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={clinic.logo_url} alt={`Logo ${clinic.name}`} className="h-10 w-10 rounded-pill object-cover" />
+            <img src={clinic.logo_url} alt={`Logo ${clinic.name}`} className="h-10 w-10 shrink-0 rounded-pill object-cover" />
           ) : (
             <span
               aria-hidden="true"
@@ -18,7 +18,7 @@ export function ClinicHeader({ clinic }: { clinic: PublicClinic }) {
           )}
           <div className="min-w-0 leading-tight">
             <p className="truncate font-sans text-base font-semibold text-navy">{clinic.name}</p>
-            {clinic.tagline && <p className="truncate text-[13px] font-medium text-slate">{clinic.tagline}</p>}
+            {clinic.tagline && <p className="line-clamp-2 text-[13px] font-medium text-slate sm:truncate">{clinic.tagline}</p>}
           </div>
         </div>
         {clinic.brand_mode === "cobrand" && (
@@ -29,7 +29,7 @@ export function ClinicHeader({ clinic }: { clinic: PublicClinic }) {
             >
               A
             </span>
-            <span>powered by AEVIA</span>
+            <span className="max-w-20 leading-tight sm:max-w-none">powered by AEVIA</span>
           </p>
         )}
       </div>

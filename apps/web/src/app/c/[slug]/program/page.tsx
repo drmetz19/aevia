@@ -23,7 +23,7 @@ export default async function Program({ params }: { params: Promise<{ slug: stri
         {programs.length === 0 ? (
           <p className="mt-8 rounded-lg border border-line bg-surface p-6 text-base text-body">Program akan segera tersedia di klinik ini.</p>
         ) : (
-          <ul className="mt-8 grid gap-4 md:grid-cols-3">
+          <ul className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-3">
             {programs.map((p) => (
               <li key={p.id} className="flex flex-col rounded-lg border border-line bg-surface p-6 shadow-soft">
                 <p className="text-[13px] font-semibold uppercase tracking-[0.12em] text-copper-ink">

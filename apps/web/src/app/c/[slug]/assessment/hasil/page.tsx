@@ -61,7 +61,7 @@ export default async function Hasil({ params }: { params: Promise<{ slug: string
           </ol>
         </section>
 
-        <ul className="mt-6 grid gap-4 sm:grid-cols-2">
+        <ul className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
           {r.areas.map((a) => {
             const { Icon, cls } = levelIcon[a.level];
             return (

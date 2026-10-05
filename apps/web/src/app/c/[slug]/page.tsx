@@ -65,7 +65,7 @@ export default async function ClinicLanding({ params }: Props) {
           <h2 id="alur" className="mt-2 text-[28px] font-semibold leading-9 text-navy">
             Empat langkah, satu perjalanan
           </h2>
-          <ol className="mt-8 grid gap-4 md:grid-cols-4">
+          <ol className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-4">
             {steps.map(({ title, desc, Icon }, i) => (
               <li key={title} className="rounded-lg border border-line bg-surface p-5 shadow-soft">
                 <div className="flex items-center gap-3">

@@ -32,7 +32,7 @@ export default async function Konsultasi({ params, searchParams }: Props) {
         <p className="text-[13px] font-semibold uppercase tracking-[0.12em] text-copper-ink">Siapkan konsultasi</p>
         <h1 className="mt-1 font-serif text-4xl leading-tight text-navy">Hal yang ingin dibahas bersama profesional</h1>
 
-        <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_320px]">
+        <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
           <section aria-labelledby="form-prep">
             <h2 id="form-prep" className="sr-only">Formulir persiapan</h2>
             <div className="flex gap-3 rounded-lg bg-sand p-4 text-base text-navy">

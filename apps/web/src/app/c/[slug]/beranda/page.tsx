@@ -89,7 +89,7 @@ export default async function Beranda({ params, searchParams }: { params: Promis
           </section>
         )}
 
-        <ol className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4" aria-label="Perjalanan Anda">
+        <ol className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4" aria-label="Perjalanan Anda">
           {steps.map((st, i) => (
             <li
               key={st.title}

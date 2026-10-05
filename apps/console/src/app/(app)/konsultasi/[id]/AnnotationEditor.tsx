@@ -118,7 +118,7 @@ export function AnnotationEditor({ photoId, src, angle, initial }: { photoId: st
 
   return (
     <div className="space-y-4">
-      <div className="grid gap-4 md:grid-cols-[3fr_2fr]">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-[3fr_2fr]">
         <figure>
           <div ref={surface} onPointerDown={down} onPointerMove={move} onPointerUp={up} className={`relative cursor-crosshair select-none overflow-hidden rounded-lg bg-sand ${drawMode ? "touch-none" : "[@media(pointer:fine)]:touch-none"}`}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -172,7 +172,7 @@ export function AnnotationEditor({ photoId, src, angle, initial }: { photoId: st
                 </label>
               ))}
             </div>
-            <div className="grid gap-3 sm:grid-cols-2">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <label className="text-[13px] font-medium text-navy">
                 Label
                 <input ref={labelRef} value={draft.label} maxLength={80} onChange={(e) => setDraft({ ...draft, label: e.target.value })} className={field} />

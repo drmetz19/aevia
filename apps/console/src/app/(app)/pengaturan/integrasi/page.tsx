@@ -12,7 +12,7 @@ function ScopeChecks({ name }: { name: string }) {
     <fieldset className="space-y-2">
       <legend className={labelCls}>Cakupan akses</legend>
       {SCOPES.map((s) => (
-        <label key={s} className="flex items-start gap-3 text-base text-body">
+        <label key={s} className="flex min-h-11 items-start gap-3 py-1 text-base text-body">
           <input type="checkbox" name={name} value={s} className="mt-1 h-5 w-5" />
           <span>
             <code className="text-navy">{s}</code> — {SCOPE_LABELS[s]}
@@ -137,7 +137,7 @@ export default async function Integrasi() {
               <p className="text-base text-body">Belum ada pengiriman.</p>
             ) : (
               <div className="overflow-x-auto">
-                <table className="mt-2 w-full min-w-[520px] text-left text-base">
+                <table className="table-stack table-stack-flush mt-2 w-full min-w-[520px] text-left text-base">
                   <caption className="sr-only">Log pengiriman webhook</caption>
                   <thead className="text-[13px] font-medium text-body">
                     <tr>
@@ -150,10 +150,10 @@ export default async function Integrasi() {
                   <tbody>
                     {(deliveries.get(w.id) ?? []).map((d) => (
                       <tr key={d.id} className="border-t border-line">
-                        <td className="py-2 pr-3 text-body">{fmtDate(d.created_at)}</td>
-                        <td className="py-2 pr-3 text-body">{d.event_type}</td>
-                        <td className="py-2 pr-3 text-body">{deliveryStatus[d.status]}{d.last_status_code ? ` (HTTP ${d.last_status_code})` : ""}</td>
-                        <td className="py-2 text-body">{d.attempts}</td>
+                        <td data-label="Waktu" className="py-2 pr-3 text-body">{fmtDate(d.created_at)}</td>
+                        <td data-label="Kejadian" className="py-2 pr-3 text-body">{d.event_type}</td>
+                        <td data-label="Status" className="py-2 pr-3 text-body">{deliveryStatus[d.status]}{d.last_status_code ? ` (HTTP ${d.last_status_code})` : ""}</td>
+                        <td data-label="Percobaan" className="py-2 text-body">{d.attempts}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -168,7 +168,7 @@ export default async function Integrasi() {
           <fieldset className="space-y-2">
             <legend className={labelCls}>Kejadian</legend>
             {o.events.map((e) => (
-              <label key={e} className="flex items-center gap-3 text-base text-body">
+              <label key={e} className="flex min-h-11 items-center gap-3 text-base text-body">
                 <input type="checkbox" name="events" value={e} className="h-5 w-5" /> <code>{e}</code>
               </label>
             ))}
@@ -190,9 +190,9 @@ export default async function Integrasi() {
           <label htmlFor="ksurl" className={labelCls}>Alamat dasar KlinikSistem (https)</label>
           <input id="ksurl" name="base_url" type="url" required pattern="https://.*" defaultValue={ks?.base_url ?? ""} placeholder="https://kliniksistem.klinikanda.id" className={inputCls} />
           <p className="text-[13px] font-medium text-body">Booking dikirim ke <code>/aevia/bookings</code> dengan tanda tangan <code>X-Aevia-Signature</code>.</p>
-          <label className="flex items-center gap-3 text-base text-body"><input type="checkbox" name="enabled" defaultChecked={ks?.enabled ?? true} className="h-5 w-5" /> Aktifkan pengiriman booking</label>
-          <label className="flex items-center gap-3 text-base text-body"><input type="checkbox" name="push_requested" defaultChecked={ks?.push_requested ?? false} className="h-5 w-5" /> Kirim juga saat permintaan konsultasi masuk (sebelum dijadwalkan)</label>
-          {ks?.has_secret && <label className="flex items-center gap-3 text-base text-body"><input type="checkbox" name="rotate_secret" className="h-5 w-5" /> Putar rahasia penandatangan (rahasia lama tidak berlaku lagi)</label>}
+          <label className="flex min-h-11 items-center gap-3 text-base text-body"><input type="checkbox" name="enabled" defaultChecked={ks?.enabled ?? true} className="h-5 w-5" /> Aktifkan pengiriman booking</label>
+          <label className="flex min-h-11 items-center gap-3 text-base text-body"><input type="checkbox" name="push_requested" defaultChecked={ks?.push_requested ?? false} className="h-5 w-5" /> Kirim juga saat permintaan konsultasi masuk (sebelum dijadwalkan)</label>
+          {ks?.has_secret && <label className="flex min-h-11 items-center gap-3 text-base text-body"><input type="checkbox" name="rotate_secret" className="h-5 w-5" /> Putar rahasia penandatangan (rahasia lama tidak berlaku lagi)</label>}
           <Submit className={primaryCls}>Simpan konektor</Submit>
         </ActionForm>
         {ks?.configured && (
@@ -202,7 +202,7 @@ export default async function Integrasi() {
         )}
         {con.deliveries.length > 0 && (
           <div className="mt-4 overflow-x-auto">
-            <table className="w-full min-w-[520px] text-left text-base">
+            <table className="table-stack table-stack-flush w-full min-w-[520px] text-left text-base">
               <caption className="sr-only">Pengiriman ke KlinikSistem</caption>
               <thead className="text-[13px] font-medium text-body">
                 <tr>
@@ -215,10 +215,10 @@ export default async function Integrasi() {
               <tbody>
                 {con.deliveries.map((d) => (
                   <tr key={d.id} className="border-t border-line">
-                    <td className="py-2 pr-3 text-body">{fmtDate(d.created_at)}</td>
-                    <td className="py-2 pr-3 text-body">{d.event_type}</td>
-                    <td className="py-2 pr-3 text-body">{deliveryStatus[d.status]}{d.last_status_code ? ` (HTTP ${d.last_status_code})` : ""}</td>
-                    <td className="py-2 text-body">{d.external_ref ?? "-"}</td>
+                    <td data-label="Waktu" className="py-2 pr-3 text-body">{fmtDate(d.created_at)}</td>
+                    <td data-label="Kejadian" className="py-2 pr-3 text-body">{d.event_type}</td>
+                    <td data-label="Status" className="py-2 pr-3 text-body">{deliveryStatus[d.status]}{d.last_status_code ? ` (HTTP ${d.last_status_code})` : ""}</td>
+                    <td data-label="Booking" className="py-2 text-body">{d.external_ref ?? "-"}</td>
                   </tr>
                 ))}
               </tbody>
@@ -229,7 +229,7 @@ export default async function Integrasi() {
         <h3 className="mt-8 text-lg font-semibold text-navy">Beauty Code</h3>
         <p className="mt-1 text-base text-body">Beauty Code mengirim catatan lewat kunci API dengan cakupan <code>integrations:write</code> (buat di bagian Kunci API). Data hanya diterima untuk pasien yang menyetujui konteks eksternal.</p>
         <ActionForm action={saveBeautycode} className="mt-3 space-y-3">
-          <label className="flex items-center gap-3 text-base text-body"><input type="checkbox" name="enabled" defaultChecked={bc?.enabled ?? true} className="h-5 w-5" /> Terima data dari Beauty Code</label>
+          <label className="flex min-h-11 items-center gap-3 text-base text-body"><input type="checkbox" name="enabled" defaultChecked={bc?.enabled ?? true} className="h-5 w-5" /> Terima data dari Beauty Code</label>
           <Submit className={primaryCls}>Simpan</Submit>
         </ActionForm>
       </section>

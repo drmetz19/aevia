@@ -6,7 +6,7 @@ export const metadata: Metadata = { title: "Masuk — AEVIA Console" };
 export default async function Masuk({ searchParams }: { searchParams: Promise<{ sesi?: string }> }) {
   const { sesi } = await searchParams;
   return (
-    <main className="grid min-h-screen md:grid-cols-[360px_1fr]">
+    <main className="grid grid-cols-1 min-h-screen md:grid-cols-[360px_minmax(0,1fr)]">
       <aside className="hidden bg-deep p-8 text-white md:block">
         <p className="font-serif text-2xl">AEVIA</p>
         <p className="mt-2 text-[13px] font-medium text-white/70">Console klinik & profesional</p>

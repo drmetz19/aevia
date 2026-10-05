@@ -9,7 +9,8 @@
     "typecheck": "next typegen && tsc -p .",
     "test": "echo \"web: smoke via pnpm smoke\"",
     "smoke": "node scripts/smoke.mjs",
-    "smoke:e2e": "playwright test"
+    "smoke:e2e": "playwright test",
+    "audit:mobile": "node scripts/mobile-audit.mjs"
   },
   "dependencies": {
     "@aevia/core": "workspace:*",

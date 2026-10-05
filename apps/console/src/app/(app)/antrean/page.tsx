@@ -20,7 +20,7 @@ export default async function Antrean() {
         <p className="mt-8 rounded-lg border border-line bg-white p-6 text-base text-body">Belum ada permintaan konsultasi.</p>
       ) : (
         <div className="mt-8 overflow-x-auto rounded-lg border border-line bg-white shadow-soft">
-          <table className="w-full min-w-[640px] text-left text-base">
+          <table className="table-stack w-full min-w-[640px] text-left text-base">
             <caption className="sr-only">Daftar permintaan konsultasi</caption>
             <thead className="border-b border-line text-[13px] font-medium text-body">
               <tr>
@@ -34,7 +34,7 @@ export default async function Antrean() {
               {items.map((i) => (
                 <tr key={i.id} className="border-b border-line last:border-0">
                   <td className="px-4 py-3">
-                    <Link href={`/pasien/${i.patient_id}`} className="font-semibold text-navy underline underline-offset-4">
+                    <Link href={`/pasien/${i.patient_id}`} className="inline-block py-2 font-semibold text-navy underline underline-offset-4 [overflow-wrap:anywhere]">
                       {i.patient_email}
                     </Link>
                     {i.flagged && (
@@ -48,9 +48,9 @@ export default async function Antrean() {
                       </span>
                     )}
                   </td>
-                  <td className="px-4 py-3 text-navy">{i.program_name}</td>
-                  <td className="px-4 py-3 text-body">{fmtDate(i.created_at)}</td>
-                  <td className="px-4 py-3 font-semibold text-navy">
+                  <td data-label="Program" className="px-4 py-3 text-navy">{i.program_name}</td>
+                  <td data-label="Diajukan" className="px-4 py-3 text-body">{fmtDate(i.created_at)}</td>
+                  <td data-label="Status" className="px-4 py-3 font-semibold text-navy">
                     {statusLabel[i.status]}
                     {i.scheduled_at && <span className="block text-[13px] font-medium text-body">{fmtDate(i.scheduled_at)}</span>}
                   </td>
