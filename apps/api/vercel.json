@@ -2,20 +2,7 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": null,
   "installCommand": "cd ../.. && pnpm install --frozen-lockfile",
-  "buildCommand": "cd ../.. && pnpm turbo run typecheck --filter=@aevia/api && mkdir -p apps/api/public && echo AEVIA API > apps/api/public/robots.txt",
-  "outputDirectory": "public",
-  "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/api"
-    }
-  ],
-  "functions": {
-    "api/index.ts": {
-      "maxDuration": 30,
-      "includeFiles": "../../packages/db/migrations/**"
-    }
-  },
+  "buildCommand": "cd ../.. && pnpm turbo run typecheck --filter=@aevia/api && pnpm --filter @aevia/api build:vercel",
   "crons": [
     {
       "path": "/v1/internal/dispatch",

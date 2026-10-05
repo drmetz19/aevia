@@ -10,7 +10,8 @@
     "mock:kliniksistem": "tsx src/testing/mock-kliniksistem-cli.ts",
     "build": "tsc -p .",
     "typecheck": "tsc -p .",
-    "test": "vitest run"
+    "test": "vitest run",
+    "build:vercel": "node scripts/build-vercel.mjs"
   },
   "dependencies": {
     "@aevia/core": "workspace:*",
@@ -28,6 +29,7 @@
   },
   "devDependencies": {
     "@types/node": "22.20.5",
+    "esbuild": "0.28.2",
     "tsx": "4.23.15",
     "typescript": "5.9.3",
     "vitest": "5.0.3"

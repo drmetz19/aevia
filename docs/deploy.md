@@ -1,6 +1,6 @@
 # Deploy: Supabase + Vercel
 
-Panduan langkah demi langkah. Web dan console sudah ter-deploy di Vercel. Project API memakai `framework: null` + `outputDirectory: public` (folder kosong dibuat saat build) karena seluruh lalu lintas diarahkan ke fungsi `api/index.ts`; tanpa itu Vercel gagal dengan "No Output Directory named public".
+Panduan langkah demi langkah. Web dan console sudah ter-deploy di Vercel. Project API dibangun dengan `pnpm --filter @aevia/api build:vercel` (esbuild → Build Output API v3 di `apps/api/.vercel/output`), karena runtime Vercel tidak bisa memuat paket workspace `@aevia/*` yang berupa TypeScript mentah. PGlite diganti stub di bundel produksi.
 
 Arsitektur: 4 project Vercel dari satu repo (root directory berbeda) + 1 project Supabase.
 
