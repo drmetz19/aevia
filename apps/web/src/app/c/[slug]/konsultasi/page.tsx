@@ -1,15 +1,20 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
+import { Send } from "lucide-react";
 import { PREP_INTRO, PREP_NOTE } from "@aevia/core";
-import { ClinicHeader } from "@/components/ClinicHeader";
+import { PatientShell } from "@/components/PatientShell";
+import { PageIntro, btnPrimary, card } from "@/components/PageIntro";
 import { SoviaAvatar } from "@/components/SoviaHeader";
-import { brandStyle, fetchClinic } from "@/lib/api";
+import { fetchClinic } from "@/lib/api";
 import { fetchPrograms, getDraft, getMyRequests, requirePatient, rupiah } from "@/lib/session";
 import { submitRequestAction } from "../actions";
 
 type Props = { params: Promise<{ slug: string }>; searchParams: Promise<{ program?: string; pesan?: string }> };
-const field = "w-full rounded-md border border-line bg-surface px-4 py-3 text-base text-navy";
-const label = "block text-[13px] font-medium text-navy";
+const field = "field";
+const label = "flex items-center gap-2 text-[14px] font-semibold text-navy";
+const Num = ({ n }: { n: number }) => (
+  <span aria-hidden="true" className="flex h-6 w-6 items-center justify-center rounded-pill bg-sand text-[12px] font-bold text-copper-ink">{n}</span>
+);
 
 export default async function Konsultasi({ params, searchParams }: Props) {
   const { slug } = await params;
@@ -26,16 +31,13 @@ export default async function Konsultasi({ params, searchParams }: Props) {
   const name = clinic.assistant_name;
 
   return (
-    <div style={brandStyle(clinic)} className="min-h-screen bg-ivory">
-      <ClinicHeader clinic={clinic} />
-      <main className="mx-auto max-w-5xl px-4 py-10">
-        <p className="text-[13px] font-semibold uppercase tracking-[0.12em] text-copper-ink">Siapkan konsultasi</p>
-        <h1 className="mt-1 font-serif text-4xl leading-tight text-navy">Hal yang ingin dibahas bersama profesional</h1>
+    <PatientShell clinic={clinic} active="program" width="max-w-5xl">
+        <PageIntro eyebrow="Siapkan konsultasi" title="Hal yang ingin dibahas bersama profesional" />
 
-        <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
+        <div className="mt-7 grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_340px]">
           <section aria-labelledby="form-prep">
             <h2 id="form-prep" className="sr-only">Formulir persiapan</h2>
-            <div className="flex gap-3 rounded-lg bg-sand p-4 text-base text-navy">
+            <div className="reveal flex gap-3 rounded-lg border border-sand bg-sand/70 p-4 text-base text-navy">
               <SoviaAvatar clinic={clinic} size={36} />
               <div>
                 <p>{PREP_INTRO}</p>
@@ -47,14 +49,14 @@ export default async function Konsultasi({ params, searchParams }: Props) {
               </div>
             </div>
             {open ? (
-              <p role="status" className="mt-6 rounded-lg border border-line bg-surface p-5 text-base text-navy">
+              <p role="status" className={`mt-6 text-base text-navy ${card}`}>
                 Permintaan untuk program ini sudah kami terima dan sedang ditinjau tim klinik.{" "}
                 <Link href={`/c/${slug}/beranda`} className="font-semibold underline underline-offset-4">
                   Lihat status
                 </Link>
               </p>
             ) : (
-              <form action={submitRequestAction} className="mt-6 space-y-5 rounded-lg border border-line bg-surface p-6 shadow-soft">
+              <form action={submitRequestAction} className={`mt-6 space-y-6 ${card}`}>
                 <input type="hidden" name="slug" value={slug} />
                 <input type="hidden" name="program_id" value={program.id} />
                 {pesan && (
@@ -63,45 +65,44 @@ export default async function Konsultasi({ params, searchParams }: Props) {
                   </p>
                 )}
                 <div>
-                  <label htmlFor="tujuan" className={label}>Tujuan utama konsultasi</label>
-                  <textarea id="tujuan" name="tujuan" rows={2} maxLength={600} required defaultValue={prep.tujuan} className={`mt-1 ${field}`} />
+                  <label htmlFor="tujuan" className={label}><Num n={1} />Tujuan utama konsultasi</label>
+                  <textarea id="tujuan" name="tujuan" rows={2} maxLength={600} required defaultValue={prep.tujuan} className={`mt-2 ${field}`} />
                 </div>
                 <div>
-                  <label htmlFor="keluhan" className={label}>Keluhan atau hal yang dirasakan</label>
-                  <textarea id="keluhan" name="keluhan" rows={4} maxLength={1200} defaultValue={prep.keluhan} className={`mt-1 ${field}`} />
+                  <label htmlFor="keluhan" className={label}><Num n={2} />Keluhan atau hal yang dirasakan</label>
+                  <textarea id="keluhan" name="keluhan" rows={4} maxLength={1200} defaultValue={prep.keluhan} className={`mt-2 ${field}`} />
                 </div>
                 <div>
-                  <label htmlFor="pertanyaan" className={label}>Pertanyaan untuk profesional (satu per baris)</label>
-                  <textarea id="pertanyaan" name="pertanyaan" rows={4} defaultValue={prep.pertanyaan.join("\n")} className={`mt-1 ${field}`} />
+                  <label htmlFor="pertanyaan" className={label}><Num n={3} />Pertanyaan untuk profesional (satu per baris)</label>
+                  <textarea id="pertanyaan" name="pertanyaan" rows={4} defaultValue={prep.pertanyaan.join("\n")} className={`mt-2 ${field}`} />
                 </div>
                 <div>
-                  <label htmlFor="konteks" className={label}>Konteks dari assessment</label>
-                  <textarea id="konteks" name="konteks_assessment" rows={3} maxLength={1200} defaultValue={prep.konteks_assessment} className={`mt-1 ${field}`} />
+                  <label htmlFor="konteks" className={label}><Num n={4} />Konteks dari assessment</label>
+                  <textarea id="konteks" name="konteks_assessment" rows={3} maxLength={1200} defaultValue={prep.konteks_assessment} className={`mt-2 ${field}`} />
                 </div>
-                <button type="submit" className="w-full rounded-pill bg-copper px-7 py-3 text-lg font-semibold text-white shadow-soft sm:w-auto">
-                  Kirim permintaan konsultasi
+                <button type="submit" className={btnPrimary}>
+                  <Send aria-hidden="true" size={18} strokeWidth={1.75} /> Kirim permintaan konsultasi
                 </button>
               </form>
             )}
           </section>
 
-          <aside aria-label="Program yang dipilih" className="h-fit rounded-lg border border-line bg-surface p-6 shadow-soft">
-            <p className="text-[13px] font-semibold uppercase tracking-[0.12em] text-copper-ink">Program dipilih</p>
-            <h2 className="mt-1 text-xl font-semibold leading-7 text-navy">{program.name}</h2>
-            <p className="mt-2 text-base text-body">{program.summary}</p>
-            <p className="mt-4 font-serif text-3xl text-navy">{rupiah(program.price_idr)}</p>
-            <Link href={`/c/${slug}/program`} className="mt-4 inline-block text-base font-semibold text-navy underline underline-offset-4">
+          <aside aria-label="Program yang dipilih" className="hero-atmos panel-deep order-first h-fit p-5 text-white sm:p-6 lg:sticky lg:top-24 lg:order-none">
+            <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-copper-light">Program dipilih</p>
+            <h2 className="mt-1 text-xl font-semibold leading-7">{program.name}</h2>
+            <p className="mt-2 hidden text-[15px] text-white/75 sm:block">{program.summary}</p>
+            <p className="mt-3 font-serif text-[32px] leading-tight">{rupiah(program.price_idr)}</p>
+            <Link href={`/c/${slug}/program`} className="mt-3 inline-block text-[15px] font-semibold text-white underline decoration-copper-light decoration-2 underline-offset-4">
               Pilih program lain
             </Link>
             {!draft.from_assessment && (
-              <p className="mt-4 text-[13px] font-medium text-body">
+              <p className="mt-4 text-[13px] font-medium text-white/75">
                 Belum ada hasil assessment.{" "}
                 <Link href={`/c/${slug}/assessment`} className="underline underline-offset-4">Mulai assessment</Link> agar draf terisi otomatis.
               </p>
             )}
           </aside>
         </div>
-      </main>
-    </div>
+    </PatientShell>
   );
 }

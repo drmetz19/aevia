@@ -3,3 +3,179 @@
 @import "@aevia/ui/tokens.css";
 @import "@aevia/ui/tailwind.css";
 @source "../../../../packages/ui";
+
+/* ---- Lapisan atmosfer & gerak (turunan token terkunci; tidak mengubah palet) ---- */
+.hero-atmos {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background:
+    radial-gradient(60% 80% at 85% 0%, color-mix(in srgb, var(--brand-accent) 38%, transparent), transparent 62%),
+    radial-gradient(50% 60% at 0% 100%, color-mix(in srgb, var(--brand-accent) 16%, transparent), transparent 70%),
+    var(--brand-dark);
+}
+.hero-atmos::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  opacity: 0.5;
+  background-image: linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image: radial-gradient(70% 70% at 70% 20%, #000, transparent 75%);
+}
+.hero-atmos::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  opacity: 0.18;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+.orb {
+  position: absolute;
+  right: -90px;
+  top: -70px;
+  width: 280px;
+  height: 280px;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 0 0 36px rgba(255, 255, 255, 0.025), 0 0 0 78px rgba(255, 255, 255, 0.02);
+  z-index: -1;
+}
+@media (min-width: 768px) {
+  .orb { right: 4%; top: 12%; width: 420px; height: 420px; }
+}
+.text-gradient-copper {
+  background: linear-gradient(100deg, #fff 10%, var(--brand-accent-light) 90%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.card-lift {
+  transition: transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1), box-shadow 0.35s;
+}
+.card-lift:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 2px 4px rgba(11, 31, 58, 0.06), 0 18px 40px rgba(11, 31, 58, 0.12);
+}
+.numeral {
+  font-family: var(--font-serif);
+  line-height: 1;
+  background: linear-gradient(180deg, var(--brand-accent), color-mix(in srgb, var(--brand-accent) 10%, transparent));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.glass-bar {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  background: color-mix(in srgb, var(--brand-surface) 82%, transparent);
+  backdrop-filter: saturate(160%) blur(14px);
+  -webkit-backdrop-filter: saturate(160%) blur(14px);
+}
+@keyframes rise {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: none; }
+}
+.reveal { animation: rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both; animation-delay: calc(var(--d, 0) * 90ms); }
+@media (prefers-reduced-motion: reduce) {
+  .reveal { animation: none; }
+  .card-lift, .card-lift:hover { transition: none; transform: none; }
+}
+
+/* ---- Halaman dalam: latar ivory berlapis (glow tembaga lembut di atas) ---- */
+.page-atmos {
+  background:
+    radial-gradient(90% 420px at 100% -80px, color-mix(in srgb, var(--brand-accent) 14%, transparent), transparent 70%),
+    radial-gradient(70% 360px at -10% -60px, color-mix(in srgb, var(--brand-soft) 90%, transparent), transparent 70%),
+    var(--brand-bg);
+}
+/* Panel gelap ringkas (hero kartu di beranda/masuk/rencana) */
+.panel-deep {
+  border-radius: var(--radius-md);
+  box-shadow: 0 1px 2px rgba(7, 20, 38, 0.2), 0 24px 48px -16px rgba(7, 20, 38, 0.45);
+}
+.chat-bg {
+  background-color: var(--brand-surface);
+  background-image: radial-gradient(color-mix(in srgb, var(--brand-primary) 7%, transparent) 1px, transparent 1px);
+  background-size: 18px 18px;
+}
+.field {
+  width: 100%;
+  border-radius: 10px;
+  border: 1px solid var(--aevia-border);
+  background: color-mix(in srgb, var(--brand-bg) 55%, var(--brand-surface));
+  padding: 12px 16px;
+  font-size: 16px;
+  color: var(--brand-primary);
+  transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s;
+}
+.field::placeholder { color: var(--aevia-slate); }
+.field:focus {
+  outline: none;
+  background: var(--brand-surface);
+  border-color: var(--brand-accent);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--brand-accent) 22%, transparent);
+}
+/* Saklar persetujuan: checkbox asli, tampil sebagai toggle */
+.switch {
+  appearance: none;
+  -webkit-appearance: none;
+  position: relative;
+  flex-shrink: 0;
+  width: 48px;
+  height: 28px;
+  border-radius: 999px;
+  background: var(--aevia-border);
+  cursor: pointer;
+  transition: background-color 0.25s;
+}
+.switch::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(11, 31, 58, 0.25);
+  transition: transform 0.25s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.switch:checked { background: var(--brand-primary); }
+.switch:checked::after { transform: translateX(20px); }
+/* Garis waktu perjalanan pasien */
+.timeline > li { position: relative; }
+.timeline > li:not(:last-child)::before {
+  content: "";
+  position: absolute;
+  left: 15px;
+  top: 34px;
+  bottom: -14px;
+  width: 2px;
+  background: linear-gradient(var(--aevia-border), var(--aevia-border));
+}
+.timeline > li[data-state="done"]:not(:last-child)::before {
+  background: linear-gradient(var(--brand-accent), color-mix(in srgb, var(--brand-accent) 40%, var(--aevia-border)));
+}
+@media (min-width: 1024px) {
+  .timeline > li:not(:last-child)::before { display: none; }
+}
+.progress-glow {
+  background: linear-gradient(90deg, color-mix(in srgb, var(--brand-accent) 70%, #fff), var(--brand-accent));
+  box-shadow: 0 0 12px color-mix(in srgb, var(--brand-accent) 55%, transparent);
+}
+/* Bar navigasi bawah (mobile) */
+.tabbar {
+  background: color-mix(in srgb, var(--brand-surface) 88%, transparent);
+  backdrop-filter: saturate(160%) blur(16px);
+  -webkit-backdrop-filter: saturate(160%) blur(16px);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.pb-tabbar { padding-bottom: calc(96px + env(safe-area-inset-bottom)); }
+@media (min-width: 1024px) { .pb-tabbar { padding-bottom: 56px; } }

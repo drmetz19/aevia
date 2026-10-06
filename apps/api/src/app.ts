@@ -68,6 +68,14 @@ export async function buildApp({ db, otpSender = otpSenderFromEnv(), jwtSecret, 
   const files = storage ?? storageFromEnv(ctx.secret);
   const app = Fastify({ logger: false }).withTypeProvider<ZodTypeProvider>();
   app.decorate("isStaffActive", (staffId: string, clinicId: string) => isStaffActive(db, staffId, clinicId));
+  // Body JSON kosong (content-type JSON tanpa isi) diperlakukan sebagai tanpa body, bukan 400.
+  // Klien lama dan integrasi sering mengirim header ini pada POST tanpa payload.
+  const jsonParser = app.getDefaultJsonParser("error", "error"); // tetap aman dari __proto__/constructor poisoning
+  app.addContentTypeParser("application/json", { parseAs: "string" }, (req, body, done) => {
+    const text = typeof body === "string" ? body : body.toString("utf8");
+    if (text.trim() === "") return done(null, undefined);
+    jsonParser(req, text, done);
+  });
   app.setValidatorCompiler(validatorCompiler);
   app.setSerializerCompiler(serializerCompiler);
 

@@ -130,3 +130,18 @@ describe("assessment Sovia", () => {
     expect((await call("GET", "/v1/assessments/latest", t)).statusCode).toBe(404);
   });
 });
+
+describe("body JSON kosong", () => {
+  it("POST dengan content-type JSON tanpa body tetap diterima (klien lama/integrasi)", async () => {
+    const t = await login("drmetz", "body-kosong@contoh.test");
+    const res = await app.inject({ method: "POST", url: "/v1/assessments", headers: { authorization: `Bearer ${t}`, "content-type": "application/json" }, payload: "" });
+    expect(res.statusCode).toBeLessThan(300);
+    expect(res.json().id).toBeTruthy();
+  });
+  it("JSON rusak tetap ditolak 400", async () => {
+    const t = await login("drmetz", "body-rusak@contoh.test");
+    const res = await app.inject({ method: "POST", url: "/v1/assessments", headers: { authorization: `Bearer ${t}`, "content-type": "application/json" }, payload: "{rusak" });
+    expect(res.statusCode).toBe(400);
+  });
+});
+
