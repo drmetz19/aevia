@@ -3,6 +3,8 @@
 import { build } from "esbuild";
 import { cpSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
+import { createRequire } from "node:module";
+import { dirname } from "node:path";
 
 const root = fileURLToPath(new URL("..", import.meta.url));
 const out = `${root}.vercel/output`;
@@ -36,8 +38,15 @@ await build({
   external: ["pg-native"],
   plugins: [pgliteStub],
   // Dependensi CommonJS di dalam bundel ESM butuh require().
-  banner: { js: "import { createRequire as __cr } from 'node:module'; const require = __cr(import.meta.url);" },
+  // Dependensi CommonJS memakai require/__dirname/__filename; di ESM ketiganya harus disediakan.
+  banner: {
+    js: "import { createRequire as __cr } from 'node:module'; import { fileURLToPath as __fu } from 'node:url'; import { dirname as __dn } from 'node:path'; const require = __cr(import.meta.url); const __filename = __fu(import.meta.url); const __dirname = __dn(__filename);",
+  },
 });
+
+// Aset statis Swagger UI (/docs) ikut disalin; src/vercel.ts mengarahkan SWAGGER_UI_STATIC_DIR ke folder ini.
+const swaggerUiDir = dirname(createRequire(`${root}package.json`).resolve("@fastify/swagger-ui/package.json"));
+cpSync(`${swaggerUiDir}/static`, `${fn}/static`, { recursive: true });
 
 // Cron didefinisikan di vercel.json (Vercel menggabungkannya); jangan diulang di config.json.
 // Migrasi SQL ikut disalin (dibaca relatif terhadap bundel bila dipakai).

@@ -132,7 +132,7 @@ export async function buildApp({ db, otpSender = otpSenderFromEnv(), jwtSecret, 
       return r;
     },
   });
-  await app.register(swaggerUi, { routePrefix: "/docs", staticCSP: true, uiConfig: { docExpansion: "list", deepLinking: false } });
+  await app.register(swaggerUi, { routePrefix: "/docs", staticCSP: true, ...(process.env.SWAGGER_UI_STATIC_DIR ? { baseDir: process.env.SWAGGER_UI_STATIC_DIR } : {}), uiConfig: { docExpansion: "list", deepLinking: false } });
 
   app.get("/health", async () => ({ status: "ok" }));
   app.get("/v1/openapi.json", { schema: { hide: true } }, async () => app.swagger());
