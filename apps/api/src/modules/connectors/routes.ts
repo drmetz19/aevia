@@ -3,6 +3,7 @@ import type { ZodTypeProvider } from "fastify-type-provider-zod";
 import { z } from "zod";
 import {
   beautycodeConfigInputSchema,
+  beautycodeSyncResultSchema,
   beautycodeTrackerBodySchema,
   beautycodeTrackerResponseSchema,
   connectorConfigInputSchema,
@@ -35,6 +36,10 @@ export function registerConnectorRoutes(app: FastifyInstance, o: { ctx: AuthCtx;
   a.get("/v1/staff/connectors", { schema: { tags: tagS, security: staffSec, response: { 200: connectorOverviewSchema } }, preHandler: clinicAdmin }, async (req) => svc.overview(sc(req)));
   a.put("/v1/staff/connectors/kliniksistem", { schema: { tags: tagS, security: staffSec, summary: "Atur konektor KlinikSistem. Rahasia penandatangan hanya tampil saat dibuat atau diputar.", body: connectorConfigInputSchema, response: { 200: connectorSavedSchema } }, preHandler: clinicAdmin }, async (req) => svc.saveKliniksistem(sc(req), req.body));
   a.put("/v1/staff/connectors/beautycode", { schema: { tags: tagS, security: staffSec, body: beautycodeConfigInputSchema, response: { 200: connectorSavedSchema } }, preHandler: clinicAdmin }, async (req) => svc.saveBeautycode(sc(req), req.body));
+  a.post("/v1/staff/connectors/beautycode/sync", { schema: { tags: tagS, security: staffSec, summary: "Tarik ringkasan tracker Beauty Code sekarang (pasien yang setuju berbagi konteks eksternal saja).", response: { 200: beautycodeSyncResultSchema } }, preHandler: clinicAdmin }, async (req) => {
+    const r = await svc.syncBeautycode(sc(req));
+    return { ok: r.ok, message: r.message, patients: r.patients, days: r.days };
+  });
   a.post("/v1/staff/connectors/kliniksistem/test", { schema: { tags: tagS, security: staffSec, summary: "Uji koneksi: kirim aevia.ping bertanda tangan ke KlinikSistem.", response: { 200: connectorTestResultSchema } }, preHandler: clinicAdmin }, async (req) => svc.testKliniksistem(sc(req)));
 
   // ---- Inbound (kunci API / token OAuth dengan cakupan integrations:write) ----

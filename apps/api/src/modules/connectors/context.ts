@@ -17,14 +17,21 @@ export async function beautySnapshotFor(tx: Tx, patientId: string): Promise<{ co
     .orderBy(desc(externalContext.recordedAt), desc(externalContext.createdAt))
     .limit(1);
   if (!r) return { consent_active: true, beautycode: null };
-  const d = r.data as { skin_barrier?: number; sleep_hours?: number; diet_triggers?: string[] };
+  const d = r.data as Record<string, unknown>;
+  const n = (k: string) => (typeof d[k] === "number" ? (d[k] as number) : null);
   return {
     consent_active: true,
     beautycode: {
       recorded_at: r.recordedAt.toISOString(),
-      skin_barrier: typeof d.skin_barrier === "number" ? d.skin_barrier : null,
-      sleep_hours: typeof d.sleep_hours === "number" ? d.sleep_hours : null,
-      diet_triggers: Array.isArray(d.diet_triggers) ? d.diet_triggers : [],
+      skin_barrier: n("skin_barrier"),
+      sleep_hours: n("sleep_hours"),
+      diet_triggers: Array.isArray(d.diet_triggers) ? (d.diet_triggers as string[]) : [],
+      skin_condition: typeof d.skin_condition === "string" ? d.skin_condition : null,
+      energy: n("energy"),
+      stress: n("stress"),
+      mood: n("mood"),
+      water_liters: n("water_liters"),
+      activity_minutes: n("activity_minutes"),
     },
   };
 }

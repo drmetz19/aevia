@@ -7,15 +7,19 @@ import { decryptSecret, encryptSecret } from "../integrations/crypto";
 import { randomToken } from "../integrations/secrets";
 import { signBody } from "../integrations/sign";
 import type { KsConfig } from "./outbound";
+import { pullBeautycode, type BcConfig } from "./pull";
 
 type Ctx = { db: Db; clinicId: string; actorId: string; now: Date; encryptionKey: Uint8Array; fetchFn?: typeof fetch };
 type Row = typeof clinicConnectors.$inferSelect;
 
 const ksView = (r?: Row) => {
   const c = (r?.config ?? {}) as KsConfig;
-  return { kind: "kliniksistem" as const, configured: Boolean(r && c.base_url), enabled: Boolean(c.enabled), base_url: c.base_url ?? null, push_requested: Boolean(c.push_requested), has_secret: Boolean(c.secret), last_sync_at: r?.lastSyncAt?.toISOString() ?? null };
+  return { kind: "kliniksistem" as const, configured: Boolean(r && c.base_url), enabled: Boolean(c.enabled), base_url: c.base_url ?? null, push_requested: Boolean(c.push_requested), has_secret: Boolean(c.secret), last_sync_at: r?.lastSyncAt?.toISOString() ?? null, remote_clinic_id: null, last_pull: null };
 };
-const bcView = (r?: Row) => ({ kind: "beautycode" as const, configured: Boolean(r), enabled: r ? (r.config as { enabled?: boolean }).enabled !== false : true, base_url: null, push_requested: false, has_secret: false, last_sync_at: r?.lastSyncAt?.toISOString() ?? null });
+const bcView = (r?: Row) => {
+  const c = (r?.config ?? {}) as BcConfig;
+  return { kind: "beautycode" as const, configured: Boolean(r), enabled: r ? c.enabled !== false : true, base_url: c.pull_base_url ?? null, push_requested: false, has_secret: Boolean(c.api_key), last_sync_at: r?.lastSyncAt?.toISOString() ?? null, remote_clinic_id: c.pull_clinic_id ?? null, last_pull: c.last_pull ?? null };
+};
 
 export async function overview(c: Ctx) {
   return c.db.withTenant(c.clinicId, async (tx) => {
@@ -60,12 +64,27 @@ export async function saveKliniksistem(c: Ctx, body: z.infer<typeof connectorCon
 export async function saveBeautycode(c: Ctx, body: z.infer<typeof beautycodeConfigInputSchema>) {
   return c.db.withTenant(c.clinicId, async (tx) => {
     const [before] = await tx.select().from(clinicConnectors).where(eq(clinicConnectors.kind, "beautycode"));
+    const old = (before?.config ?? {}) as BcConfig;
+    const config: BcConfig = { ...old, enabled: body.enabled };
+    if (body.pull_base_url !== undefined) config.pull_base_url = body.pull_base_url || undefined;
+    if (body.pull_clinic_id !== undefined) config.pull_clinic_id = body.pull_clinic_id || undefined;
+    if (body.api_key) config.api_key = encryptSecret(body.api_key, c.encryptionKey);
+    if (!config.pull_base_url && !config.pull_clinic_id) delete config.api_key; // sinkron dimatikan sepenuhnya
     const [row] = before
-      ? await tx.update(clinicConnectors).set({ config: { enabled: body.enabled } }).where(eq(clinicConnectors.id, before.id)).returning()
-      : await tx.insert(clinicConnectors).values({ clinicId: c.clinicId, kind: "beautycode", config: { enabled: body.enabled }, createdAt: c.now }).returning();
-    await writeAudit(tx, { clinicId: c.clinicId, actorType: "staff", actorId: c.actorId, entity: "connector", entityId: row!.id, action: "connector.update", before: before ? before.config : null, after: { kind: "beautycode", enabled: body.enabled }, at: c.now });
+      ? await tx.update(clinicConnectors).set({ config }).where(eq(clinicConnectors.id, before.id)).returning()
+      : await tx.insert(clinicConnectors).values({ clinicId: c.clinicId, kind: "beautycode", config, createdAt: c.now }).returning();
+    await writeAudit(tx, {
+      clinicId: c.clinicId, actorType: "staff", actorId: c.actorId, entity: "connector", entityId: row!.id, action: "connector.update",
+      before: before ? { enabled: old.enabled, pull_base_url: old.pull_base_url ?? null, pull_clinic_id: old.pull_clinic_id ?? null } : null,
+      after: { kind: "beautycode", enabled: body.enabled, pull_base_url: config.pull_base_url ?? null, pull_clinic_id: config.pull_clinic_id ?? null, api_key_changed: Boolean(body.api_key) },
+      at: c.now,
+    });
     return { ...bcView(row), secret: null };
   });
+}
+
+export async function syncBeautycode(c: Ctx) {
+  return pullBeautycode({ db: c.db, clinicId: c.clinicId, now: c.now, encryptionKey: c.encryptionKey, fetchFn: c.fetchFn, actor: { type: "staff", id: c.actorId } });
 }
 
 /** Uji koneksi: kirim aevia.ping bertanda tangan ke {base_url}/aevia/ping; sukses bila 2xx. */

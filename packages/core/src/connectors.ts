@@ -46,7 +46,16 @@ export const beautySnapshotSchema = z.object({
   skin_barrier: z.number().nullable(),
   sleep_hours: z.number().nullable(),
   diet_triggers: z.array(z.string()),
+  /** Dari sinkron Beauty Code: label apa adanya (baik | kurang | ada_problem), bukan skor. */
+  skin_condition: z.string().nullable().default(null),
+  energy: z.number().nullable().default(null),
+  stress: z.number().nullable().default(null),
+  mood: z.number().nullable().default(null),
+  water_liters: z.number().nullable().default(null),
+  activity_minutes: z.number().nullable().default(null),
 });
+
+export const SKIN_CONDITION_LABEL: Record<string, string> = { baik: "baik", kurang: "kurang baik", ada_problem: "ada keluhan" };
 export type BeautySnapshot = z.infer<typeof beautySnapshotSchema>;
 
 /** Kalimat konteks untuk draf persiapan konsultasi (Sovia). Bahasa tenang, tanpa diagnosis. */
@@ -54,6 +63,9 @@ export function beautyContextLine(s: BeautySnapshot): string {
   const parts: string[] = [];
   if (s.skin_barrier !== null) parts.push(`skor skin barrier ${s.skin_barrier}`);
   if (s.sleep_hours !== null) parts.push(`tidur sekitar ${String(s.sleep_hours).replace(".", ",")} jam`);
+  if (s.skin_condition) parts.push(`kondisi kulit ${SKIN_CONDITION_LABEL[s.skin_condition] ?? s.skin_condition}`);
+  if (s.energy !== null && s.energy !== undefined) parts.push(`energi ${s.energy}/10`);
+  if (s.stress !== null && s.stress !== undefined) parts.push(`stres ${s.stress}/10`);
   if (s.diet_triggers.length) parts.push(`pemicu makanan yang dicatat: ${s.diet_triggers.join(", ")}`);
   return parts.length ? `Catatan Beauty Code terakhir Anda: ${parts.join("; ")}.` : "";
 }
@@ -72,7 +84,25 @@ export const connectorConfigInputSchema = z.object({
   push_requested: z.boolean().default(false),
   rotate_secret: z.boolean().default(false),
 });
-export const beautycodeConfigInputSchema = z.object({ enabled: z.boolean() });
+export const beautycodeConfigInputSchema = z.object({
+  enabled: z.boolean(),
+  /** Sinkron tarik dari Beauty Code (opsional). Kosongkan ketiganya bila hanya menerima kiriman. */
+  pull_base_url: z
+    .string()
+    .trim()
+    .max(300)
+    .superRefine((v, ctx) => {
+      if (!v) return;
+      const m = validateWebhookUrl(v);
+      if (m) ctx.addIssue({ code: "custom", message: m.replace("webhook", "Beauty Code") });
+    })
+    .transform((v) => v.replace(/\/+$/, ""))
+    .optional(),
+  pull_clinic_id: z.union([z.literal(""), z.uuid({ error: "ID klinik Beauty Code harus berupa UUID." })]).optional(),
+  /** Kunci API Beauty Code (scope tracker:read). Hanya ditulis; kosong = pakai kunci yang tersimpan. */
+  api_key: z.string().trim().max(300).optional(),
+});
+export const beautycodeSyncResultSchema = z.object({ ok: z.boolean(), message: z.string(), patients: z.number(), days: z.number() });
 
 export const connectorViewSchema = z.object({
   kind: connectorKindSchema,
@@ -82,6 +112,8 @@ export const connectorViewSchema = z.object({
   push_requested: z.boolean(),
   has_secret: z.boolean(),
   last_sync_at: z.string().nullable(),
+  remote_clinic_id: z.string().nullable().default(null),
+  last_pull: z.object({ at: z.string(), ok: z.boolean(), message: z.string(), patients: z.number(), days: z.number() }).nullable().default(null),
 });
 export const connectorDeliveryViewSchema = z.object({
   id: z.string(),

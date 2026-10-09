@@ -3,7 +3,7 @@ import { z } from "zod";
 import { fmtDate, requireStaff, staffFetch } from "@/lib/api";
 import { PageHead, ActionForm, Submit, inputCls, labelCls, primaryCls, ghostCls } from "@/components/Ui";
 import { SettingsTabs } from "@/components/SettingsTabs";
-import { saveBeautycode, saveKliniksistem, testKliniksistem, createApiKey, createOauthClient, createWebhook, deleteWebhook, revokeApiKey, revokeOauthClient, testWebhook, toggleWebhook } from "../actions";
+import { saveBeautycode, saveKliniksistem, syncBeautycode, testKliniksistem, createApiKey, createOauthClient, createWebhook, deleteWebhook, revokeApiKey, revokeOauthClient, testWebhook, toggleWebhook } from "../actions";
 
 const deliveryStatus = { pending: "Menunggu percobaan ulang", delivered: "Terkirim", failed: "Belum berhasil" } as const;
 
@@ -227,11 +227,33 @@ export default async function Integrasi() {
         )}
 
         <h3 className="mt-8 text-lg font-semibold text-navy">Beauty Code</h3>
-        <p className="mt-1 text-base text-body">Beauty Code mengirim catatan lewat kunci API dengan cakupan <code>integrations:write</code> (buat di bagian Kunci API). Data hanya diterima untuk pasien yang menyetujui konteks eksternal.</p>
+        <p className="mt-1 text-base text-body">AEVIA menarik ringkasan tracker harian (tidur, kondisi kulit, energi, stres, mood, air, aktivitas) dari Beauty Code setiap jam, <strong className="font-semibold text-navy">hanya untuk pasien yang menyetujui berbagi konteks dari aplikasi lain</strong> dan terhubung ke klinik di Beauty Code. Foto tidak pernah ditarik.</p>
         <ActionForm action={saveBeautycode} className="mt-3 space-y-3">
-          <label className="flex min-h-11 items-center gap-3 text-base text-body"><input type="checkbox" name="enabled" defaultChecked={bc?.enabled ?? true} className="h-5 w-5" /> Terima data dari Beauty Code</label>
+          <label htmlFor="bcurl" className={labelCls}>Alamat Beauty Code</label>
+          <input id="bcurl" name="pull_base_url" type="url" defaultValue={bc?.base_url ?? "https://www.aginggracefully.online"} placeholder="https://www.aginggracefully.online" className={inputCls} />
+          <label htmlFor="bcclinic" className={labelCls}>ID klinik di Beauty Code</label>
+          <input id="bcclinic" name="pull_clinic_id" defaultValue={bc?.remote_clinic_id ?? ""} placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" className={inputCls} />
+          <label htmlFor="bckey" className={labelCls}>Kunci API Beauty Code (izin <code>tracker:read</code>)</label>
+          <input id="bckey" name="api_key" type="password" autoComplete="off" placeholder={bc?.has_secret ? "Tersimpan. Isi hanya untuk mengganti." : "Tempel kunci dari Admin Beauty Code → Klinik"} className={inputCls} />
+          <label className="flex min-h-11 items-center gap-3 text-base text-body"><input type="checkbox" name="enabled" defaultChecked={bc?.enabled ?? true} className="h-5 w-5" /> Aktifkan Beauty Code (sinkron otomatis + terima kiriman)</label>
           <Submit className={primaryCls}>Simpan</Submit>
         </ActionForm>
+        {bc?.base_url && bc.remote_clinic_id && bc.has_secret && (
+          <div className="mt-4 space-y-3 rounded-md border border-line p-4">
+            <p className="text-[13px] font-medium text-body">
+              Sinkron terakhir:{" "}
+              {bc.last_pull ? (
+                <span className={bc.last_pull.ok ? "text-success" : "text-critical"}>{fmtDate(bc.last_pull.at)} · {bc.last_pull.message}</span>
+              ) : (
+                "belum pernah"
+              )}
+            </p>
+            <ActionForm action={syncBeautycode} className="space-y-3">
+              <Submit className={ghostCls}>Sinkron sekarang</Submit>
+            </ActionForm>
+          </div>
+        )}
+        <p className="mt-4 text-[13px] font-medium text-body">Cara lain: Beauty Code juga bisa mengirim catatan langsung dengan kunci API AEVIA bercakupan <code>integrations:write</code> (bagian Kunci API di atas).</p>
       </section>
     </main>
   );

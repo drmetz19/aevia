@@ -367,7 +367,7 @@ describe("BeautyCode inbound: tracker", () => {
   it("detail pasien di konsol memuat snapshot terbaru (berdasarkan recorded_at), hanya bila consent aktif", async () => {
     const d = (await call("GET", `/v1/staff/patients/${pat.id}`, proA)).json();
     expect(d.external_context.consent_active).toBe(true);
-    expect(d.external_context.beautycode).toEqual({ recorded_at: "2026-10-04T08:00:00.000Z", skin_barrier: 70, sleep_hours: 7, diet_triggers: ["gula"] });
+    expect(d.external_context.beautycode).toMatchObject({ recorded_at: "2026-10-04T08:00:00.000Z", skin_barrier: 70, sleep_hours: 7, diet_triggers: ["gula"] });
     await grant(pat, false);
     const hidden = (await call("GET", `/v1/staff/patients/${pat.id}`, proA)).json();
     expect(hidden.external_context).toEqual({ consent_active: false, beautycode: null });

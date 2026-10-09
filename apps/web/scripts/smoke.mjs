@@ -416,6 +416,7 @@ try {
   check((await fetch(`${API}/v1/integrations/me`, { headers: { authorization: `Bearer ${tokB.access_token}` } })).status === 200, "OAuth: token dipakai di route integrasi");
   const intPage = await (await fetch(`${CON}/pengaturan/integrasi`, { headers: caC })).text();
   check(intPage.includes("Kunci API") && intPage.includes("aev_live_") && !intPage.includes(ikb.secret), "console /pengaturan/integrasi: daftar kunci, rahasia tidak tampil ulang");
+  check(intPage.includes("Alamat Beauty Code") && intPage.includes("ID klinik di Beauty Code") && intPage.includes("tracker:read"), "console /pengaturan/integrasi: form sinkron Beauty Code");
   const spec9 = await (await fetch(`${API}/v1/openapi.json`)).json();
   check(spec9.openapi === "3.1.0" && Boolean(spec9.paths["/v1/integrations/patients/{id}/summary"]), "OpenAPI 3.1 memuat route integrasi");
   const docs9 = await fetch(`${API}/docs/`);

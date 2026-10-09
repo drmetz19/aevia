@@ -207,5 +207,22 @@ export async function testKliniksistem(): Promise<SettingsState> {
   return d.ok ? { ok: d.message } : { error: d.message };
 }
 export async function saveBeautycode(_p: SettingsState, fd: FormData): Promise<SettingsState> {
-  return done(await call("PUT", "/v1/staff/connectors/beautycode", { enabled: str(fd, "enabled") === "on" }), "Pengaturan Beauty Code tersimpan.", "/pengaturan/integrasi");
+  const key = str(fd, "api_key").trim();
+  return done(
+    await call("PUT", "/v1/staff/connectors/beautycode", {
+      enabled: str(fd, "enabled") === "on",
+      pull_base_url: str(fd, "pull_base_url").trim(),
+      pull_clinic_id: str(fd, "pull_clinic_id").trim(),
+      ...(key ? { api_key: key } : {}),
+    }),
+    "Pengaturan Beauty Code tersimpan.",
+    "/pengaturan/integrasi",
+  );
+}
+export async function syncBeautycode(): Promise<SettingsState> {
+  const r = await call("POST", "/v1/staff/connectors/beautycode/sync");
+  if (!r.ok) return { error: r.error };
+  const d = r.data as { ok?: boolean; message?: string };
+  revalidatePath("/pengaturan/integrasi");
+  return d.ok ? { ok: d.message } : { error: d.message };
 }

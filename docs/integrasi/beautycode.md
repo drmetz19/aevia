@@ -1,6 +1,22 @@
 # Konektor BeautyCode
 
-BeautyCode adalah tracker web statis (skor kulit, tidur, pemicu makanan) yang di-host di Firebase/Netlify. Aplikasi ini tidak punya backend, jadi **AEVIA mendefinisikan kontrak inbound** dan mendokumentasikan pola relay agar kunci API tidak pernah ada di kode browser.
+Ada dua cara data Beauty Code masuk ke AEVIA:
+
+1. **Sinkron tarik (disarankan, otomatis tiap jam)**: AEVIA memanggil Clinic API Beauty Code `POST /api/v1/clinics/{clinicId}/tracker/export` (scope `tracker:read`). Lihat bagian *Sinkron tarik* di bawah.
+2. **Kiriman (inbound)**: Beauty Code/relay memanggil `POST /v1/integrations/beautycode/tracker` di AEVIA dengan kunci API AEVIA (`integrations:write`).
+
+## Sinkron tarik
+
+- Diatur admin klinik di console: **Pengaturan → Integrasi → Beauty Code**. Isi alamat Beauty Code (`https://www.aginggracefully.online`), **ID klinik di Beauty Code**, dan **kunci API Beauty Code** dengan izin *Baca Tracker* (`tracker:read`). Kunci dibuat di Admin Beauty Code → Klinik → terbitkan kredensial.
+- Hanya **email pasien AEVIA yang menyetujui konteks eksternal** yang dikirim ke Beauty Code. Beauty Code hanya membalas pasien yang **terhubung aktif** ke kliniknya; email lain dilewati tanpa pesan. **Foto tidak pernah ditarik.**
+- Cron `/v1/internal/dispatch` menarik otomatis bila ≥ 60 menit sejak tarikan terakhir (14 hari ke belakang). Tombol **Sinkron sekarang** menarik seketika.
+- Data disimpan per hari di `external_context` (append-only): hari yang isinya sama tidak disimpan ulang; hari yang berubah disimpan sebagai versi baru dan versi terbaru yang tampil.
+- Kondisi kulit disimpan sebagai label apa adanya (`baik` / `kurang` / `ada_problem`), **bukan** dikonversi ke skor. Kartu *Beauty Code snapshot* di detail pasien menampilkan kondisi kulit, tidur, energi, stres, air, dan aktivitas; ringkasannya masuk ke konteks draf persiapan Sovia.
+- Pencabutan persetujuan oleh pasien: AEVIA berhenti meminta data pasien itu dan data yang ada langsung disembunyikan.
+
+## Kiriman (inbound)
+
+BeautyCode versi lama tidak punya backend, jadi **AEVIA mendefinisikan kontrak inbound** dan mendokumentasikan pola relay agar kunci API tidak pernah ada di kode browser.
 
 ## Aturan penting
 

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { EyeOff } from "lucide-react";
-import { PROGRESS_EMPTY, areaLabel, patientDetailSchema, progressSchema, resultSchema } from "@aevia/core";
+import { PROGRESS_EMPTY, SKIN_CONDITION_LABEL, areaLabel, patientDetailSchema, progressSchema, resultSchema } from "@aevia/core";
 import { ProgressCard } from "@aevia/ui/progress";
 import { z } from "zod";
 import { fmtDate, requireStaff, staffFetch } from "@/lib/api";
@@ -135,15 +135,34 @@ export default async function Pasien({ params, searchParams }: Props) {
           ) : (
             <>
               <p className="mt-1 text-[13px] font-medium text-body">Dicatat {fmtDate(d.external_context.beautycode.recorded_at)}</p>
-              <dl className="mt-3 grid grid-cols-1 gap-4 sm:grid-cols-3">
-                <div><dt className="text-[13px] font-medium text-body">Skin barrier</dt><dd className="font-serif text-3xl text-navy">{d.external_context.beautycode.skin_barrier ?? "-"}</dd></div>
-                <div><dt className="text-[13px] font-medium text-body">Tidur (jam)</dt><dd className="font-serif text-3xl text-navy">{d.external_context.beautycode.sleep_hours !== null ? String(d.external_context.beautycode.sleep_hours).replace(".", ",") : "-"}</dd></div>
-                <div>
-                  <dt className="text-[13px] font-medium text-body">Pemicu makanan</dt>
-                  <dd className="mt-1 flex flex-wrap gap-2">
-                    {d.external_context.beautycode.diet_triggers.length ? d.external_context.beautycode.diet_triggers.map((t) => <span key={t} className="rounded-pill border border-line px-3 py-1 text-base text-navy">{t}</span>) : <span className="text-base text-body">Tidak ada</span>}
-                  </dd>
-                </div>
+              <dl className="mt-3 grid grid-cols-2 gap-4 sm:grid-cols-4">
+                {(() => {
+                  const b = d.external_context.beautycode!;
+                  const num = (v: number | null | undefined, unit = "") => (v === null || v === undefined ? "-" : `${String(v).replace(".", ",")}${unit}`);
+                  const items: { label: string; value: string }[] = [
+                    ...(b.skin_condition ? [{ label: "Kondisi kulit", value: SKIN_CONDITION_LABEL[b.skin_condition] ?? b.skin_condition }] : []),
+                    ...(b.skin_barrier !== null ? [{ label: "Skin barrier", value: num(b.skin_barrier) }] : []),
+                    { label: "Tidur (jam)", value: num(b.sleep_hours) },
+                    ...(b.energy !== null ? [{ label: "Energi", value: num(b.energy, "/10") }] : []),
+                    ...(b.stress !== null ? [{ label: "Stres", value: num(b.stress, "/10") }] : []),
+                    ...(b.water_liters !== null ? [{ label: "Air (liter)", value: num(b.water_liters) }] : []),
+                    ...(b.activity_minutes !== null ? [{ label: "Aktivitas (menit)", value: num(b.activity_minutes) }] : []),
+                  ];
+                  return items.map((i) => (
+                    <div key={i.label} className="min-w-0">
+                      <dt className="text-[13px] font-medium text-body">{i.label}</dt>
+                      <dd className="font-serif text-2xl text-navy [overflow-wrap:anywhere] sm:text-3xl">{i.value}</dd>
+                    </div>
+                  ));
+                })()}
+                {d.external_context.beautycode.diet_triggers.length > 0 && (
+                  <div className="col-span-2 sm:col-span-4">
+                    <dt className="text-[13px] font-medium text-body">Pemicu makanan</dt>
+                    <dd className="mt-1 flex flex-wrap gap-2">
+                      {d.external_context.beautycode.diet_triggers.map((t) => <span key={t} className="rounded-pill border border-line px-3 py-1 text-base text-navy">{t}</span>)}
+                    </dd>
+                  </div>
+                )}
               </dl>
             </>
           )}
