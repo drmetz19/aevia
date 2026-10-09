@@ -65,7 +65,7 @@ beforeAll(async () => {
   await db.migrate();
   await seed(db);
   const storage = createLocalStorage({ dir: mkdtempSync(join(tmpdir(), "aevia-mcp-")), secret: new TextEncoder().encode(SECRET) });
-  app = await buildApp({ db, jwtSecret: SECRET, now: () => clock, storage, anthropicApiKey: "", encryptionKey: new Uint8Array(32).fill(3), otpSender: { send: async ({ email, code }: { email: string; code: string }) => void sent.push({ email, code }) } });
+  app = await buildApp({ db, jwtSecret: SECRET, now: () => clock, storage, anthropicApiKey: "", encryptionKey: new Uint8Array(32).fill(3), otpSender: { send: async (m: { email: string; code?: string }) => void (m.code && sent.push({ email: m.email, code: m.code })) } });
   adminA = await staff("admin@drmetz.test");
   adminB = await staff("admin@demo-partner.test");
   patA = await patient("drmetz", "mcp-a@contoh.test");

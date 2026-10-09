@@ -10,6 +10,8 @@ export interface AuthCtx {
   secret: Uint8Array;
   sender: OtpSender;
   now: () => Date;
+  /** Basis URL console untuk link atur password. */
+  consoleUrl: string;
 }
 
 export const OTP_SENT = "Jika email Anda terdaftar, kode masuk akan segera kami kirim. Kode berlaku 10 menit.";
@@ -38,14 +40,14 @@ export async function verifyPatientOtp(ctx: AuthCtx, slug: string, email: string
   return { token, expires_in: TOKEN_TTL_SECONDS, role: "patient" as Role, clinic_slug: clinic.slug };
 }
 
-interface StaffIdentity {
+export interface StaffIdentity {
   id: string;
   clinicId: string | null;
   slug: string | null;
   role: Role;
 }
 
-async function findStaffIdentity(db: Db, email: string): Promise<StaffIdentity | null> {
+export async function findStaffIdentity(db: Db, email: string): Promise<StaffIdentity | null> {
   const [admin] = await db.db.select().from(platformAdmins).where(eq(platformAdmins.email, email));
   if (admin) return { id: admin.id, clinicId: null, slug: null, role: "aevia_admin" };
   // Lookup pra-login lintas klinik: koneksi pemilik (bypass RLS), hanya untuk identitas staf.

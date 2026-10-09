@@ -94,6 +94,26 @@ export const otpCodes = pgTable("otp_codes", {
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
+/** Password staf & admin platform (dipisah dari staff; hanya koneksi pemilik). */
+export const staffCredentials = pgTable("staff_credentials", {
+  email: text("email").primaryKey(),
+  passwordHash: text("password_hash").notNull(),
+  failedAttempts: integer("failed_attempts").notNull().default(0),
+  lockedUntil: timestamp("locked_until", { withTimezone: true }),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
+/** Link sekali pakai untuk membuat/mengganti password (hanya hash yang disimpan). */
+export const passwordTokens = pgTable("password_tokens", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  email: text("email").notNull(),
+  purpose: text("purpose", { enum: ["set", "reset"] }).notNull(),
+  tokenHash: text("token_hash").notNull().unique(),
+  expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+  usedAt: timestamp("used_at", { withTimezone: true }),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
 export const assessments = pgTable("assessments", {
   id: uuid("id").primaryKey().defaultRandom(),
   clinicId: uuid("clinic_id").notNull().references(() => clinics.id, { onDelete: "cascade" }),

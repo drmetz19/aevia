@@ -307,6 +307,27 @@ try {
 
   // Console staf
   check((await fetch(`${CON}/masuk`)).status === 200, "console /masuk 200");
+  // Password staf: halaman, link dari email (log dev), atur password, login
+  const masukHtml = await (await fetch(`${CON}/masuk`)).text();
+  check(masukHtml.includes('type="password"') && masukHtml.includes("Lupa atau belum punya password?"), "console /masuk: form password + link lupa password");
+  check((await (await fetch(`${CON}/masuk/kode`)).text()).includes("Kirim kode masuk"), "console /masuk/kode: OTP tetap tersedia");
+  check((await fetch(`${CON}/lupa-password`)).status === 200, "console /lupa-password 200");
+  check((await (await fetch(`${CON}/atur-password?token=x`)).text()).includes("belum lengkap atau sudah tidak berlaku"), "console /atur-password token rusak → pesan + minta link baru");
+  const pwEmail = "admin@drmetz.test";
+  check((await post(`${API}/v1/staff/auth/login`, { email: pwEmail, password: "belum-diatur-1" })).status === 400, "API: login password sebelum diatur → 400");
+  check((await post(`${API}/v1/staff/auth/password/request`, { email: pwEmail })).status === 200, "API: minta link atur password");
+  let pwLink;
+  for (let i = 0; i < 40 && !pwLink; i++) { pwLink = [...apiLog.matchAll(/\[LINK\] password_set admin@drmetz\.test link=(\S+)/g)].pop()?.[1]; if (!pwLink) await new Promise((r) => setTimeout(r, 250)); }
+  check(Boolean(pwLink) && pwLink.includes("/atur-password?token="), "email link berisi /atur-password?token=");
+  const pwToken = new URL(pwLink).searchParams.get("token");
+  check((await (await fetch(`${CON}/atur-password?token=${pwToken}`)).text()).includes("Simpan dan masuk"), "console /atur-password: form password baru");
+  const pwSet = await post(`${API}/v1/staff/auth/password/set`, { token: pwToken, password: "Smoke-Password-2026" });
+  check(pwSet.status === 200 && (await pwSet.json()).role === "clinic_admin", "API: atur password → sesi admin klinik");
+  const pwLogin = await post(`${API}/v1/staff/auth/login`, { email: pwEmail, password: "Smoke-Password-2026" });
+  check(pwLogin.status === 200, "API: login dengan password");
+  const pwBeranda = await fetch(`${CON}/beranda`, { headers: { cookie: `ssid=${(await pwLogin.json()).token}` } });
+  check(pwBeranda.status === 200 && (await pwBeranda.text()).includes("Admin DrMetz"), "console beranda dengan sesi password");
+
   const se = "dr.metz@drmetz.test";
   await post(`${API}/v1/staff/auth/otp`, { email: se });
   const sv = await post(`${API}/v1/staff/auth/verify`, { email: se, code: await otpCode(se) });

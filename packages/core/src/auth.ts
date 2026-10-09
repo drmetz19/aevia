@@ -17,6 +17,15 @@ export const verifyOtpSchema = z.object({
 });
 
 export const otpRequestedSchema = z.object({ message: z.string() });
+
+export const PASSWORD_MIN = 10;
+export const passwordSchema = z
+  .string()
+  .min(PASSWORD_MIN, { error: `Password minimal ${PASSWORD_MIN} karakter.` })
+  .max(200, { error: "Password terlalu panjang." });
+export const staffPasswordLoginSchema = z.object({ email: emailSchema, password: z.string().min(1).max(200) });
+export const passwordLinkRequestSchema = z.object({ email: emailSchema });
+export const passwordSetSchema = z.object({ token: z.string().min(20).max(200), password: passwordSchema });
 export const sessionSchema = z.object({
   token: z.string(),
   expires_in: z.number(),

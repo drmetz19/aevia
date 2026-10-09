@@ -13,7 +13,7 @@ beforeAll(async () => {
   db = await createDb();
   await db.migrate();
   await seed(db);
-  app = await buildApp({ db, jwtSecret: "test-secret-test-secret-test-secret-123", now: () => clock, otpSender: { send: async ({ email, code }) => void sent.push({ email, code }) } });
+  app = await buildApp({ db, jwtSecret: "test-secret-test-secret-test-secret-123", now: () => clock, otpSender: { send: async (m) => void (m.code && sent.push({ email: m.email, code: m.code })) } });
 });
 afterAll(async () => {
   await app.close();

@@ -15,6 +15,7 @@ import { clinicRoutes } from "./modules/clinics/routes";
 import { authRoutes } from "./modules/auth/routes";
 import { AuthError } from "./modules/auth/otp";
 import { otpSenderFromEnv, type OtpSender } from "./modules/auth/otp-sender";
+import { consoleUrlFromEnv } from "./modules/auth/password";
 import { resolveSecret } from "./modules/auth/tokens";
 import { assessmentRoutes } from "./modules/assessments/routes";
 import { programRoutes } from "./modules/programs/routes";
@@ -45,6 +46,8 @@ export interface AppDeps {
   fetchFn?: typeof fetch;
   /** Batas permintaan per kredensial integrasi (token bucket di memori). */
   rateLimit?: RateLimitConfig;
+  /** Basis URL console untuk link atur password (default: env CONSOLE_URL). */
+  consoleUrl?: string;
   /** Rahasia untuk /v1/internal/dispatch; default env CRON_SECRET. */
   cronSecret?: string;
   /** 32 byte; default env ENCRYPTION_KEY. Mengenkripsi rahasia webhook saat disimpan (AES-256-GCM). */
@@ -59,8 +62,8 @@ export interface AppDeps {
 const isTestEnv = () => process.env.NODE_ENV === "test" || Boolean(process.env.VITEST);
 
 /** Dipakai server lokal dan (nanti) Vercel Function: tidak membuka port di sini. */
-export async function buildApp({ db, otpSender = otpSenderFromEnv(), jwtSecret, now = () => new Date(), storage, anthropicApiKey = process.env.ANTHROPIC_API_KEY, fetchFn, rateLimit, cronSecret, encryptionKey, llmProvider, llmTimeoutMs, llmLog }: AppDeps) {
-  const ctx = { db, secret: resolveSecret(jwtSecret), sender: otpSender, now };
+export async function buildApp({ db, consoleUrl, otpSender = otpSenderFromEnv(), jwtSecret, now = () => new Date(), storage, anthropicApiKey = process.env.ANTHROPIC_API_KEY, fetchFn, rateLimit, cronSecret, encryptionKey, llmProvider, llmTimeoutMs, llmLog }: AppDeps) {
+  const ctx = { db, secret: resolveSecret(jwtSecret), sender: otpSender, now, consoleUrl: consoleUrl ?? consoleUrlFromEnv() };
   const encKey = encryptionKey ?? resolveEncryptionKey();
   await reencryptWebhookSecrets(db, encKey); // migrasi data idempoten: rahasia webhook lama → terenkripsi
   const provider = llmProvider ?? (anthropicApiKey && !isTestEnv() ? new ClaudeProvider(anthropicApiKey) : undefined);

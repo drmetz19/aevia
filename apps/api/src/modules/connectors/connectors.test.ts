@@ -23,7 +23,7 @@ beforeAll(async () => {
   await db.migrate();
   await seed(db);
   const storage = createLocalStorage({ dir: mkdtempSync(join(tmpdir(), "aevia-con-")), secret: new TextEncoder().encode(SECRET) });
-  app = await buildApp({ db, jwtSecret: SECRET, now: () => clock, storage, anthropicApiKey: "", encryptionKey: ENC, fetchFn: mock.fetch, otpSender: { send: async ({ email, code }: { email: string; code: string }) => void sent.push({ email, code }) } });
+  app = await buildApp({ db, jwtSecret: SECRET, now: () => clock, storage, anthropicApiKey: "", encryptionKey: ENC, fetchFn: mock.fetch, otpSender: { send: async (m) => void (m.code && sent.push({ email: m.email, code: m.code })) } });
 });
 afterAll(async () => {
   await app.close();

@@ -2,15 +2,19 @@ import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { z } from "zod";
 import {
   otpRequestedSchema,
+  passwordLinkRequestSchema,
+  passwordSetSchema,
   patientMeSchema,
   requestOtpSchema,
   sessionSchema,
   staffMeSchema,
+  staffPasswordLoginSchema,
   verifyOtpSchema,
 } from "@aevia/core";
 import { findClinicBySlug } from "@aevia/db";
 import { AuthError } from "./otp";
 import { FORBIDDEN, SESSION_ENDED, requireRole } from "./guard";
+import { loginWithPassword, requestPasswordLink, setPasswordWithToken } from "./password";
 import { patientProfile, requestPatientOtp, requestStaffOtp, staffProfile, verifyPatientOtp, verifyStaffOtp, type AuthCtx } from "./service";
 
 const slugParam = z.object({ slug: z.string().min(1).max(64) });
@@ -35,6 +39,23 @@ export const authRoutes: FastifyPluginAsyncZod<{ ctx: AuthCtx }> = async (app, {
     "/v1/staff/auth/verify",
     { schema: { body: verifyOtpSchema, response: { 200: sessionSchema } } },
     async (req) => verifyStaffOtp(ctx, req.body.email, req.body.code),
+  );
+
+  // Password staf: login, minta link (undangan/lupa password), atur password dari link sekali pakai.
+  app.post(
+    "/v1/staff/auth/login",
+    { schema: { summary: "Masuk staf dengan email + password.", body: staffPasswordLoginSchema, response: { 200: sessionSchema } } },
+    async (req) => loginWithPassword(ctx, req.body.email, req.body.password),
+  );
+  app.post(
+    "/v1/staff/auth/password/request",
+    { schema: { summary: "Kirim link atur password ke email staf (jawaban selalu sama).", body: passwordLinkRequestSchema, response: { 200: otpRequestedSchema } } },
+    async (req) => requestPasswordLink(ctx, req.body.email),
+  );
+  app.post(
+    "/v1/staff/auth/password/set",
+    { schema: { summary: "Atur password dari link sekali pakai, lalu langsung masuk.", body: passwordSetSchema, response: { 200: sessionSchema } } },
+    async (req) => setPasswordWithToken(ctx, req.body.token, req.body.password),
   );
 
   // Profil pasien: tenant dari path HARUS sama dengan tenant di token (pasien klinik A ditolak di klinik B).

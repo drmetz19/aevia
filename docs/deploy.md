@@ -56,6 +56,7 @@ Untuk tiap project: Import repo, set **Root Directory** sesuai tabel, dan biarka
 | `MAILKETING_API_TOKEN` | ✔ | | | | Pengirim email OTP (diutamakan). Token dari menu Integrasi Mailketing. **Produksi wajib salah satu: Mailketing atau Resend** |
 | `RESEND_API_KEY` | | | | | Alternatif bila tidak memakai Mailketing |
 | `OTP_FROM_EMAIL` | ✔ | | | | Mis. `Klinik Anda <masuk@domain.id>`; email harus terdaftar di menu Add Domain Mailketing (atau terverifikasi di Resend) |
+| `CONSOLE_URL` | ✔ | | | | URL console untuk link atur password staf (mis. `https://aevia-console.vercel.app`). Default produksi: `https://aevia-console.vercel.app` |
 | `API_URL` | | ✔ | ✔ | | URL API dari server Next.js (mis. `https://api.domain.id`) |
 | `API_PUBLIC_URL` | | | ✔ | | URL API yang dapat dijangkau browser (foto di konsol) |
 | `PLATFORM_HOSTS` | | ✔ | | | Host platform yang bukan domain klinik, mis. `app.domain.id` |
@@ -102,3 +103,17 @@ AEVIA_TEST_PG_URL=postgres://owner:pw@localhost:5432/postgres pnpm test
 ```
 
 Setiap test membuat database sementara (role pemilik butuh `CREATEDB`) dan menghapusnya setelahnya. Aktif hanya bila variabel itu diisi; default test memakai PGlite.
+
+
+## Login staf (password)
+
+Staf dan admin platform masuk dengan **email + password** di console (`/masuk`). Password tidak pernah dikirim atau diketik oleh admin:
+
+1. Admin platform membuat klinik → admin klinik otomatis menerima email **"Atur password akun staf Anda"** (link berlaku 72 jam).
+2. Admin klinik mengundang staf (Pengaturan → Staf) → staf menerima email yang sama.
+3. Lupa password / link kedaluwarsa → console `/lupa-password` (link reset berlaku 60 menit, maks 3 permintaan per jam).
+4. 5× salah password → akun terkunci 15 menit. Login kode email (`/masuk/kode`) tetap tersedia sebagai cadangan.
+
+Hash password (scrypt) disimpan di tabel `staff_credentials`, terpisah dari `staff`, dan hanya bisa dibaca koneksi pemilik. Pasien tetap masuk dengan kode OTP.
+
+Migrasi `0014_staff_passwords.sql` wajib dijalankan di database produksi sebelum fitur ini dipakai.

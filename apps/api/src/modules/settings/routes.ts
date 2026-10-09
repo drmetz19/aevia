@@ -26,6 +26,7 @@ import {
 import { AuthError } from "../auth/otp";
 import { requireRole } from "../auth/guard";
 import type { AuthCtx } from "../auth/service";
+import { sendInviteLinkSafely } from "../auth/password";
 import type { StorageProvider } from "../../storage";
 import { llmUsage30d } from "../llm/engine";
 import * as admin from "./admin";
@@ -107,7 +108,7 @@ export const settingsRoutes: FastifyPluginAsyncZod<{ ctx: AuthCtx; storage: Stor
   // ---- Admin klinik: tim ----
   app.get("/v1/staff/team", { schema: { response: { 200: teamListSchema } }, preHandler: clinicAdmin }, async (req) => ({ members: await team.listTeam(sc(req)) }));
   app.post("/v1/staff/team", { schema: { body: inviteBodySchema, response: { 201: teamMemberSchema } }, preHandler: clinicAdmin }, async (req, reply) =>
-    reply.code(201).send(await team.inviteStaff(sc(req), req.body)),
+    reply.code(201).send(await team.inviteStaff(sc(req), req.body).then(async (m) => (await sendInviteLinkSafely(ctx, m.email), m))),
   );
   app.put("/v1/staff/team/:id/active", { schema: { params: idParam, body: activeBodySchema, response: { 200: teamMemberSchema } }, preHandler: clinicAdmin }, async (req) =>
     team.setStaffActive(sc(req), req.params.id, req.body.active),
@@ -117,7 +118,7 @@ export const settingsRoutes: FastifyPluginAsyncZod<{ ctx: AuthCtx; storage: Stor
   const ac = (req: { principal?: { sub: string } }) => ({ db: ctx.db, adminId: req.principal!.sub, now: ctx.now(), storage });
   app.get("/v1/admin/clinics", { schema: { response: { 200: adminClinicListSchema } }, preHandler: platformAdmin }, async () => ({ clinics: await admin.listClinics(ctx.db) }));
   app.post("/v1/admin/clinics", { schema: { body: createClinicSchema, response: { 201: adminClinicSchema } }, preHandler: platformAdmin }, async (req, reply) =>
-    reply.code(201).send(await admin.createClinic(ac(req), req.body)),
+    reply.code(201).send(await admin.createClinic(ac(req), req.body).then(async (c) => (await sendInviteLinkSafely(ctx, req.body.admin_email), c))),
   );
   app.put("/v1/admin/clinics/:id/domain", { schema: { params: idParam, body: domainVerifyBodySchema, response: { 200: adminClinicSchema } }, preHandler: platformAdmin }, async (req) =>
     admin.verifyDomain(ac(req), req.params.id, req.body.verified),

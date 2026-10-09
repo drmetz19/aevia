@@ -17,7 +17,7 @@ beforeAll(async () => {
     db,
     jwtSecret: "test-secret-test-secret-test-secret-123",
     now: () => now,
-    otpSender: { send: async ({ email, code }) => void sent.push({ email, code }) },
+    otpSender: { send: async (m) => void (m.code && sent.push({ email: m.email, code: m.code })) },
   });
 });
 afterAll(async () => {

@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
-import { requestStaffCode, verifyStaffCode, type FormState } from "../actions";
+import { requestStaffCode, verifyStaffCode, type FormState } from "../../actions";
 
 const input = "w-full rounded-md border border-line bg-ivory px-4 py-3 text-base text-navy";
 const primary = "w-full rounded-pill bg-navy px-6 py-3 text-base font-semibold text-white";

@@ -1,3 +1,4 @@
+import type { MailMessage } from "../auth/otp-sender";
 import { mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -23,7 +24,7 @@ beforeAll(async () => {
   await db.migrate();
   await seed(db);
   const storage = createLocalStorage({ dir: mkdtempSync(join(tmpdir(), "aevia-set-")), secret: new TextEncoder().encode(SECRET) });
-  const base = { db, jwtSecret: SECRET, now: () => clock, storage, otpSender: { send: async ({ email, code }: { email: string; code: string }) => void sent.push({ email, code }) } };
+  const base = { db, jwtSecret: SECRET, now: () => clock, storage, otpSender: { send: async (m: MailMessage) => void (m.code && sent.push({ email: m.email, code: m.code })) } };
   app = await buildApp({ ...base, anthropicApiKey: "sk-test" });
   appNoKey = await buildApp({ ...base, anthropicApiKey: "" });
 });

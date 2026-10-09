@@ -1,3 +1,4 @@
+import type { MailMessage } from "../auth/otp-sender";
 import { createHmac } from "node:crypto";
 import { mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -34,7 +35,7 @@ beforeAll(async () => {
   await db.migrate();
   await seed(db);
   const storage = createLocalStorage({ dir: mkdtempSync(join(tmpdir(), "aevia-int-")), secret: new TextEncoder().encode(SECRET) });
-  const base = { db, jwtSecret: SECRET, now: () => clock, storage, anthropicApiKey: "", fetchFn: fakeFetch, encryptionKey: ENC, cronSecret: CRON, otpSender: { send: async ({ email, code }: { email: string; code: string }) => void sent.push({ email, code }) } };
+  const base = { db, jwtSecret: SECRET, now: () => clock, storage, anthropicApiKey: "", fetchFn: fakeFetch, encryptionKey: ENC, cronSecret: CRON, otpSender: { send: async (m: MailMessage) => void (m.code && sent.push({ email: m.email, code: m.code })) } };
   app = await buildApp(base);
   limited = await buildApp({ ...base, rateLimit: { capacity: 3, perSecond: 0.5 } });
 });

@@ -22,7 +22,7 @@ beforeAll(async () => {
     jwtSecret: SECRET,
     now: () => clock,
     storage: createLocalStorage({ dir: mkdtempSync(join(tmpdir(), "aevia-up-")), secret: new TextEncoder().encode(SECRET) }),
-    otpSender: { send: async ({ email, code }) => void sent.push({ email, code }) },
+    otpSender: { send: async (m) => void (m.code && sent.push({ email: m.email, code: m.code })) },
   });
 });
 afterAll(async () => {

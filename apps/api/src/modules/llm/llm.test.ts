@@ -1,3 +1,4 @@
+import type { MailMessage } from "../auth/otp-sender";
 import { mkdtempSync, readFileSync, readdirSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -31,7 +32,7 @@ beforeAll(async () => {
   await db.migrate();
   await seed(db);
   const storage = createLocalStorage({ dir: mkdtempSync(join(tmpdir(), "aevia-llm-")), secret: new TextEncoder().encode(SECRET) });
-  const base = { db, jwtSecret: SECRET, now: () => clock, storage, encryptionKey: new Uint8Array(32).fill(1), otpSender: { send: async ({ email, code }: { email: string; code: string }) => void sent.push({ email, code }) } };
+  const base = { db, jwtSecret: SECRET, now: () => clock, storage, encryptionKey: new Uint8Array(32).fill(1), otpSender: { send: async (m: MailMessage) => void (m.code && sent.push({ email: m.email, code: m.code })) } };
   withLlm = await buildApp({ ...base, anthropicApiKey: "sk-test", llmProvider: provider, llmTimeoutMs: 100, llmLog: (m) => logs.push(m) });
   noKey = await buildApp({ ...base, anthropicApiKey: "" });
 });
