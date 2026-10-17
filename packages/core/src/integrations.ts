@@ -185,4 +185,4 @@ export const integrationRequestBodySchema = z.object({
     .default({ tujuan: "", keluhan: "", pertanyaan: [], konteks_assessment: "" }),
 });
 export const integrationRequestSchema = z.object({ id: z.string(), patient_id: z.string(), program_id: z.string(), status: z.string(), created_at: z.string() });
-export const integrationMeSchema = z.object({ clinic_id: z.string(), credential: z.enum(["api_key", "oauth"]), label: z.string(), scopes: z.array(z.string()) });
+export const integrationMeSchema = z.object({ clinic_id: z.string(), clinic_slug: z.string(), clinic_name: z.string(), credential: z.enum(["api_key", "oauth"]), label: z.string(), scopes: z.array(z.string()) });

@@ -14,6 +14,20 @@ Autentikasi, rate limit, dan format webhook sama dengan [API integrasi](README.m
 
 `GET /v1/integrations/lead-stages` (katalog fase) bisa dibaca kredensial apa pun.
 
+### Satu CRM untuk banyak klinik
+
+Setiap klinik adalah tenant terpisah dan **membuat kuncinya sendiri**. Klinik ditentukan oleh kredensial, bukan parameter URL, sehingga satu kunci tidak pernah bisa membaca atau menulis kontak klinik lain. Email/telepon yang sama boleh ada di beberapa klinik sebagai kontak terpisah.
+
+Bila satu CRM menampung beberapa klinik, simpan satu kunci per klinik lalu pakai identifier berikut untuk memisahkan data:
+
+| Di mana | Field |
+| --- | --- |
+| `GET /v1/integrations/me` | `clinic_id`, `clinic_slug` (mis. `drmetz`), `clinic_name` — panggil sekali saat kunci dipasang |
+| Setiap kontak | `clinic_id` |
+| Setiap webhook | `clinic_id` di level atas body (di luar `data`) |
+
+Saran pemetaan: `clinic_slug` → pipeline/label/tim di CRM; `external_ref` tetap unik per klinik.
+
 > **Catatan data pribadi.** Berbeda dengan route integrasi lain, respons kontak **memuat nama, email, dan telepon**, karena itulah kebutuhan CRM. Berikan cakupan `read:contacts` hanya pada sistem milik klinik sendiri. Data klinis (jawaban assessment, SOAP, resep, isi rencana, check-in) **tidak pernah** ada di API ini; fase lead hanya menyatakan *tahap* perjalanan, bukan isinya. Payload webhook tetap minimal (id + fase, tanpa nama/email/telepon).
 
 ## Fase lead ↔ fase penjualan
@@ -76,7 +90,7 @@ Respons:
 {
   "created": true,
   "contact": {
-    "id": "…", "patient_id": null,
+    "id": "…", "clinic_id": "…", "patient_id": null,
     "name": "Rina", "email": "rina@contoh.id", "phone": "6281211112222",
     "source": "ads", "source_detail": "Form Meta Lead Ads Okt",
     "utm": { "source": "meta", "medium": "paid", "campaign": "anti-aging-okt" },

@@ -142,6 +142,7 @@ export const contactListQuerySchema = z.object({
 
 export const contactViewSchema = z.object({
   id: z.string(),
+  clinic_id: z.string().describe("Klinik pemilik kontak (sama dengan klinik kredensial)."),
   patient_id: z.string().nullable().describe("Terisi bila kontak sudah punya akun pasien di klinik."),
   name: z.string().nullable(),
   email: z.string().nullable(),

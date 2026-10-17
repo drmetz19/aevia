@@ -11,6 +11,7 @@ const NOT_FOUND = "Kontak ini belum ditemukan di klinik Anda.";
 
 const view = (c: Row): ContactView => ({
   id: c.id,
+  clinic_id: c.clinicId,
   patient_id: c.patientId,
   name: c.name,
   email: c.email,

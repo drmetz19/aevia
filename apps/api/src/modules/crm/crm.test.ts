@@ -55,7 +55,9 @@ beforeAll(async () => {
   crmA = (await call("POST", "/v1/staff/integrations/api-keys", adminA, { name: "CRM", scopes: ["read:contacts", "write:contacts"] })).json().secret;
   crmB = (await call("POST", "/v1/staff/integrations/api-keys", adminB, { name: "CRM B", scopes: ["read:contacts", "write:contacts"] })).json().secret;
   readOnly = (await call("POST", "/v1/staff/integrations/api-keys", adminA, { name: "Laporan", scopes: ["read:contacts"] })).json().secret;
-  clinicA = (await call("GET", "/v1/integrations/me", crmA)).json().clinic_id;
+  const me = (await call("GET", "/v1/integrations/me", crmA)).json();
+  expect(me).toMatchObject({ clinic_slug: "drmetz", clinic_name: expect.any(String) });
+  clinicA = me.clinic_id;
 }, 300_000);
 
 describe("normalisasi telepon", () => {
@@ -94,7 +96,7 @@ describe("kontak: upsert, ubah, hapus", () => {
     const r = await call("POST", "/v1/integrations/contacts", crmA, body);
     expect(r.statusCode).toBe(201);
     const c = r.json().contact;
-    expect(c).toMatchObject({ name: "Rina", phone: "6281211112222", email: null, source: "ads", stage: "new", stage_label: "Lead baru", sales_phase: "lead", patient_id: null, tags: ["vip"], utm: { source: "meta", campaign: "anti-aging-okt" } });
+    expect(c).toMatchObject({ clinic_id: clinicA, name: "Rina", phone: "6281211112222", email: null, source: "ads", stage: "new", stage_label: "Lead baru", sales_phase: "lead", patient_id: null, tags: ["vip"], utm: { source: "meta", campaign: "anti-aging-okt" } });
 
     tick();
     const again = await call("POST", "/v1/integrations/contacts", crmA, { external_source: "konektor", external_ref: "L-001", email: "Rina@Contoh.test", value_idr: 3_500_000 });
