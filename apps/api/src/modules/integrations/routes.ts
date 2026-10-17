@@ -35,6 +35,7 @@ import { AuthError } from "../auth/otp";
 import { requireRole } from "../auth/guard";
 import type { AuthCtx } from "../auth/service";
 import { registerConnectorRoutes } from "../connectors/routes";
+import { registerCrmRoutes } from "../crm/routes";
 import { pullBeautycodeDue } from "../connectors/pull";
 import { requireScope, issueAccessToken, type IntegrationAuthDeps } from "./auth";
 import * as keys from "./keys";
@@ -189,6 +190,7 @@ export const integrationRoutes: FastifyPluginAsyncZod<IntegrationDeps> = async (
   });
 
   registerConnectorRoutes(app, { ctx, ad, encryptionKey, fetchFn });
+  registerCrmRoutes(app, { ctx, ad });
 
   // ---------- Dispatcher (Vercel Cron memanggil GET; POST juga diterima) ----------
   const cron = async (req: { headers: { authorization?: string } }) => {

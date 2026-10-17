@@ -1,4 +1,4 @@
-import { boolean, integer, jsonb, pgTable, text, timestamp, unique, uuid } from "drizzle-orm/pg-core";
+import { bigint, boolean, integer, jsonb, pgTable, text, timestamp, unique, uuid } from "drizzle-orm/pg-core";
 
 export const clinics = pgTable("clinics", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -416,4 +416,42 @@ export const llmCalls = pgTable("llm_calls", {
   fallback: boolean("fallback").notNull().default(false),
   fallbackReason: text("fallback_reason"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
+/** CRM: kontak + fase lead per klinik (migrasi 0015). Fase otomatis maju lewat trigger DB dari kejadian perjalanan pasien. */
+export const contacts = pgTable("contacts", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  clinicId: uuid("clinic_id").notNull().references(() => clinics.id, { onDelete: "cascade" }),
+  patientId: uuid("patient_id").unique().references(() => patients.id, { onDelete: "set null" }),
+  name: text("name"),
+  email: text("email"),
+  phone: text("phone"),
+  source: text("source", { enum: ["website", "whatsapp", "phone", "email", "referral", "social", "ads", "event", "walk_in", "aevia", "other"] }).notNull().default("other"),
+  sourceDetail: text("source_detail"),
+  utm: jsonb("utm").$type<Record<string, string>>().notNull().default({}),
+  tags: text("tags").array().notNull().default([]),
+  notes: text("notes"),
+  ownerStaffId: uuid("owner_staff_id").references(() => staff.id, { onDelete: "set null" }),
+  valueIdr: bigint("value_idr", { mode: "number" }),
+  externalSource: text("external_source"),
+  externalRef: text("external_ref"),
+  stage: text("stage", { enum: ["new", "contacted", "registered", "assessed", "consultation_requested", "consultation_scheduled", "consulted", "won", "lost"] }).notNull().default("new"),
+  stageChangedAt: timestamp("stage_changed_at", { withTimezone: true }).notNull().defaultNow(),
+  lostReason: text("lost_reason"),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
+export const contactStageHistory = pgTable("contact_stage_history", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  clinicId: uuid("clinic_id").notNull().references(() => clinics.id, { onDelete: "cascade" }),
+  contactId: uuid("contact_id").notNull().references(() => contacts.id, { onDelete: "cascade" }),
+  fromStage: text("from_stage"),
+  toStage: text("to_stage").notNull(),
+  mode: text("mode", { enum: ["auto", "manual"] }).notNull(),
+  trigger: text("trigger"),
+  reason: text("reason"),
+  actorType: text("actor_type", { enum: ["staff", "system", "api", "mcp"] }).notNull().default("system"),
+  actorId: uuid("actor_id"),
+  at: timestamp("at", { withTimezone: true }).notNull().defaultNow(),
 });
