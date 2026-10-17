@@ -5,6 +5,7 @@ Panduan untuk menghubungkan sistem Anda ke klinik di AEVIA: autentikasi, cakupan
 - Spesifikasi OpenAPI 3.1: `GET /v1/openapi.json`
 - Dokumentasi interaktif (aset dihosting sendiri, tanpa CDN): `/docs`
 - Kunci dan klien dibuat oleh admin klinik di konsol: **Pengaturan → Integrasi**.
+- Asisten AI (Claude Desktop, Claude Code, dll.) lewat server MCP: [mcp.md](mcp.md).
 
 ## Autentikasi
 
