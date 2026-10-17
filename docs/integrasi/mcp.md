@@ -9,6 +9,19 @@ Ringkas:
 - **Tanpa akses database.** Server hanya memanggil REST integrasi (`/v1/integrations/*`) dengan kunci API klinik, jadi semua aturan [API integrasi](README.md) berlaku apa adanya: cakupan (scope), persetujuan pasien, isolasi klinik, batas permintaan, dan audit.
 - **Dua transport**: stdio (lokal, satu kunci per proses) dan Streamable HTTP (`POST /mcp`, tanpa sesi, kunci dikirim di setiap permintaan).
 
+## Mulai cepat (3 langkah)
+
+1. **Buat kunci API** di konsol: **Pengaturan → Integrasi → Kunci API**. Centang cakupan yang dibutuhkan (lihat [tabel](#menyiapkan-kunci-api)), salin `aev_live_…`.
+2. **Hubungkan asisten** ke server MCP klinik:
+
+   ```bash
+   claude mcp add --transport http aevia https://mcp.contoh-klinik.id/mcp \
+     --header "Authorization: Bearer aev_live_…"
+   ```
+
+   Klien lain: [`.mcp.json`](#klien-lain-mcpjson) · Claude Desktop/lokal: [stdio](#transport-1-stdio-lokal).
+3. **Coba**: minta asisten, mis. *"Ringkas progres pasien 9a2e… dan kirim pengingat check-in besok jam 9 pagi."* ID pasien ada di URL detail pasien di konsol (`/pasien/<id>`).
+
 ## Arsitektur
 
 ```
