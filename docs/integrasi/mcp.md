@@ -11,7 +11,7 @@ Ringkas:
 
 ## Mulai cepat (3 langkah)
 
-1. **Buat kunci API** di konsol: **Pengaturan → Integrasi → Kunci API**. Centang cakupan yang dibutuhkan (lihat [tabel](#menyiapkan-kunci-api)), salin `aev_live_…`.
+1. **Buat kunci API** di konsol: **Pengaturan → Integrasi → Kunci API**. Centang cakupan yang dibutuhkan (lihat [tabel](#menyiapkan-kunci-api)), salin `aev_live_…` ke [lembar kredensial](mcp-kredensial.md).
 2. **Hubungkan asisten** ke server MCP klinik:
 
    ```bash
@@ -50,7 +50,7 @@ Header `X-Aevia-Actor: mcp` hanya **label audit**, bukan hak akses tambahan: API
    | `create_consultation_request` | `write:consultation_requests` |
 
    Untuk asisten yang hanya membaca, cukup tiga cakupan `read:*`.
-3. Salin rahasia `aev_live_…`. Rahasia hanya tampil **sekali**; yang tersimpan di server hanya hash-nya.
+3. Salin rahasia `aev_live_…`. Rahasia hanya tampil **sekali**; yang tersimpan di server hanya hash-nya. Catat di [lembar kredensial](mcp-kredensial.md), terpisah dari dokumen ini.
 
 Tool tetap terdaftar walau cakupannya tidak ada; pemanggilannya saja yang ditolak dengan pesan yang menyebut cakupan yang kurang (lihat [Galat](#galat)).
 
@@ -278,7 +278,7 @@ Keterangan *terakhir dipakai* pada kunci di konsol juga diperbarui setiap kali k
 
 - Buat **kunci khusus MCP** per asisten/orang, dengan cakupan minimal. Jangan memakai ulang kunci integrasi KlinikSistem/BeautyCode.
 - Mencabut kunci di konsol berlaku seketika untuk kedua transport.
-- Kunci adalah rahasia klinik: jangan menaruhnya di repo, `.mcp.json` yang di-commit, atau tangkapan layar. Untuk Claude Code, simpan di konfigurasi lokal/pengguna, bukan konfigurasi proyek yang dibagikan.
+- Kunci adalah rahasia klinik: jangan menaruhnya di repo, `.mcp.json` yang di-commit, atau tangkapan layar. Simpan di variabel lingkungan dan rujuk dengan `${AEVIA_API_KEY}`; caranya ada di [lembar kredensial](mcp-kredensial.md).
 - Data klinis hanya terbaca selama pasien menyetujui akses rekam medis; pencabutan berlaku seketika.
 - Batas permintaan per kunci: 120, terisi ulang 2 per detik (sama dengan API).
 - Hasil tool masuk ke konteks model AI yang Anda pakai. Pastikan penyedia/asisten tersebut sesuai kebijakan privasi klinik Anda.

@@ -10,3 +10,5 @@ playwright-report
 *.tsbuildinfo
 next-env.d.ts
 .vercel
+# Lembar kredensial yang sudah diisi (template: docs/integrasi/mcp-kredensial.md)
+*.kredensial.md
