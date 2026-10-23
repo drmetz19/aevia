@@ -98,6 +98,19 @@ describe("isolasi tenant (RLS, role aevia_app)", () => {
   });
 });
 
+describe("temuan Supabase advisor (0015)", () => {
+  it("semua kebijakan tenant_isolation membungkus current_setting dalam subquery; fungsi guard punya search_path tetap", async () => {
+    const pol = (await d.db.execute(sql`SELECT tablename, qual, with_check FROM pg_policies WHERE policyname = 'tenant_isolation'`)) as unknown as { rows: { tablename: string; qual: string; with_check: string }[] };
+    expect(pol.rows.length).toBe(25);
+    for (const r of pol.rows) {
+      expect(r.qual, r.tablename).toMatch(/\(\s*SELECT\s+\(?NULLIF\(current_setting/i);
+      expect(r.with_check, r.tablename).toMatch(/\(\s*SELECT\s+\(?NULLIF\(current_setting/i);
+    }
+    const fn = (await d.db.execute(sql`SELECT proconfig FROM pg_proc WHERE proname = 'aevia_guard_immutable'`)) as unknown as { rows: { proconfig: string[] | null }[] };
+    expect(fn.rows[0]?.proconfig?.some((c) => c.startsWith("search_path="))).toBe(true);
+  });
+});
+
 describe("runner migrasi", () => {
   it("baris _migrations tanpa akhiran .sql dianggap sudah terpasang (tidak dijalankan ulang)", async () => {
     const m = await createDb();
