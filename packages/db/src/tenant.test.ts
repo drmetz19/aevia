@@ -98,10 +98,10 @@ describe("isolasi tenant (RLS, role aevia_app)", () => {
   });
 });
 
-describe("temuan Supabase advisor (0015)", () => {
+describe("temuan Supabase advisor (0016)", () => {
   it("semua kebijakan tenant_isolation membungkus current_setting dalam subquery; fungsi guard punya search_path tetap", async () => {
     const pol = (await d.db.execute(sql`SELECT tablename, qual, with_check FROM pg_policies WHERE policyname = 'tenant_isolation'`)) as unknown as { rows: { tablename: string; qual: string; with_check: string }[] };
-    expect(pol.rows.length).toBe(25);
+    expect(pol.rows.length).toBeGreaterThanOrEqual(25);
     for (const r of pol.rows) {
       expect(r.qual, r.tablename).toMatch(/\(\s*SELECT\s+\(?NULLIF\(current_setting/i);
       expect(r.with_check, r.tablename).toMatch(/\(\s*SELECT\s+\(?NULLIF\(current_setting/i);

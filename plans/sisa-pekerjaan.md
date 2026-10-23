@@ -12,21 +12,28 @@ Status: MVP 12/12 fase selesai; produksi berdiri (Supabase "Aevia konsult" + Ver
 - [x] Bucket `skin-photos` privat
 - [x] Tidak ada data seed demo di produksi (tak ada email `.test`, hanya klinik `drmetz`)
 - [x] Kode: produksi menolak start tanpa pengirim email OTP, `JWT_SECRET` < 32 karakter, atau `ENCRYPTION_KEY` kosong → kode OTP tidak pernah masuk log produksi
-- [x] Migrasi 0015 dibuat (temuan Supabase advisor): `search_path` tetap untuk fungsi guard + kebijakan RLS dihitung sekali per query
+- [x] Migrasi 0016 dibuat (temuan Supabase advisor): `search_path` tetap untuk fungsi guard + kebijakan RLS dihitung sekali per query
 
-## B. Teknis — butuh akses Vercel
+## B. Vercel (dicek via MCP 2026-10-23)
 
-- [ ] Cek status deploy ketiga project + `GET /health` dan `/docs` di aevia-api
-- [ ] Env aevia-api: `JWT_SECRET` (≥ 32), `ENCRYPTION_KEY`, `CRON_SECRET` — acak & berbeda
-- [ ] Env aevia-api: `STORAGE_DRIVER=supabase`, `MAILKETING_API_TOKEN` (atau `RESEND_API_KEY`) + `OTP_FROM_EMAIL` dari domain terverifikasi, `CONSOLE_URL` bila domain console bukan aevia-console.vercel.app
-- [ ] `ANTHROPIC_API_KEY` + `ANTHROPIC_MODEL` bila Sovia mode LLM mau dipakai
-- [ ] Cron dispatcher tiap menit butuh Vercel Pro; di Hobby pakai penjadwal luar (lihat docs/deploy.md)
+- [x] Production ketiga project **READY** dari `main` (8a3f5ed, 9 Okt); tanpa error runtime 7 hari terakhir
+- [x] `aevia-api.vercel.app/health` → `{"status":"ok"}`; `/v1/clinics/drmetz/public` → data klinik (API ↔ database tersambung)
+- [x] Web pasien `aevia-web-theta.vercel.app/c/drmetz` tampil; console `aevia-console.vercel.app/masuk` tampil
+- [x] Env aevia-api lengkap (DATABASE_URL, JWT_SECRET, ENCRYPTION_KEY, CRON_SECRET, Mailketing + OTP_FROM_EMAIL, Supabase storage, ANTHROPIC_API_KEY); web `API_URL`, console `API_URL` + `API_PUBLIC_URL` → `https://aevia-api.vercel.app`
+- [ ] Tandai `MAILKETING_API_TOKEN` & `ANTHROPIC_API_KEY` sebagai Sensitive (label "Needs Attention"; tidak mendesak)
+- [ ] Alamat web pasien `aevia-web-theta.vercel.app` kurang rapi untuk dibagikan — pertimbangkan domain sendiri (mis. `app.drmetz.id`) + `PLATFORM_HOSTS`
 - [ ] Project `aevia-mcp` belum ada — hanya perlu bila MCP lewat HTTP dipakai (Claude Desktop/Code)
-- [ ] Domain klinik (opsional): tambahkan di aevia-web, isi di Pengaturan → Merek, verifikasi di Admin → Klinik
+
+## B2. Branch yang belum digabung ke `main`
+
+- [ ] `claude/tender-keller-k5vr8h` — CRM: API kontak + fase lead (migrasi `0015_crm_contacts`). Gabungkan **sebelum** branch ini agar migrasi 0016 ikut merapikan kebijakan RLS tabel CRM
+- [ ] `claude/hopeful-shannon-g57fxf` — dokumentasi MCP (docs/integrasi/mcp.md, versi Word, lembar kredensial)
+- [ ] `claude/busy-ramanujan-xbdou2` — perbaikan tes, runner migrasi, migrasi 0016, daftar ini
+- `claude/ecstatic-tesla-d8c6g4` sudah tercakup di `main` (tidak ada commit baru) — boleh dihapus
 
 ## C. Teknis — butuh izin terapkan ke database produksi
 
-- [ ] Terapkan migrasi 0015 (`pnpm db:migrate` dengan `DATABASE_URL` produksi, atau lewat Supabase)
+- [ ] Terapkan migrasi 0016 (`pnpm db:migrate` dengan `DATABASE_URL` produksi, atau lewat Supabase)
 
 ## D. Keputusan dr. Metz / bisnis (menyusul)
 
