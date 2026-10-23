@@ -97,3 +97,21 @@ describe("isolasi tenant (RLS, role aevia_app)", () => {
     await expect(d.withTenant(a, (tx) => tx.delete(checkins))).rejects.toThrow();
   });
 });
+
+describe("runner migrasi", () => {
+  it("baris _migrations tanpa akhiran .sql dianggap sudah terpasang (tidak dijalankan ulang)", async () => {
+    const m = await createDb();
+    try {
+      const names = async () => ((await m.db.execute(sql`SELECT name FROM _migrations`)) as unknown as { rows: { name: string }[] }).rows.map((r) => r.name);
+      await m.migrate();
+      const total = (await names()).length;
+      await m.db.execute(sql`UPDATE _migrations SET name = regexp_replace(name, '\\.sql$', '')`);
+      await m.migrate();
+      const after = await names();
+      expect(after.length).toBe(total);
+      expect(after.filter((n) => n.endsWith(".sql"))).toEqual([]);
+    } finally {
+      await m.close();
+    }
+  }, 60_000);
+});

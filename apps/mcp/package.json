@@ -10,7 +10,7 @@
     "start": "tsx src/stdio.ts",
     "start:http": "tsx src/http.ts",
     "typecheck": "tsc -p .",
-    "test": "vitest run"
+    "test": "vitest run --hookTimeout=60000"
   },
   "dependencies": {
     "@aevia/core": "workspace:*",

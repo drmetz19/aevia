@@ -109,9 +109,11 @@ export async function createDb(opts: CreateDbOptions = {}): Promise<Db> {
       "CREATE TABLE IF NOT EXISTS _migrations (name text PRIMARY KEY, applied_at timestamptz NOT NULL DEFAULT now())",
     );
     const done = (await db.execute(sql`SELECT name FROM _migrations`)) as unknown as { rows: { name: string }[] };
-    const applied = new Set(done.rows.map((r) => r.name));
+    // Nama dibandingkan tanpa akhiran .sql: sebagian baris produksi tercatat tanpa akhiran (dipasang di luar runner ini).
+    const base = (n: string) => n.replace(/\.sql$/, "");
+    const applied = new Set(done.rows.map((r) => base(r.name)));
     for (const m of loadMigrations()) {
-      if (applied.has(m.name)) continue;
+      if (applied.has(base(m.name))) continue;
       const statements = m.sql.split("--> statement-breakpoint");
       for (const s of statements) if (s.trim()) await run(s);
       await db.execute(sql`INSERT INTO _migrations (name) VALUES (${m.name})`);

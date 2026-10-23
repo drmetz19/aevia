@@ -7,7 +7,7 @@
   "types": "src/index.ts",
   "scripts": {
     "typecheck": "tsc -p .",
-    "test": "vitest run",
+    "test": "vitest run --hookTimeout=60000",
     "seed": "tsx src/seed-cli.ts",
     "migrate": "tsx src/migrate-cli.ts"
   },
