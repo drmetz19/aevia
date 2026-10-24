@@ -63,7 +63,7 @@ export function LoginForm({ slug, ended }: { slug: string; ended: boolean }) {
               </p>
             )}
             <button type="submit" disabled={verPending} className={primary}>
-              Masuk
+              {verPending ? "Memeriksa…" : "Masuk"}
             </button>
           </form>
           <form action={reqAction} className="text-center">

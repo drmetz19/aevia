@@ -54,7 +54,7 @@ cpSync(fileURLToPath(new URL("../../../packages/db/migrations", import.meta.url)
 
 writeFileSync(
   `${fn}/.vc-config.json`,
-  JSON.stringify({ runtime: "nodejs22.x", handler: "index.mjs", launcherType: "Nodejs", shouldAddHelpers: false, maxDuration: 30 }, null, 2),
+  JSON.stringify({ runtime: "nodejs22.x", handler: "index.mjs", launcherType: "Nodejs", shouldAddHelpers: false, maxDuration: 30, regions: ["icn1"] }, null, 2),
 );
 writeFileSync(`${fn}/package.json`, JSON.stringify({ type: "module" }));
 writeFileSync(`${out}/static/robots.txt`, "User-agent: *\nDisallow: /\n");

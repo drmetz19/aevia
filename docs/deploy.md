@@ -39,6 +39,10 @@ Arsitektur: 4 project Vercel dari satu repo (root directory berbeda) + 1 project
 
 Untuk tiap project: Import repo, set **Root Directory** sesuai tabel, dan biarkan `vercel.json` di folder itu menentukan install/build. Aktifkan "Include source files outside of the Root Directory" (workspace `packages/*` dipakai bersama).
 
+### Region fungsi
+
+`vercel.json` ketiga project (dan `.vc-config.json` bundel API) memakai `"regions": ["icn1"]` (Seoul), satu region dengan database Supabase (`ap-northeast-2`). Satu request API melakukan beberapa query dalam transaksi; bila fungsi jalan di region lain (default Vercel `iad1`, AS), tiap query menyeberang Pasifik dan aksi sederhana bisa butuh beberapa detik. Bila database dipindah, ubah region ini ikut.
+
 ### Matriks environment
 
 | Variabel | api | web | console | mcp | Keterangan |
