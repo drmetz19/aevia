@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { scaleAnchors } from "@aevia/core";
 import { PatientShell } from "@/components/PatientShell";
+import { SubmitButton } from "@/components/SubmitButton";
 import { PageIntro, btnPrimary, linkCls } from "@/components/PageIntro";
 import { fetchClinic } from "@/lib/api";
 import { getCheckinForm, requirePatient } from "@/lib/session";
@@ -60,7 +61,7 @@ export default async function Checkin({ params, searchParams }: { params: Promis
             <textarea id="note" name="note" rows={3} maxLength={500} placeholder="Hal lain yang ingin Anda catat" className="field mt-1" />
           </div>
           <div className="flex flex-col items-center gap-4 sm:flex-row">
-            <button type="submit" className={btnPrimary}>Simpan check-in</button>
+            <SubmitButton className={btnPrimary}>Simpan check-in</SubmitButton>
             <Link href={`/c/${slug}/beranda`} className={linkCls}>Nanti saja</Link>
           </div>
         </form>

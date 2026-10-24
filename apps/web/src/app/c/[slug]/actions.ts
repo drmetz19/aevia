@@ -64,13 +64,16 @@ export async function logout(fd: FormData) {
 export async function saveConsents(fd: FormData) {
   const slug = String(fd.get("slug") ?? "");
   if (!SLUG_RE.test(slug)) redirect("/");
-  for (const scope of consentScopes) {
-    const res = await apiAuthed(slug, "/v1/me/consents", {
-      method: "PUT",
-      body: JSON.stringify({ scope, granted: fd.get(scope) === "on" }),
-    });
-    if (!res || !res.ok) redirect(`/c/${slug}/masuk?sesi=berakhir`);
-  }
+  // Paralel: tiap scope baris & transaksi sendiri; berurutan butuh ±8 dtk di produksi (4× bolak-balik ke DB).
+  const results = await Promise.all(
+    consentScopes.map((scope) =>
+      apiAuthed(slug, "/v1/me/consents", {
+        method: "PUT",
+        body: JSON.stringify({ scope, granted: fd.get(scope) === "on" }),
+      }),
+    ),
+  );
+  if (results.some((res) => !res || !res.ok)) redirect(`/c/${slug}/masuk?sesi=berakhir`);
   redirect(fd.get("dari") === "assessment" ? `/c/${slug}/assessment` : `/c/${slug}/beranda`);
 }
 

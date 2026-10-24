@@ -10,7 +10,7 @@
     "mock:kliniksistem": "tsx src/testing/mock-kliniksistem-cli.ts",
     "build": "tsc -p .",
     "typecheck": "tsc -p .",
-    "test": "vitest run",
+    "test": "vitest run --hookTimeout=60000",
     "build:vercel": "node scripts/build-vercel.mjs"
   },
   "dependencies": {

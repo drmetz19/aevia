@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { AlertTriangle, ChevronDown, History } from "lucide-react";
 import { COMPLETION_LINE, PROGRESS_LINE, areaLabel, findQuestion, guardEngine, scriptEngine } from "@aevia/core";
 import { PatientShell } from "@/components/PatientShell";
+import { SubmitButton } from "@/components/SubmitButton";
 import { SoviaAvatar, SoviaHeader } from "@/components/SoviaHeader";
 import { fetchClinic } from "@/lib/api";
 import { getConsents, getLatestAssessment, requirePatient } from "@/lib/session";
@@ -60,9 +61,9 @@ export default async function AssessmentPage({ params, searchParams }: Props) {
               )}
               <form action={startAssessmentAction} className="flex flex-col items-stretch gap-3 sm:flex-row sm:items-center">
                 <input type="hidden" name="slug" value={slug} />
-                <button type="submit" className={primary}>
+                <SubmitButton className={primary} pendingLabel="Menyiapkan…">
                   Mulai assessment
-                </button>
+                </SubmitButton>
                 {state?.status === "completed" && (
                   <Link href={`/c/${slug}/assessment/hasil`} className="text-base font-semibold text-navy underline underline-offset-4">
                     Lihat hasil terakhir
@@ -191,13 +192,13 @@ export default async function AssessmentPage({ params, searchParams }: Props) {
                         </>
                       )}
                       <div className="flex gap-3 pt-1">
-                        <button type="submit" className={primary}>
+                        <SubmitButton className={primary} notWhen="skip">
                           Lanjut
-                        </button>
+                        </SubmitButton>
                         {active.next_question.type === "text" && (
-                          <button type="submit" name="skip" value="1" formNoValidate className="inline-flex flex-1 items-center justify-center rounded-pill border border-navy px-6 py-3.5 text-base font-semibold text-navy transition active:scale-[0.98] sm:flex-none">
+                          <SubmitButton name="skip" value="1" formNoValidate className="inline-flex flex-1 items-center justify-center rounded-pill border border-navy px-6 py-3.5 text-base font-semibold text-navy transition active:scale-[0.98] sm:flex-none">
                             Lewati
-                          </button>
+                          </SubmitButton>
                         )}
                       </div>
                     </form>
@@ -208,9 +209,9 @@ export default async function AssessmentPage({ params, searchParams }: Props) {
                     <form action={completeAction} className="flex sm:pl-10">
                       <input type="hidden" name="slug" value={slug} />
                       <input type="hidden" name="assessment_id" value={active.id} />
-                      <button type="submit" className={primary}>
+                      <SubmitButton className={primary} pendingLabel="Menyiapkan hasil…">
                         Lihat hasil
-                      </button>
+                      </SubmitButton>
                     </form>
                   </div>
                 )}

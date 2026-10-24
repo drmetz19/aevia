@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import { Send } from "lucide-react";
 import { PREP_INTRO, PREP_NOTE } from "@aevia/core";
 import { PatientShell } from "@/components/PatientShell";
+import { SubmitButton } from "@/components/SubmitButton";
 import { PageIntro, btnPrimary, card } from "@/components/PageIntro";
 import { SoviaAvatar } from "@/components/SoviaHeader";
 import { fetchClinic } from "@/lib/api";
@@ -80,9 +81,9 @@ export default async function Konsultasi({ params, searchParams }: Props) {
                   <label htmlFor="konteks" className={label}><Num n={4} />Konteks dari assessment</label>
                   <textarea id="konteks" name="konteks_assessment" rows={3} maxLength={1200} defaultValue={prep.konteks_assessment} className={`mt-2 ${field}`} />
                 </div>
-                <button type="submit" className={btnPrimary}>
+                <SubmitButton className={btnPrimary} pendingLabel="Mengirim…">
                   <Send aria-hidden="true" size={18} strokeWidth={1.75} /> Kirim permintaan konsultasi
-                </button>
+                </SubmitButton>
               </form>
             )}
           </section>

@@ -3,6 +3,7 @@ import { consentCopy, consentScopes } from "@aevia/core";
 import { Lock } from "lucide-react";
 import { PageIntro } from "@/components/PageIntro";
 import { PatientShell } from "@/components/PatientShell";
+import { SubmitButton } from "@/components/SubmitButton";
 import { fetchClinic } from "@/lib/api";
 import { getConsents, requirePatient } from "@/lib/session";
 import { saveConsents } from "../actions";
@@ -54,9 +55,9 @@ export default async function Consent({ params, searchParams }: { params: Promis
           Data disimpan terpisah untuk {clinic.name}.
         </p>
         <div className={`sticky z-30 pt-2 lg:static ${decided ? "bottom-[calc(84px+env(safe-area-inset-bottom))]" : "bottom-4"}`}>
-          <button type="submit" className="w-full rounded-pill bg-navy px-6 py-3.5 text-base font-semibold text-white shadow-soft transition active:scale-[0.98]">
+          <SubmitButton className="inline-flex w-full items-center justify-center rounded-pill bg-navy px-6 py-3.5 text-base font-semibold text-white shadow-soft transition active:scale-[0.98]">
             Simpan pilihan saya
-          </button>
+          </SubmitButton>
         </div>
       </form>
     </PatientShell>

@@ -16,6 +16,7 @@ import {
   Video,
 } from "lucide-react";
 import { PatientShell } from "@/components/PatientShell";
+import { SubmitButton } from "@/components/SubmitButton";
 import { btnPrimary, linkCls } from "@/components/PageIntro";
 import { fetchClinic } from "@/lib/api";
 import { REMINDER_CTA } from "@aevia/core";
@@ -181,7 +182,7 @@ export default async function Beranda({ params, searchParams }: { params: Promis
                   <input type="hidden" name="slug" value={clinic.slug} />
                   <input type="hidden" name="reminder_id" value={r.id} />
                   <input type="hidden" name="next" value={target[r.kind]} />
-                  <button type="submit" className="w-full rounded-pill bg-navy px-5 py-3 text-base font-semibold text-white transition active:scale-[0.98] sm:w-auto">{REMINDER_CTA[r.kind]}</button>
+                  <SubmitButton pendingLabel="Membuka…" className="inline-flex w-full items-center justify-center rounded-pill bg-navy px-5 py-3 text-base font-semibold text-white transition active:scale-[0.98] sm:w-auto">{REMINDER_CTA[r.kind]}</SubmitButton>
                 </form>
               </li>
             ))}
@@ -264,10 +265,10 @@ export default async function Beranda({ params, searchParams }: { params: Promis
 
       <form action={logout} className="mt-8 flex justify-center">
         <input type="hidden" name="slug" value={clinic.slug} />
-        <button type="submit" className="inline-flex items-center gap-2 rounded-pill px-5 py-2.5 text-base font-semibold text-slate transition hover:bg-sand hover:text-navy">
+        <SubmitButton pendingLabel="Keluar…" className="inline-flex items-center gap-2 rounded-pill px-5 py-2.5 text-base font-semibold text-slate transition hover:bg-sand hover:text-navy">
           <LogOut aria-hidden="true" size={18} strokeWidth={1.75} />
           Keluar
-        </button>
+        </SubmitButton>
       </form>
     </PatientShell>
   );
