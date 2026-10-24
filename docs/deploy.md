@@ -41,7 +41,7 @@ Untuk tiap project: Import repo, set **Root Directory** sesuai tabel, dan biarka
 
 ### Region fungsi
 
-`vercel.json` ketiga project (dan `.vc-config.json` bundel API) memakai `"regions": ["icn1"]` (Seoul), satu region dengan database Supabase (`ap-northeast-2`). Satu request API melakukan beberapa query dalam transaksi; bila fungsi jalan di region lain (default Vercel `iad1`, AS), tiap query menyeberang Pasifik dan aksi sederhana bisa butuh beberapa detik. Bila database dipindah, ubah region ini ikut.
+`vercel.json` ketiga project (dan `.vc-config.json` bundel API) memakai `"regions": ["icn1"]` (Seoul), satu region dengan database Supabase (`ap-northeast-2`). Satu request API melakukan beberapa query dalam transaksi; bila fungsi jalan di region lain (sebelumnya `sin1`, Singapura: ±70 ms per query), jeda itu terkumpul per query sehingga aksi sederhana bisa butuh beberapa detik. Bila database dipindah, ubah region ini ikut.
 
 ### Matriks environment
 
