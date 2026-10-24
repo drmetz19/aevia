@@ -15,7 +15,7 @@ Satu platform, banyak klinik (multi-tenant): setiap klinik punya halaman sendiri
 | `packages/core` | Domain murni: assessment, guardrail, prompt LLM, skema Zod, kontras warna |
 | `packages/db` | Drizzle + migrasi SQL (PGlite dev/test, Postgres produksi), RLS, seed |
 | `packages/ui` | Token desain, Tailwind, font self-hosted |
-| `docs/` | `integrasi/` (API publik, webhook, KlinikSistem, BeautyCode), `deploy.md`, `brand/` |
+| `docs/` | `integrasi/` (API publik, webhook, MCP, KlinikSistem, BeautyCode), `deploy.md`, `brand/` |
 | `plans/` | PRD, rencana fase, keputusan desain |
 
 ## Mulai cepat
@@ -71,7 +71,7 @@ Default Sovia memakai skrip deterministik. Admin klinik dapat menyalakan mode LL
 - CRM (data kontak + fase lead/penjualan): [docs/integrasi/crm.md](docs/integrasi/crm.md)
 - KlinikSistem: [docs/integrasi/kliniksistem.md](docs/integrasi/kliniksistem.md)
 - BeautyCode: [docs/integrasi/beautycode.md](docs/integrasi/beautycode.md)
-- MCP (Claude Desktop / Claude Code): [apps/mcp/README.md](apps/mcp/README.md)
+- MCP (Claude Desktop / Claude Code): [docs/integrasi/mcp.md](docs/integrasi/mcp.md)
 - Deploy Supabase + Vercel: [docs/deploy.md](docs/deploy.md)
 
 ## Prinsip yang dijaga kode
