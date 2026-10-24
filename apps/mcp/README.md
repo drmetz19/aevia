@@ -2,6 +2,8 @@
 
 Server [Model Context Protocol](https://modelcontextprotocol.io) agar asisten AI (Claude Desktop, Claude Code, dll.) dapat membaca ringkasan pendampingan dan melakukan dua aksi terbatas untuk **klinik Anda**.
 
+Dokumentasi lengkap (input/output per tool, galat, audit, uji curl): [docs/integrasi/mcp.md](../../docs/integrasi/mcp.md).
+
 **Zero akses DB.** Server ini hanya memanggil REST integrasi AEVIA lewat HTTP (`/v1/integrations/*`) dengan kunci API klinik. Karena itu semua aturan API berlaku apa adanya: cakupan (scope), persetujuan pasien, isolasi klinik, batas permintaan, dan audit. Setiap panggilan mengirim `X-Aevia-Actor: mcp`, sehingga audit klinik mencatat `actor_type=mcp` dengan penanda `mcp:<prefix kunci>`.
 
 ## Tool (tepat 6)

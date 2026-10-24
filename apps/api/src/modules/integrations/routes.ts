@@ -30,11 +30,12 @@ import {
   webhookViewSchema,
 } from "@aevia/core";
 import { and, eq, isNull } from "drizzle-orm";
-import { oauthClients, writeAudit } from "@aevia/db";
+import { clinics, oauthClients, writeAudit } from "@aevia/db";
 import { AuthError } from "../auth/otp";
 import { requireRole } from "../auth/guard";
 import type { AuthCtx } from "../auth/service";
 import { registerConnectorRoutes } from "../connectors/routes";
+import { registerCrmRoutes } from "../crm/routes";
 import { pullBeautycodeDue } from "../connectors/pull";
 import { requireScope, issueAccessToken, type IntegrationAuthDeps } from "./auth";
 import * as keys from "./keys";
@@ -111,12 +112,17 @@ export const integrationRoutes: FastifyPluginAsyncZod<IntegrationDeps> = async (
   );
 
   // ---------- Route integrasi (kunci API / token OAuth) ----------
-  app.get("/v1/integrations/me", { schema: { tags: ["Integrasi"], summary: "Identitas kredensial: klinik dan cakupan aktif.", security: apiSec, response: { 200: integrationMeSchema } }, preHandler: requireScope(ad) }, async (req) => ({
-    clinic_id: req.integration!.clinicId,
-    credential: req.integration!.kind,
-    label: req.integration!.label,
-    scopes: req.integration!.scopes,
-  }));
+  app.get("/v1/integrations/me", { schema: { tags: ["Integrasi"], summary: "Identitas kredensial: klinik dan cakupan aktif.", security: apiSec, response: { 200: integrationMeSchema } }, preHandler: requireScope(ad) }, async (req) => {
+    const [c] = await ctx.db.db.select({ slug: clinics.slug, name: clinics.name }).from(clinics).where(eq(clinics.id, req.integration!.clinicId));
+    return {
+      clinic_id: req.integration!.clinicId,
+      clinic_slug: c!.slug,
+      clinic_name: c!.name,
+      credential: req.integration!.kind,
+      label: req.integration!.label,
+      scopes: req.integration!.scopes,
+    };
+  });
 
   app.get(
     "/v1/integrations/patients/:id/summary",
@@ -189,6 +195,7 @@ export const integrationRoutes: FastifyPluginAsyncZod<IntegrationDeps> = async (
   });
 
   registerConnectorRoutes(app, { ctx, ad, encryptionKey, fetchFn });
+  registerCrmRoutes(app, { ctx, ad });
 
   // ---------- Dispatcher (Vercel Cron memanggil GET; POST juga diterima) ----------
   const cron = async (req: { headers: { authorization?: string } }) => {

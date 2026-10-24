@@ -70,8 +70,9 @@ describe("isolasi tenant (RLS, role aevia_app)", () => {
 
   it("outbox events terisolasi per klinik", async () => {
     await d.withTenant(a, (tx) => tx.insert(events).values({ clinicId: a, type: "assessment.completed" }));
-    expect(await d.withTenant(b, (tx) => tx.select().from(events))).toEqual([]);
-    expect((await d.withTenant(a, (tx) => tx.select().from(events))).length).toBe(1);
+    expect((await d.withTenant(b, (tx) => tx.select().from(events))).filter((e) => e.clinicId !== b)).toEqual([]);
+    // pendaftaran pasien di test sebelumnya juga memancarkan contact.created (trigger CRM) di kedua klinik
+    expect((await d.withTenant(a, (tx) => tx.select().from(events))).filter((e) => e.type === "assessment.completed").length).toBe(1);
   });
 
   it("programs terisolasi per klinik", async () => {

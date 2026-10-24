@@ -24,16 +24,16 @@ Status: MVP 12/12 fase selesai; produksi berdiri (Supabase "Aevia konsult" + Ver
 - [ ] Alamat web pasien `aevia-web-theta.vercel.app` kurang rapi untuk dibagikan — pertimbangkan domain sendiri (mis. `app.drmetz.id`) + `PLATFORM_HOSTS`
 - [ ] Project `aevia-mcp` belum ada — hanya perlu bila MCP lewat HTTP dipakai (Claude Desktop/Code)
 
-## B2. Branch yang belum digabung ke `main`
+## B2. Branch digabung ke `main` (2026-10-24)
 
-- [ ] `claude/tender-keller-k5vr8h` — CRM: API kontak + fase lead (migrasi `0015_crm_contacts`). Gabungkan **sebelum** branch ini agar migrasi 0016 ikut merapikan kebijakan RLS tabel CRM
-- [ ] `claude/hopeful-shannon-g57fxf` — dokumentasi MCP (docs/integrasi/mcp.md, versi Word, lembar kredensial)
-- [ ] `claude/busy-ramanujan-xbdou2` — perbaikan tes, runner migrasi, migrasi 0016, daftar ini
-- `claude/ecstatic-tesla-d8c6g4` sudah tercakup di `main` (tidak ada commit baru) — boleh dihapus
+- [x] `claude/tender-keller-k5vr8h` — CRM: API kontak + fase lead (migrasi `0015_crm_contacts`) → PR #1
+- [x] `claude/hopeful-shannon-g57fxf` — dokumentasi MCP → PR #2
+- [x] `claude/busy-ramanujan-xbdou2` — perbaikan tes, runner migrasi, migrasi 0016, tombol "Menyimpan…", region Seoul, daftar ini
+- [ ] Hapus branch lama yang sudah tercakup di `main` (mis. `claude/ecstatic-tesla-d8c6g4`)
 
 ## C. Teknis — butuh izin terapkan ke database produksi
 
-- [ ] Terapkan migrasi 0016 (`pnpm db:migrate` dengan `DATABASE_URL` produksi, atau lewat Supabase)
+- [ ] Terapkan migrasi `0015_crm_contacts` lalu `0016_advisor_fixes` (urutan ini) — `pnpm db:migrate` dengan `DATABASE_URL` produksi, atau lewat Supabase. Tanpa 0015, endpoint CRM gagal; fitur lain tidak terpengaruh
 
 ## D. Keputusan dr. Metz / bisnis (menyusul)
 

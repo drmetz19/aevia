@@ -6,6 +6,8 @@ export const SCOPES = [
   "read:plans",
   "write:reminders",
   "write:consultation_requests",
+  "read:contacts",
+  "write:contacts",
   "integrations:write",
   "webhooks:manage",
 ] as const;
@@ -18,6 +20,8 @@ export const SCOPE_LABELS: Record<Scope, string> = {
   "read:plans": "Membaca rencana pendampingan yang sudah ditandatangani",
   "write:reminders": "Membuat pengingat check-in atau tinjauan",
   "write:consultation_requests": "Membuat permintaan konsultasi",
+  "read:contacts": "Membaca data kontak (nama, email, telepon) dan fase lead untuk CRM",
+  "write:contacts": "Membuat/mengubah kontak dan memindahkan fase lead dari CRM",
   "integrations:write": "Dicadangkan: mengelola integrasi lain melalui API",
   "webhooks:manage": "Mengelola endpoint webhook melalui API",
 };
@@ -30,6 +34,9 @@ export const WEBHOOK_EVENTS = [
   "plan.approved",
   "checkin.submitted",
   "progress.updated",
+  "contact.created",
+  "contact.updated",
+  "contact.stage_changed",
 ] as const;
 export const webhookEventSchema = z.enum(WEBHOOK_EVENTS, { error: "Jenis kejadian belum dikenal." });
 
@@ -178,4 +185,4 @@ export const integrationRequestBodySchema = z.object({
     .default({ tujuan: "", keluhan: "", pertanyaan: [], konteks_assessment: "" }),
 });
 export const integrationRequestSchema = z.object({ id: z.string(), patient_id: z.string(), program_id: z.string(), status: z.string(), created_at: z.string() });
-export const integrationMeSchema = z.object({ clinic_id: z.string(), credential: z.enum(["api_key", "oauth"]), label: z.string(), scopes: z.array(z.string()) });
+export const integrationMeSchema = z.object({ clinic_id: z.string(), clinic_slug: z.string(), clinic_name: z.string(), credential: z.enum(["api_key", "oauth"]), label: z.string(), scopes: z.array(z.string()) });

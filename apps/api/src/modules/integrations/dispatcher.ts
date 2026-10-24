@@ -24,11 +24,13 @@ export interface DispatchResult {
   failed: number;
 }
 
-/** Payload minimal: hanya id (…_id), versi, dan penanda flagged. Tanpa nama, email, atau data klinis. */
+const PAYLOAD_KEYS = new Set(["version", "flagged", "status", "stage", "previous_stage", "mode"]);
+
+/** Payload minimal: hanya id (…_id), versi, status/fase, dan penanda flagged. Tanpa nama, email, telepon, atau data klinis. */
 export function minimalPayload(p: Record<string, unknown>): Record<string, string | number | boolean> {
   const out: Record<string, string | number | boolean> = {};
   for (const [k, v] of Object.entries(p)) {
-    if ((k.endsWith("_id") || k === "version" || k === "flagged" || k === "status") && ["string", "number", "boolean"].includes(typeof v)) out[k] = v as string | number | boolean;
+    if ((k.endsWith("_id") || PAYLOAD_KEYS.has(k)) && ["string", "number", "boolean"].includes(typeof v)) out[k] = v as string | number | boolean;
   }
   return out;
 }

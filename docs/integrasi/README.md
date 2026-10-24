@@ -5,6 +5,7 @@ Panduan untuk menghubungkan sistem Anda ke klinik di AEVIA: autentikasi, cakupan
 - Spesifikasi OpenAPI 3.1: `GET /v1/openapi.json`
 - Dokumentasi interaktif (aset dihosting sendiri, tanpa CDN): `/docs`
 - Kunci dan klien dibuat oleh admin klinik di konsol: **Pengaturan → Integrasi**.
+- Asisten AI (Claude Desktop, Claude Code, dll.) lewat server MCP: [mcp.md](mcp.md), kredensialnya dicatat terpisah di [mcp-kredensial.md](mcp-kredensial.md).
 
 ## Autentikasi
 
@@ -45,13 +46,15 @@ Token berumur **15 menit** (`aud=aevia-api`, klaim `scope`). Minta token baru sa
 | `write:reminders` | `POST /v1/integrations/reminders` |
 | `write:consultation_requests` | `POST /v1/integrations/consultation-requests` |
 | `webhooks:manage` | `GET/POST/DELETE /v1/integrations/webhooks` |
+| `read:contacts` | Data kontak, fase lead, riwayat fase, funnel untuk CRM (lihat [crm.md](crm.md)) |
+| `write:contacts` | Upsert/ubah/hapus kontak dan pindah fase lead dari CRM (lihat [crm.md](crm.md)) |
 | `integrations:write` | Konektor masuk: `POST /v1/integrations/kliniksistem/visits` dan `POST /v1/integrations/beautycode/tracker` (lihat [kliniksistem.md](kliniksistem.md), [beautycode.md](beautycode.md)) |
 
 Tanpa cakupan yang sesuai: `403 insufficient_scope`. **Tidak ada** route integrasi untuk menulis SOAP, resep, atau rencana pendampingan; semuanya hanya dapat dibuat dan ditandatangani profesional klinik.
 
 ### Aturan data
 
-- Respons tidak memuat nama atau email pasien, hanya `id` pasien.
+- Respons tidak memuat nama atau email pasien, hanya `id` pasien. Pengecualian: route kontak CRM (`read:contacts`), lihat [crm.md](crm.md).
 - Data klinis (check-in, progres, rencana, bagian klinis ringkasan) hanya tersedia bila pasien menyetujui akses rekam medis; selain itu `403 consent_required`. Pencabutan persetujuan berlaku seketika.
 - Pengingat memakai teks baku; Anda hanya memilih `kind` (`checkin` atau `review`) dan `due_at`.
 - Setiap panggilan, termasuk yang ditolak karena cakupan, tercatat di audit klinik sebagai `actor_type=api` dengan penanda `api:<prefix kunci>`.
@@ -76,7 +79,7 @@ Setiap pengiriman adalah `POST` JSON:
 }
 ```
 
-`data` minimal: hanya id (dan `version` / `flagged`), tanpa nama, email, jawaban, atau nilai klinis. Ambil detailnya lewat route integrasi di atas bila cakupan Anda mengizinkan.
+`data` minimal: hanya id (dan `version` / `flagged` / `status` / `stage`), tanpa nama, email, jawaban, atau nilai klinis. Ambil detailnya lewat route integrasi di atas bila cakupan Anda mengizinkan.
 
 Header:
 
@@ -120,6 +123,9 @@ Maksimal **3 percobaan**: percobaan 1 segera, ke-2 setelah 1 menit, ke-3 setelah
 | `checkin.submitted` | Pasien mengirim check-in | `checkin_id`, `patient_id`, `care_plan_id` |
 | `progress.updated` | Progres terhitung ulang setelah check-in | `patient_id`, `checkin_id` |
 | `consultation.status_changed` | Status konsultasi berubah (mis. dari KlinikSistem) | `consultation_id`, `patient_id`, `status` |
+| `contact.created` | Kontak CRM dibuat (API atau pasien mendaftar) | `contact_id`, `patient_id`, `stage` |
+| `contact.updated` | Data kontak diubah lewat API | `contact_id`, `patient_id` |
+| `contact.stage_changed` | Fase lead berpindah (otomatis/manual) | `contact_id`, `patient_id`, `stage`, `previous_stage`, `mode` |
 | `webhook.test` | Tombol "Kirim tes" | `endpoint_id` |
 
 Langganan `*` menerima semua jenis di atas.
