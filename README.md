@@ -68,6 +68,7 @@ Default Sovia memakai skrip deterministik. Admin klinik dapat menyalakan mode LL
 ## Integrasi
 
 - API publik, kunci API, OAuth client-credentials, webhook bertanda tangan: [docs/integrasi/README.md](docs/integrasi/README.md)
+- CRM (data kontak + fase lead/penjualan): [docs/integrasi/crm.md](docs/integrasi/crm.md)
 - KlinikSistem: [docs/integrasi/kliniksistem.md](docs/integrasi/kliniksistem.md)
 - BeautyCode: [docs/integrasi/beautycode.md](docs/integrasi/beautycode.md)
 - MCP (Claude Desktop / Claude Code): [apps/mcp/README.md](apps/mcp/README.md)

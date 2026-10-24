@@ -11,4 +11,5 @@ export * from "./color";
 export * from "./settings";
 export * from "./integrations";
 export * from "./connectors";
+export * from "./crm";
 export * from "./llm";

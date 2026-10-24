@@ -32,7 +32,7 @@ export async function verifyPatientOtp(ctx: AuthCtx, slug: string, email: string
   if (!clinic) throw clinicNotFound();
   await checkOtp(ctx.db, ctx.secret, { subjectType: "patient", clinicId: clinic.id, email }, code, ctx.now());
   const patientId = await ctx.db.withTenant(clinic.id, async (tx) => {
-    await tx.insert(patients).values({ clinicId: clinic.id, email }).onConflictDoNothing();
+    await tx.insert(patients).values({ clinicId: clinic.id, email, createdAt: ctx.now() }).onConflictDoNothing();
     const [p] = await tx.select({ id: patients.id }).from(patients).where(eq(patients.email, email));
     return p!.id;
   });
