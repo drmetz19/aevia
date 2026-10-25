@@ -46,4 +46,5 @@ Pembayaran sungguhan; video call bawaan; integrasi MoreMe/analisis spektral; met
 - Verbal Identity tetap berlaku pada semua copy baru (tanpa "wajib/gagal/garansi/instan"; pesan voucher tenang dan memberi langkah).
 
 ## Changelog
-- (diisi saat implementasi mengubah rencana)
+- 2026-10-25 · Phase 1 · Util baru `bg-action` (`--brand-primary-action`, default #0E7490) untuk tombol primer; whitelabel menimpanya dengan `--brand-primary` klinik — alasan: tombol whitelabel tetap berwarna klinik. Toggle mati #94A3B8 — alasan: kontras ≥3:1 (WCAG 1.4.11).
+- 2026-10-25 · Phase 3 · Hapus program yang masih dirujuk voucher ditolak 409 `program_has_vouchers`; voucher dengan program klinik lain → 404; kedaluwarsa di form dibaca sebagai akhir hari WIB; Nonaktifkan voucher memakai konfirmasi, Aktifkan tanpa — alasan: integritas FK tanpa cascade, isolasi tenant, dan zona waktu klinik.
