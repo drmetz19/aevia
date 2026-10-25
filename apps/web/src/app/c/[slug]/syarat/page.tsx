@@ -15,7 +15,7 @@ export default async function Syarat({ params }: { params: Promise<{ slug: strin
         <PageIntro eyebrow="Ketentuan layanan" title="Syarat & ketentuan">
           <p>Layanan ini dijalankan oleh {clinic.name} dengan teknologi dari AEVIA. Berikut hal-hal yang perlu Anda ketahui.</p>
         </PageIntro>
-        <div className="mt-8 rounded-lg border border-line bg-surface p-5 shadow-soft sm:p-7">
+        <div className="mt-8 rounded-lg border border-line bg-surface p-4 sm:p-6">
         <h2 className="text-xl font-semibold text-navy">Peran asisten AI</h2>
         <p className="mt-2 text-base text-body">
           {clinic.assistant_name} adalah asisten AI yang membantu merangkum keluhan dan tujuan Anda. Asisten tidak memberi

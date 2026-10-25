@@ -30,7 +30,7 @@ export default async function Consent({ params, searchParams }: { params: Promis
             <label
               key={scope}
               style={{ "--d": i + 1 } as React.CSSProperties}
-              className="reveal flex cursor-pointer items-start gap-4 rounded-lg border border-line bg-surface p-5 shadow-soft transition-colors has-[:checked]:border-navy/40 has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-[var(--brand-accent)]"
+              className="reveal flex cursor-pointer items-start gap-4 rounded-lg border border-line bg-surface p-5 transition-colors has-[:checked]:border-navy/40 has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-[var(--brand-accent)]"
             >
               <span className="min-w-0 flex-1">
                 <span className="block text-lg font-semibold leading-7 text-navy">{consentCopy[scope].title}</span>
@@ -55,7 +55,7 @@ export default async function Consent({ params, searchParams }: { params: Promis
           Data disimpan terpisah untuk {clinic.name}.
         </p>
         <div className={`sticky z-30 pt-2 lg:static ${decided ? "bottom-[calc(84px+env(safe-area-inset-bottom))]" : "bottom-4"}`}>
-          <SubmitButton className="inline-flex w-full items-center justify-center rounded-md bg-action px-6 py-3.5 text-base font-semibold text-white shadow-soft transition active:scale-[0.98]">
+          <SubmitButton className="inline-flex w-full items-center justify-center rounded-md bg-action px-6 py-3.5 text-base font-semibold text-white transition active:scale-[0.98]">
             Simpan pilihan saya
           </SubmitButton>
         </div>

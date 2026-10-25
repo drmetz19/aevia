@@ -47,7 +47,7 @@ export default function PatientError({ error, retry }: { error: Error & { digest
             <button
               type="button"
               onClick={() => window.location.reload()}
-              className="inline-flex w-full items-center justify-center rounded-md bg-action px-6 py-3.5 text-base font-semibold text-white shadow-soft transition active:scale-[0.98] sm:w-auto"
+              className="inline-flex w-full items-center justify-center rounded-md bg-action px-6 py-3.5 text-base font-semibold text-white transition active:scale-[0.98] sm:w-auto"
             >
               Muat ulang halaman
             </button>

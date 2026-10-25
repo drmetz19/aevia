@@ -29,7 +29,7 @@ export default async function Checkin({ params, searchParams }: { params: Promis
           <input type="hidden" name="slug" value={slug} />
           {pesan && <p role="alert" className="text-base text-critical">{pesan}</p>}
           {form.fields.map((f) => (
-            <fieldset key={f.key} className="reveal rounded-lg border border-line bg-surface p-5 shadow-soft">
+            <fieldset key={f.key} className="reveal rounded-lg border border-line bg-surface p-5">
               <legend className="float-left w-full text-lg font-semibold leading-7 text-navy">{f.label}</legend>
               {f.scale ? (
                 <>

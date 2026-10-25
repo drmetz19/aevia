@@ -13,19 +13,19 @@ type Props = { params: Promise<{ slug: string }>; searchParams: Promise<{ pesan?
 
 const engine = guardEngine(scriptEngine);
 const primary =
-  "inline-flex flex-1 items-center justify-center rounded-md bg-action px-6 py-3.5 text-base font-semibold text-white shadow-soft transition active:scale-[0.98] sm:flex-none";
+  "inline-flex flex-1 items-center justify-center rounded-md bg-action px-6 py-3.5 text-base font-semibold text-white transition active:scale-[0.98] sm:flex-none";
 
 function SoviaBubble({ clinic, children, live }: { clinic: Parameters<typeof SoviaAvatar>[0]["clinic"]; children: React.ReactNode; live?: boolean }) {
   return (
     <div className={`flex items-end gap-2 ${live ? "reveal" : ""}`} {...(live ? { "aria-live": "polite" as const } : {})}>
       <SoviaAvatar clinic={clinic} size={32} />
-      <div className="max-w-[85%] rounded-lg rounded-bl-sm border border-sand bg-sand/80 px-4 py-3 text-base text-navy shadow-[0_1px_2px_rgba(11,31,58,0.05)]">{children}</div>
+      <div className="max-w-[85%] rounded-lg rounded-bl-sm border border-sand bg-sand/80 px-4 py-3 text-base text-navy">{children}</div>
     </div>
   );
 }
 const PatientBubble = ({ children }: { children: React.ReactNode }) => (
   <div className="flex justify-end">
-    <div className="max-w-[85%] rounded-lg rounded-br-sm bg-navy px-4 py-3 text-base text-white shadow-soft">{children}</div>
+    <div className="max-w-[85%] rounded-lg rounded-br-sm bg-navy px-4 py-3 text-base text-white">{children}</div>
   </div>
 );
 
@@ -44,7 +44,7 @@ export default async function AssessmentPage({ params, searchParams }: Props) {
   return (
     <PatientShell clinic={clinic} active="assessment" width="max-w-2xl">
         <h1 className="sr-only">Assessment bersama {name}</h1>
-        <div className="reveal -mx-4 -mt-7 overflow-hidden border-b border-line bg-surface shadow-soft sm:mx-0 sm:mt-0 sm:rounded-lg sm:border">
+        <div className="reveal -mx-4 -mt-7 overflow-hidden border-b border-line bg-surface sm:mx-0 sm:mt-0 sm:rounded-lg sm:border">
           <SoviaHeader clinic={clinic} />
 
           {!active ? (
@@ -148,7 +148,7 @@ export default async function AssessmentPage({ params, searchParams }: Props) {
                 {active.next_question ? (
                   <div className="space-y-3">
                     <SoviaBubble clinic={clinic} live>
-                      <span className="mb-1 block text-[13px] font-semibold uppercase tracking-[0.12em] text-navy">
+                      <span className="mb-1 block text-[11px] font-semibold uppercase tracking-[0.08em] text-navy">
                         {areaLabel(active.next_question.area)}
                       </span>
                       {active.next_question.text}
@@ -163,7 +163,7 @@ export default async function AssessmentPage({ params, searchParams }: Props) {
                           {active.next_question.options.map((o) => (
                             <label
                               key={o.value}
-                              className="group flex cursor-pointer items-center gap-3 rounded-md border border-line bg-surface px-4 py-3.5 text-base font-medium text-navy shadow-[0_1px_2px_rgba(11,31,58,0.04)] transition hover:border-navy/40 active:scale-[0.99] has-[:checked]:border-navy has-[:checked]:bg-sand has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-[var(--brand-accent)]"
+                              className="group flex cursor-pointer items-center gap-3 rounded-md border border-line bg-surface px-4 py-3.5 text-base font-medium text-navy transition hover:border-navy/40 active:scale-[0.99] has-[:checked]:border-navy has-[:checked]:bg-sand has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-[var(--brand-accent)]"
                             >
                               <input type="radio" name="value" value={o.value} required className="peer sr-only" />
                               <span

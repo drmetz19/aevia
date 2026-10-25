@@ -25,7 +25,7 @@ export default async function Hasil({ params }: { params: Promise<{ slug: string
 
   return (
     <PatientShell clinic={clinic} active="assessment" width="max-w-3xl">
-        <div className="reveal mb-7 overflow-hidden rounded-lg border border-line bg-surface shadow-soft">
+        <div className="reveal mb-7 overflow-hidden rounded-lg border border-line bg-surface">
           <SoviaHeader clinic={clinic} />
         </div>
         <PageIntro eyebrow="Hasil assessment" title="Gambaran awal kondisi Anda">
@@ -42,7 +42,7 @@ export default async function Hasil({ params }: { params: Promise<{ slug: string
           </div>
         )}
         {r.goal && (
-          <p className="mt-5 inline-flex flex-wrap items-center gap-2 rounded-pill border border-line bg-surface px-4 py-2 text-[15px] text-body shadow-soft">
+          <p className="mt-5 inline-flex flex-wrap items-center gap-2 rounded-pill border border-line bg-surface px-4 py-2 text-[15px] text-body">
             Fokus yang Anda pilih: <strong className="font-semibold text-navy">{r.goal}</strong>
           </p>
         )}
@@ -66,8 +66,8 @@ export default async function Hasil({ params }: { params: Promise<{ slug: string
           {r.areas.map((a, i) => {
             const { Icon, cls, bar } = levelIcon[a.level];
             return (
-              <li key={a.area} style={{ "--d": i } as React.CSSProperties} className={`reveal card-lift rounded-lg border border-line border-l-4 ${bar} bg-surface p-5 shadow-soft`}>
-                <p className="text-[13px] font-semibold uppercase tracking-[0.12em] text-copper-ink">{a.label}</p>
+              <li key={a.area} style={{ "--d": i } as React.CSSProperties} className={`reveal card-lift rounded-lg border border-line border-l-4 ${bar} bg-surface p-5`}>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-copper-ink">{a.label}</p>
                 <p className="mt-2 flex items-center gap-2 text-base font-semibold text-navy">
                   <Icon aria-hidden="true" className={cls} size={20} strokeWidth={1.5} />
                   {a.level_label}

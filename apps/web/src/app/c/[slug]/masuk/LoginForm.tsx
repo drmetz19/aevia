@@ -5,7 +5,7 @@ import { requestCode, verifyCode, type FormState } from "../actions";
 
 const input = "field";
 const primary =
-  "w-full rounded-md bg-action px-6 py-3.5 text-base font-semibold text-white shadow-soft transition active:scale-[0.98] disabled:cursor-wait disabled:opacity-70";
+  "w-full rounded-md bg-action px-6 py-3.5 text-base font-semibold text-white transition active:scale-[0.98] disabled:cursor-wait disabled:opacity-70";
 
 export function LoginForm({ slug, ended }: { slug: string; ended: boolean }) {
   const [req, reqAction, reqPending] = useActionState<FormState, FormData>(requestCode, {});

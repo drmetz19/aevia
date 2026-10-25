@@ -95,7 +95,7 @@ export default async function Beranda({ params, searchParams }: { params: Promis
         <div aria-hidden="true" className="orb" />
         <div className="flex items-start justify-between gap-4">
           <div className="min-w-0">
-            <p className="inline-flex items-center gap-3 text-[13px] font-semibold uppercase tracking-[0.14em] text-copper-light">
+            <p className="inline-flex items-center gap-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-copper-light">
               <span aria-hidden="true" className="h-px w-6 bg-copper-light" />
               Beranda
             </p>
@@ -126,7 +126,7 @@ export default async function Beranda({ params, searchParams }: { params: Promis
         </div>
 
         <div className="mt-6 rounded-md border border-white/12 bg-white/[0.06] p-4 backdrop-blur-sm sm:p-5">
-          <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-copper-light">Langkah berikutnya</p>
+          <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-copper-light">Langkah berikutnya</p>
           <p className="mt-1 text-lg font-semibold leading-snug">{next.title}</p>
           <p className="mt-1 text-[15px] text-white/75">{next.note}</p>
           {next.cta &&
@@ -143,13 +143,13 @@ export default async function Beranda({ params, searchParams }: { params: Promis
       </section>
 
       {info === "terkirim" && (
-        <p role="status" className="reveal mt-5 flex gap-3 rounded-md border border-success/30 bg-surface px-4 py-3 text-base text-navy shadow-soft">
+        <p role="status" className="reveal mt-5 flex gap-3 rounded-md border border-success/30 bg-surface px-4 py-3 text-base text-navy">
           <CircleCheck aria-hidden="true" className="mt-0.5 shrink-0 text-success" size={20} strokeWidth={1.75} />
           Selesai. Permintaan konsultasi Anda sudah terkirim dan akan ditinjau tim klinik.
         </p>
       )}
       {info === "ada" && (
-        <p role="status" className="reveal mt-5 flex gap-3 rounded-md border border-line bg-surface px-4 py-3 text-base text-navy shadow-soft">
+        <p role="status" className="reveal mt-5 flex gap-3 rounded-md border border-line bg-surface px-4 py-3 text-base text-navy">
           <CircleCheck aria-hidden="true" className="mt-0.5 shrink-0 text-copper-ink" size={20} strokeWidth={1.75} />
           Permintaan untuk program ini sudah kami terima dan sedang ditinjau tim klinik.
         </p>
@@ -175,7 +175,7 @@ export default async function Beranda({ params, searchParams }: { params: Promis
               <li
                 key={r.id}
                 style={{ "--d": i } as React.CSSProperties}
-                className="reveal flex flex-col gap-3 rounded-lg border border-line border-l-4 border-l-copper bg-surface p-4 shadow-soft sm:flex-row sm:items-center sm:justify-between"
+                className="reveal flex flex-col gap-3 rounded-lg border border-line border-l-4 border-l-copper bg-surface p-4 sm:flex-row sm:items-center sm:justify-between"
               >
                 <p className="text-base text-navy">{r.message}</p>
                 <form action={markReminderReadAction} className="w-full sm:w-auto">
@@ -213,11 +213,11 @@ export default async function Beranda({ params, searchParams }: { params: Promis
                 {st.state === "done" ? <Check size={16} strokeWidth={2.5} /> : i + 1}
               </span>
               <div
-                className={`min-w-0 flex-1 rounded-lg border bg-surface px-4 py-3 shadow-soft lg:border-0 lg:p-0 lg:shadow-none ${
+                className={`min-w-0 flex-1 rounded-lg border bg-surface px-4 py-3 lg:border-0 lg:p-0 lg:shadow-none ${
                   st.state === "todo" ? "border-line" : "border-copper/50"
                 }`}
               >
-                <span className="block text-[12px] font-semibold uppercase tracking-[0.12em] text-slate">Langkah {i + 1}</span>
+                <span className="block text-[11px] font-semibold uppercase tracking-[0.08em] text-slate">Langkah {i + 1}</span>
                 <span className="block text-base font-semibold text-navy">{st.title}</span>
                 <span className={`mt-0.5 block text-[14px] font-medium ${st.state === "todo" ? "text-body" : "text-copper-ink"}`}>{st.status}</span>
               </div>
@@ -233,7 +233,7 @@ export default async function Beranda({ params, searchParams }: { params: Promis
             <li key={label} style={{ "--d": i + 2 } as React.CSSProperties} className="reveal">
               <Link
                 href={href}
-                className="card-lift group flex h-full flex-col justify-between gap-4 rounded-lg border border-line bg-surface p-4 shadow-soft active:scale-[0.98]"
+                className="card-lift group flex h-full flex-col justify-between gap-4 rounded-lg border border-line bg-surface p-4 active:scale-[0.98]"
               >
                 <span className="flex h-10 w-10 items-center justify-center rounded-pill bg-sand text-copper-ink transition-colors group-hover:bg-navy group-hover:text-white">
                   <Icon aria-hidden="true" size={20} strokeWidth={1.75} />
@@ -248,7 +248,7 @@ export default async function Beranda({ params, searchParams }: { params: Promis
         </ul>
       </section>
 
-      <section className="mt-10 flex items-start gap-4 rounded-lg border border-line bg-surface p-5 shadow-soft" aria-labelledby="pers">
+      <section className="mt-10 flex items-start gap-4 rounded-lg border border-line bg-surface p-5" aria-labelledby="pers">
         <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-pill bg-sand text-navy">
           <ShieldCheck aria-hidden="true" size={22} strokeWidth={1.75} />
         </span>
