@@ -240,6 +240,7 @@ try {
   const sAuth = { authorization: `Bearer ${sTok}` };
   const soapPage = await (await fetch(`${CON}/konsultasi/${kid}`, { headers: sCookie })).text();
   check(soapPage.includes("Catatan SOAP") && soapPage.includes("Subjective") && soapPage.includes("Audit") && soapPage.includes("Resep"), "console /konsultasi/:id: tab + form SOAP");
+  check(soapPage.includes("Hanya tim klinis") && /aria-labelledby="h-subjective"/.test(soapPage) && /aria-labelledby="h-plan"/.test(soapPage) && soapPage.includes("Riwayat konsultasi"), "console workspace: blok S/O/A/P + 'Hanya tim klinis' + ringkasan kiri");
   const putSoap = await fetch(`${API}/v1/staff/consultations/${kid}/soap`, { method: "PUT", headers: { ...sAuth, "content-type": "application/json" }, body: JSON.stringify({ subjective: "Sulit tidur", objective: "Kulit kering", assessment: "Perlu tinjauan", plan: "Kontrol 2 minggu" }) });
   check(putSoap.status === 200, "API: simpan SOAP");
   const soapAfter = await (await fetch(`${CON}/konsultasi/${kid}`, { headers: sCookie })).text();
@@ -279,6 +280,35 @@ try {
   check((await fetch(`${WEB}/c/drmetz/rencana`, { headers: cookie }).then((r) => r.text())).includes("Rencana akan tersedia"), "draf rencana tidak terlihat pasien");
   const signRes = await fetch(`${API}/v1/staff/care-plans/${planDraft.id}/sign`, { method: "POST", headers: jh, body: JSON.stringify({ confirm: true }) });
   check(signRes.status === 200, "API: tandatangani rencana");
+  // Audit tata letak workspace: 1280 dua kolom, 390 satu kolom tanpa overflow horizontal (Playwright; dilewati bila tak tersedia).
+  try {
+    const { chromium } = await import("@playwright/test");
+    const browser = await chromium.launch();
+    try {
+      for (const [w, cols] of [[1280, 2], [390, 1]]) {
+        const ctx = await browser.newContext({ viewport: { width: w, height: 900 } });
+        await ctx.addCookies([{ name: "ssid", value: sTok, url: CON }]);
+        const pg = await ctx.newPage();
+        for (const path of [`/konsultasi/${kid}`, `/konsultasi/${kid}?tab=rencana`, `/pasien/${mine.patient_id}`]) {
+          await pg.goto(`${CON}${path}`);
+          const m = await pg.evaluate(() => {
+            const aside = document.querySelector("aside[aria-label='Ringkasan pasien']");
+            const sec = document.querySelector("section[aria-label='Catatan konsultasi']");
+            return { overflow: document.documentElement.scrollWidth > window.innerWidth, sideBySide: Boolean(aside && sec && Math.abs(aside.getBoundingClientRect().top - sec.getBoundingClientRect().top) < 40) };
+          });
+          check(!m.overflow, `${w}px ${path.split("?")[0].replace(/[0-9a-f-]{36}/, ":id")}: tanpa scroll horizontal`);
+          if (path === `/konsultasi/${kid}`) check(m.sideBySide === (cols === 2), `${w}px workspace: ${cols} kolom`);
+        }
+        await ctx.close();
+      }
+    } finally {
+      await browser.close();
+    }
+  } catch (e) {
+    console.log(`(audit tata letak dilewati: ${String(e).split("\n")[0]})`);
+  }
+  const signedTab = await (await fetch(`${CON}/konsultasi/${kid}?tab=rencana`, { headers: sCookie })).text();
+  check(signedTab.includes("Terlihat pasien") && /hanya tim klinis/i.test(signedTab), "console rencana: 'Terlihat pasien' pada versi ditandatangani, draf 'Hanya tim klinis'");
   const plan = (await (await fetch(`${WEB}/c/drmetz/rencana`, { headers: cookie })).text()).replace(/<!-- -->/g, "");
   check(plan.includes("Rencana Anda telah diperbarui oleh tim DrMetz."), "rencana: kalimat §34 (nama klinik)");
   check(["Fokus Anda saat ini", "Langkah berikutnya", "Yang perlu dipantau", "Kapan kita tinjau kembali", "Yang dibahas", "Prioritas Anda", "Rencana saat ini"].every((h) => plan.includes(h)), "rencana: heading §23 + §24");

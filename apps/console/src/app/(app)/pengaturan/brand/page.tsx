@@ -22,7 +22,7 @@ export default async function Brand() {
       <div className="mt-6" />
       <SettingsTabs current="/pengaturan/brand" />
 
-      <section aria-labelledby="logo" className="rounded-lg border border-line bg-white p-6 shadow-soft">
+      <section aria-labelledby="logo" className="rounded-lg border border-line bg-white p-4 md:p-6">
         <h2 id="logo" className="text-xl font-semibold text-navy">Logo</h2>
         {b.logo_url && (
           // eslint-disable-next-line @next/next/no-img-element
@@ -42,12 +42,12 @@ export default async function Brand() {
         )}
       </section>
 
-      <section aria-labelledby="merek" className="mt-6 rounded-lg border border-line bg-white p-6 shadow-soft">
+      <section aria-labelledby="merek" className="mt-6 rounded-lg border border-line bg-white p-4 md:p-6">
         <h2 id="merek" className="text-xl font-semibold text-navy">Warna, font, dan domain</h2>
         <div className="mt-4"><BrandForm b={b} /></div>
       </section>
 
-      <section aria-labelledby="asisten" className="mt-6 rounded-lg border border-line bg-white p-6 shadow-soft">
+      <section aria-labelledby="asisten" className="mt-6 rounded-lg border border-line bg-white p-4 md:p-6">
         <h2 id="asisten" className="text-xl font-semibold text-navy">Nama & avatar asisten</h2>
         <p className="mt-2 text-base text-body">
           Saat ini pasien melihat nama <strong>{a.name}</strong>. Status usulan: {statusText[a.status]}
@@ -65,7 +65,7 @@ export default async function Brand() {
         </ActionForm>
       </section>
 
-      <section aria-labelledby="llm" className="mt-6 rounded-lg border border-line bg-white p-6 shadow-soft">
+      <section aria-labelledby="llm" className="mt-6 rounded-lg border border-line bg-white p-4 md:p-6">
         <h2 id="llm" className="text-xl font-semibold text-navy">Percakapan asisten dengan AI generatif</h2>
         <p className="mt-2 text-base text-body">
           {b.llm_available

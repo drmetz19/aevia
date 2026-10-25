@@ -11,7 +11,7 @@ export default async function Klinik() {
   return (
     <main className="mx-auto max-w-4xl px-4 py-10 md:px-8">
       <PageHead eyebrow="Admin platform" title="Klinik" lead="Buat klinik baru beserta admin pertamanya, dan verifikasi domain khusus." />
-      <div className="mt-8 overflow-x-auto rounded-lg border border-line bg-white shadow-soft">
+      <div className="mt-8 overflow-x-auto rounded-lg border border-line bg-white">
         <table className="table-stack w-full min-w-[640px] text-left text-base">
           <caption className="sr-only">Daftar klinik</caption>
           <thead className="border-b border-line text-[13px] font-medium text-body">
@@ -47,7 +47,7 @@ export default async function Klinik() {
           </tbody>
         </table>
       </div>
-      <section aria-labelledby="baru" className="mt-8 rounded-lg border border-line bg-white p-6 shadow-soft">
+      <section aria-labelledby="baru" className="mt-8 rounded-lg border border-line bg-white p-4 md:p-6">
         <h2 id="baru" className="text-xl font-semibold text-navy">Buat klinik baru</h2>
         <ActionForm action={createClinic} className="mt-4 space-y-3">
                       <>

@@ -12,11 +12,11 @@ export default async function Asisten() {
     <main className="mx-auto max-w-3xl px-4 py-10 md:px-8">
       <PageHead eyebrow="Admin platform" title="Persetujuan nama asisten" lead="Nama dan avatar baru baru tampil di web klinik setelah disetujui di sini." />
       {items.length === 0 ? (
-        <p className="mt-8 rounded-lg border border-line bg-white p-6 text-base text-body">Tidak ada usulan yang menunggu.</p>
+        <p className="mt-8 rounded-lg border border-line bg-white p-4 md:p-6 text-base text-body">Tidak ada usulan yang menunggu.</p>
       ) : (
         <ul className="mt-8 space-y-4">
           {items.map((i) => (
-            <li key={i.clinic_id} className="rounded-lg border border-line bg-white p-6 shadow-soft">
+            <li key={i.clinic_id} className="rounded-lg border border-line bg-white p-4 md:p-6">
               <h2 className="text-xl font-semibold text-navy">{i.clinic_name}</h2>
               <p className="mt-1 text-base text-body">
                 Nama saat ini <strong>{i.current_name}</strong>

@@ -12,7 +12,7 @@ export function AcceptDialog({ requestId, patientId }: { requestId: string; pati
       <button type="button" onClick={() => ref.current?.showModal()} className="rounded-md bg-action px-6 py-3 text-base font-semibold text-white">
         Terima dan jadwalkan
       </button>
-      <dialog ref={ref} aria-labelledby={`t-${requestId}`} className="m-auto w-[min(92vw,440px)] rounded-lg border border-line bg-white p-6 shadow-soft backdrop:bg-black/40">
+      <dialog ref={ref} aria-labelledby={`t-${requestId}`} className="m-auto w-[min(92vw,440px)] rounded-lg border border-line bg-white p-4 md:p-6 backdrop:bg-black/40">
         <h3 id={`t-${requestId}`} className="text-xl font-semibold leading-7 text-navy">Jadwalkan konsultasi</h3>
         <form action={action} className="mt-4 space-y-4">
           <input type="hidden" name="request_id" value={requestId} />

@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-import { EyeOff, Video } from "lucide-react";
-import { auditListSchema, consultationDetailSchema, photoUrlSchema, skinSchema } from "@aevia/core";
+import { EyeOff, Lock, Video } from "lucide-react";
+import { auditListSchema, consultationDetailSchema, patientDetailSchema, photoUrlSchema, skinSchema } from "@aevia/core";
 import { fmtDate, publicFileUrl, requireStaff, staffFetch } from "@/lib/api";
+import { InternalBadge } from "@/components/Visibility";
 import { AnnotationEditor } from "./AnnotationEditor";
 import { PlanTab, RxTab } from "./PlanTabs";
 import { saveSkinAction, saveSoapAction, uploadPhotoAction } from "./actions";
@@ -15,6 +16,12 @@ const TABS = [
   { key: "rencana", label: "Rencana" },
   { key: "audit", label: "Audit" },
 ] as const;
+const cardCls = "rounded-lg border border-line bg-white p-4 md:p-6";
+const eyebrow = "text-[11px] font-semibold uppercase tracking-[0.08em] text-copper-ink";
+const REQ_STATUS = { submitted: "Menunggu ditinjau", accepted: "Diterima", declined: "Ditolak" } as const;
+const Pill = ({ ok, yes, no }: { ok: boolean; yes: string; no: string }) => (
+  <span className={`inline-flex whitespace-nowrap rounded-pill border px-2 py-0.5 text-[11px] font-semibold ${ok ? "border-current/25 bg-[var(--status-success-bg)] text-[var(--status-success)]" : "border-line bg-sand text-body"}`}>{ok ? yes : no}</span>
+);
 const area = "mt-1 w-full rounded-md border border-line bg-ivory px-4 py-3 text-base text-navy";
 const ACTION: Record<string, string> = {
   "soap.create": "SOAP dibuat",
@@ -99,26 +106,53 @@ export default async function Konsultasi({ params, searchParams }: Props) {
       )
     : [];
 
+  const dRes = await staffFetch(`/v1/staff/patients/${k.patient.id}`);
+  const history = dRes.ok ? patientDetailSchema.parse(await dRes.json()).requests : [];
+
   return (
     <main className="mx-auto max-w-7xl px-4 py-8 md:px-8">
       <Link href={`/pasien/${k.patient.id}`} className="text-base font-semibold text-navy underline underline-offset-4">← {k.patient.email}</Link>
-      <p className="mt-4 text-[13px] font-semibold uppercase tracking-[0.12em] text-copper-ink">Konsultasi</p>
+      <p className="mt-4 text-[11px] font-semibold uppercase tracking-[0.08em] text-copper-ink">Konsultasi</p>
       <h1 className="mt-1 font-bold text-4xl text-navy">{k.program_name}</h1>
 
-      <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-[320px_minmax(0,1fr)]">
-        <aside aria-label="Ringkasan pasien" className="order-last space-y-4 lg:order-none">
-          <section className="rounded-lg border border-line bg-white p-5 shadow-soft">
-            <p className="text-[13px] font-semibold uppercase tracking-[0.12em] text-copper-ink">Pasien</p>
-            <p className="mt-1 text-base font-semibold text-navy">{k.patient.email}</p>
+      <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-12">
+        <aside aria-label="Ringkasan pasien" className="order-last space-y-4 lg:order-none lg:col-span-4">
+          <section className={cardCls}>
+            <p className={eyebrow}>Pasien</p>
+            <p className="mt-1 text-base font-semibold text-navy [overflow-wrap:anywhere]">{k.patient.email}</p>
             <p className="mt-2 text-base text-body">{fmtDate(k.scheduled_at)}</p>
-            <a href={k.meeting_url} rel="noopener noreferrer" className="mt-2 inline-flex items-center gap-2 text-base font-semibold text-navy underline underline-offset-4">
-              <Video aria-hidden="true" size={18} strokeWidth={1.5} /> Buka ruang konsultasi
+            <a href={k.meeting_url} rel="noopener noreferrer" className="mt-2 inline-flex min-h-11 items-center gap-2 text-base font-semibold text-copper-ink underline underline-offset-4">
+              <Video aria-hidden="true" size={18} strokeWidth={1.75} /> Buka ruang konsultasi
             </a>
           </section>
-          <section className="rounded-lg border border-line bg-white p-5 shadow-soft">
-            <p className="text-[13px] font-semibold uppercase tracking-[0.12em] text-copper-ink">Foto klinis</p>
+          <section className={cardCls}>
+            <p className={eyebrow}>Persetujuan</p>
+            <ul className="mt-2 space-y-2 text-base text-navy">
+              <li className="flex items-center justify-between gap-3">Assessment<Pill ok={k.assessment_visible} yes="Dibagikan" no="Tidak dibagikan" /></li>
+              <li className="flex items-center justify-between gap-3">Foto klinis<Pill ok={k.photos_consent} yes="Diizinkan" no="Tidak aktif" /></li>
+            </ul>
+            <Link href={`/pasien/${k.patient.id}`} className="mt-3 inline-block text-base font-semibold text-copper-ink underline underline-offset-4">Lihat assessment di profil pasien</Link>
+          </section>
+          <section className={cardCls}>
+            <p className={eyebrow}>Riwayat konsultasi</p>
+            {history.length === 0 ? (
+              <p className="mt-2 text-base text-body">Belum ada riwayat.</p>
+            ) : (
+              <ol className="mt-2 space-y-3">
+                {history.map((r) => (
+                  <li key={r.id} className="border-b border-line pb-3 last:border-0 last:pb-0">
+                    <p className="text-base font-semibold text-navy">{r.program_name}</p>
+                    <p className="text-[13px] font-medium text-body">{fmtDate(r.created_at)} · {REQ_STATUS[r.status]}</p>
+                    {r.voucher_code && <p className="mt-1 font-mono text-[13px] font-semibold text-body">Voucher {r.voucher_code}</p>}
+                  </li>
+                ))}
+              </ol>
+            )}
+          </section>
+          <section className={cardCls}>
+            <p className={eyebrow}>Foto klinis</p>
             {!k.photos_consent ? (
-              <p className="mt-2 flex gap-2 text-base text-body"><EyeOff aria-hidden="true" size={20} strokeWidth={1.5} className="mt-0.5 shrink-0" />Pasien belum memberi persetujuan foto, atau sudah mencabutnya. Foto disembunyikan.</p>
+              <p className="mt-2 flex gap-2 text-base text-body"><EyeOff aria-hidden="true" size={20} strokeWidth={1.75} className="mt-0.5 shrink-0" />Pasien belum memberi persetujuan foto, atau sudah mencabutnya. Foto disembunyikan.</p>
             ) : skin && skin.photos.length ? (
               <div className="mt-2 grid grid-cols-2 gap-2">
                 {skin.photos.map((p, i) =>
@@ -132,14 +166,9 @@ export default async function Konsultasi({ params, searchParams }: Props) {
               <p className="mt-2 text-base text-body">Belum ada foto.</p>
             )}
           </section>
-          <section className="rounded-lg border border-line bg-white p-5 shadow-soft">
-            <p className="text-[13px] font-semibold uppercase tracking-[0.12em] text-copper-ink">Assessment</p>
-            <p className="mt-2 text-base text-body">{k.assessment_visible ? "Dibagikan pasien." : "Tidak dibagikan oleh pasien."}</p>
-            <Link href={`/pasien/${k.patient.id}`} className="mt-2 inline-block text-base font-semibold text-navy underline underline-offset-4">Lihat di profil pasien</Link>
-          </section>
         </aside>
 
-        <section aria-label="Catatan konsultasi">
+        <section aria-label="Catatan konsultasi" className="min-w-0 lg:col-span-8">
           <nav aria-label="Bagian konsultasi" className="flex flex-wrap gap-2">
             {TABS.map((t) => (
               <Link
@@ -156,17 +185,35 @@ export default async function Konsultasi({ params, searchParams }: Props) {
           {pesan && <p role="alert" className="mt-4 text-base text-critical">{pesan}</p>}
 
           {active === "soap" && (
-            <form action={saveSoapAction} className="mt-6 space-y-5 rounded-lg border border-line bg-white p-6 shadow-soft">
+            <form action={saveSoapAction} className="mt-6 space-y-4">
               <input type="hidden" name="consultation_id" value={id} />
-              <h2 className="text-xl font-semibold leading-7 text-navy">Catatan SOAP</h2>
-              {([["subjective", "S — Subjective (keluhan dan riwayat dari pasien)"], ["objective", "O — Objective (temuan pemeriksaan)"], ["assessment", "A — Assessment (penilaian profesional)"], ["plan", "P — Plan (rencana tindakan dan tindak lanjut)"]] as const).map(([name, label]) => (
-                <div key={name}>
-                  <label htmlFor={name} className="block text-[13px] font-medium text-navy">{label}</label>
-                  <textarea id={name} name={name} rows={4} maxLength={5000} defaultValue={k.soap[name]} className={area} />
-                </div>
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <h2 className="text-xl font-semibold leading-7 text-navy">Catatan SOAP</h2>
+                <InternalBadge />
+              </div>
+              <p className="flex items-start gap-2 rounded-md border border-[var(--status-internal-border)] bg-[var(--status-internal-bg)] px-3 py-2 text-[14px] text-internal">
+                <Lock aria-hidden="true" size={16} strokeWidth={1.75} className="mt-0.5 shrink-0" />
+                Catatan internal: tidak terlihat oleh pasien. Yang terlihat pasien hanya rencana yang sudah Anda tandatangani.
+              </p>
+              {([
+                ["subjective", "S", "Subjective", "Keluhan dan riwayat dari pasien", "Dilaporkan pasien"],
+                ["objective", "O", "Objective", "Temuan pemeriksaan", "Hasil pemeriksaan"],
+                ["assessment", "A", "Assessment", "Penilaian profesional", "Penilaian profesional"],
+                ["plan", "P", "Plan", "Rencana tindakan dan tindak lanjut", "Rencana tindakan"],
+              ] as const).map(([name, letter, title, hint, source]) => (
+                <section key={name} aria-labelledby={`h-${name}`} className="rounded-lg border border-line bg-white p-4 md:p-6">
+                  <div className="flex items-center justify-between gap-3">
+                    <h3 id={`h-${name}`} className="flex min-w-0 items-center gap-2 text-base font-semibold text-navy">
+                      <span aria-hidden="true" className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-copper text-[12px] font-bold text-white">{letter}</span>
+                      <label htmlFor={name}>{title} <span className="font-medium text-body">({hint})</span></label>
+                    </h3>
+                    <span className="hidden shrink-0 text-[12px] font-semibold text-slate sm:inline">{source}</span>
+                  </div>
+                  <textarea id={name} name={name} rows={4} maxLength={5000} defaultValue={k.soap[name]} className={`${area} mt-3`} />
+                </section>
               ))}
               <div className="flex flex-wrap items-center gap-4">
-                <button type="submit" className="rounded-md bg-action px-6 py-3 text-base font-semibold text-white">Simpan SOAP</button>
+                <button type="submit" className="min-h-11 rounded-md bg-action px-6 py-3 text-base font-semibold text-white hover:brightness-90">Simpan SOAP</button>
                 {k.soap.updated_at && <p className="text-[13px] font-medium text-body">Terakhir disimpan {fmtDate(k.soap.updated_at)}</p>}
               </div>
             </form>
@@ -178,7 +225,7 @@ export default async function Konsultasi({ params, searchParams }: Props) {
                 {skin.parameters.map((p) => {
                   const v = skin.scores[p.key];
                   return (
-                    <li key={p.key} className="min-w-0 rounded-lg border border-line bg-white p-4 shadow-soft">
+                    <li key={p.key} className="min-w-0 rounded-lg border border-line bg-white p-4">
                       <p className="text-[13px] font-medium text-body">{p.label}</p>
                       <p className="mt-1 font-bold text-4xl text-navy">{v ?? "–"}</p>
                       <div aria-hidden="true" className="mt-2 h-1.5 overflow-hidden rounded-pill bg-sand"><div className="h-full bg-copper" style={{ width: `${v ?? 0}%` }} /></div>
@@ -187,7 +234,7 @@ export default async function Konsultasi({ params, searchParams }: Props) {
                 })}
               </ul>
 
-              <form action={saveSkinAction} className="space-y-4 rounded-lg border border-line bg-white p-6 shadow-soft">
+              <form action={saveSkinAction} className="space-y-4 rounded-lg border border-line bg-white p-4 md:p-6">
                 <input type="hidden" name="consultation_id" value={id} />
                 <h2 className="text-xl font-semibold leading-7 text-navy">Skor per parameter (0–100)</h2>
                 <p className="text-base text-body">Skor diisi manual oleh profesional berdasarkan pemeriksaan.</p>
@@ -206,7 +253,7 @@ export default async function Konsultasi({ params, searchParams }: Props) {
                 <button type="submit" className="rounded-md bg-action px-6 py-3 text-base font-semibold text-white">Simpan analisis</button>
               </form>
 
-              <section aria-labelledby="foto" className="space-y-4 rounded-lg border border-line bg-white p-6 shadow-soft">
+              <section aria-labelledby="foto" className="space-y-4 rounded-lg border border-line bg-white p-4 md:p-6">
                 <h2 id="foto" className="text-xl font-semibold leading-7 text-navy">Foto klinis dan anotasi</h2>
                 {!skin.photos_consent ? (
                   <p className="flex gap-2 text-base text-body"><EyeOff aria-hidden="true" size={20} strokeWidth={1.5} className="mt-0.5 shrink-0" />Pasien belum memberi persetujuan foto, atau sudah mencabutnya. Foto tidak dapat diunggah atau dilihat.</p>
@@ -255,7 +302,7 @@ async function AuditTab({ id }: { id: string }) {
   const res = await staffFetch(`/v1/staff/consultations/${id}/audit`);
   const { entries } = res.ok ? auditListSchema.parse(await res.json()) : { entries: [] };
   return (
-    <div className="mt-6 rounded-lg border border-line bg-white p-6 shadow-soft">
+    <div className="mt-6 rounded-lg border border-line bg-white p-4 md:p-6">
       <h2 className="text-xl font-semibold leading-7 text-navy">Riwayat perubahan</h2>
       {entries.length === 0 ? (
         <p className="mt-2 text-base text-body">Belum ada perubahan tercatat.</p>

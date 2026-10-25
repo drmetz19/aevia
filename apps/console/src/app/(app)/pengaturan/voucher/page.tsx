@@ -85,7 +85,7 @@ export default async function Voucher() {
       </section>
 
       {vouchers.length === 0 ? (
-        <p className="mt-8 rounded-lg border border-line bg-white p-6 text-base text-body">Belum ada voucher. Buat satu di atas untuk mulai membagikan akses.</p>
+        <p className="mt-8 rounded-lg border border-line bg-white p-4 md:p-6 text-base text-body">Belum ada voucher. Buat satu di atas untuk mulai membagikan akses.</p>
       ) : (
         <ActionForm action={setVoucherActive} className="mt-8 space-y-3" noticeFirst>
         <div className="overflow-x-auto rounded-lg border border-line bg-white">

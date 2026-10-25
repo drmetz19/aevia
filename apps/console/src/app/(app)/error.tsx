@@ -26,7 +26,7 @@ export default function ConsoleError({ error, retry }: { error: Error & { digest
   }, [error, stale]);
 
   return (
-    <div className="rounded-lg border border-line bg-white p-6">
+    <div className="rounded-lg border border-line bg-white p-4 md:p-6">
       <h1 className="text-[22px] font-semibold text-navy">{stale ? "Konsol sudah diperbarui" : "Ada yang belum berjalan semestinya"}</h1>
       <p className="mt-2 text-base text-body">
         {reloading

@@ -1,8 +1,9 @@
 import { PLAN_HEADINGS, SUMMARY_HEADINGS, findForbidden, formatDateId, planListSchema, prescriptionListSchema, type PlanView, type PrescriptionView } from "@aevia/core";
 import { fmtDate, staffFetch } from "@/lib/api";
+import { InternalBadge, PatientVisibleBadge } from "@/components/Visibility";
 import { issueRxAction, savePlanAction, saveRxAction, signPlanAction } from "./actions";
 
-const card = "rounded-lg border border-line bg-white p-6 shadow-soft";
+const card = "rounded-lg border border-line bg-white p-4 md:p-6";
 const h2 = "text-xl font-semibold leading-7 text-navy";
 const input = "mt-1 w-full rounded-md border border-line bg-ivory px-3 py-2 text-base text-navy";
 const lab = "block text-[13px] font-medium text-navy";
@@ -41,7 +42,10 @@ export async function RxTab({ id }: { id: string }) {
       <form action={saveRxAction} className={`space-y-4 ${card}`}>
         <input type="hidden" name="consultation_id" value={id} />
         <Warning texts={(draft?.items ?? []).flatMap((i) => [i.name, i.notes, i.dose, i.frequency])} />
-        <h2 className={h2}>{draft ? `Resep (draf versi ${draft.version})` : base ? `Versi baru dari resep versi ${base.version}` : "Resep baru"}</h2>
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <h2 className={h2}>{draft ? `Resep (draf versi ${draft.version})` : base ? `Versi baru dari resep versi ${base.version}` : "Resep baru"}</h2>
+          <InternalBadge>Draf · hanya tim klinis</InternalBadge>
+        </div>
         <p className="text-base text-body">Resep hanya dibuat oleh profesional. Resep yang sudah diterbitkan tidak dapat diubah; perubahan membuat versi baru.</p>
         {rows.map((r, i) => (
           <fieldset key={i} className="rounded-md border border-line p-4">
@@ -63,7 +67,10 @@ export async function RxTab({ id }: { id: string }) {
         <form action={issueRxAction} className={card}>
           <input type="hidden" name="consultation_id" value={id} />
           <input type="hidden" name="rx_id" value={draft.id} />
-          <h2 className={h2}>Terbitkan resep</h2>
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <h2 className={h2}>Terbitkan resep</h2>
+            <PatientVisibleBadge>Terlihat pasien setelah terbit</PatientVisibleBadge>
+          </div>
           <p className="mt-1 text-base text-body">Setelah diterbitkan, pasien dapat melihat resep ini (hanya baca) dan isinya terkunci.</p>
           <button type="submit" className="mt-3 rounded-md bg-action px-7 py-3 text-lg font-semibold text-white">Terbitkan resep</button>
         </form>
@@ -74,8 +81,8 @@ export async function RxTab({ id }: { id: string }) {
         {list.length === 0 ? <p className="mt-2 text-base text-body">Belum ada resep.</p> : (
           <ol className="mt-3 space-y-4">
             {list.map((r) => (
-              <li key={r.id} className="border-b border-line pb-4 last:border-0">
-                <p className="flex flex-wrap items-center gap-2 text-base font-semibold text-navy">Versi {r.version} <Status s={r.status} /></p>
+              <li key={r.id} className={r.status === "issued" ? "rounded-lg border-2 border-copper p-4" : "border-b border-line pb-4 last:border-0"}>
+                <p className="flex flex-wrap items-center gap-2 text-base font-semibold text-navy">Versi {r.version} <Status s={r.status} />{r.status === "issued" && <PatientVisibleBadge />}</p>
                 <p className="text-[13px] font-medium text-body">{r.issued_at ? `Diterbitkan ${fmtDate(r.issued_at)} oleh ${r.issued_by_name}` : `Diperbarui ${fmtDate(r.updated_at)}`}</p>
                 <ul className="mt-2 list-inside list-disc text-base text-navy">
                   {r.items.map((i, n) => <li key={n}>{i.name}{[i.strength, i.dose, i.frequency, i.route, i.duration].filter(Boolean).length ? ` — ${[i.strength, i.dose, i.frequency, i.route, i.duration].filter(Boolean).join(", ")}` : ""}</li>)}
@@ -103,7 +110,10 @@ export async function PlanTab({ id }: { id: string }) {
       <form action={savePlanAction} className={`space-y-5 ${card}`}>
         <input type="hidden" name="consultation_id" value={id} />
         <Warning texts={draft ? [draft.summary.discussed, ...draft.summary.priorities, ...draft.content.focus, ...draft.content.next_steps, ...draft.content.monitor.map((m) => m.label)] : []} />
-        <h2 className={h2}>{draft ? `Rencana personal (draf versi ${draft.version})` : base ? `Versi baru dari rencana versi ${base.version}` : "Rencana personal baru"}</h2>
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <h2 className={h2}>{draft ? `Rencana personal (draf versi ${draft.version})` : base ? `Versi baru dari rencana versi ${base.version}` : "Rencana personal baru"}</h2>
+          <InternalBadge>Draf · hanya tim klinis</InternalBadge>
+        </div>
         <p className="text-base text-body">Rencana yang sudah ditandatangani terkunci. Mengubahnya membuat versi baru yang perlu ditandatangani lagi.</p>
         <div>
           <label htmlFor="discussed" className={lab}>{SUMMARY_HEADINGS.discussed} (ringkasan konsultasi)</label>
@@ -149,10 +159,13 @@ export async function PlanTab({ id }: { id: string }) {
         <form action={signPlanAction} className={card}>
           <input type="hidden" name="consultation_id" value={id} />
           <input type="hidden" name="plan_id" value={draft.id} />
-          <h2 className={h2}>Tanda tangan rencana</h2>
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <h2 className={h2}>Tanda tangan rencana</h2>
+            <PatientVisibleBadge>Terlihat pasien setelah ditandatangani</PatientVisibleBadge>
+          </div>
           <p className="mt-1 text-base text-body">Setelah ditandatangani, pasien melihat rencana ini dan versi sebelumnya digantikan. Simpan draf terlebih dulu bila ada perubahan.</p>
           <label className="mt-3 flex items-start gap-3 text-base text-navy">
-            <input type="checkbox" name="confirm" className="mt-1 h-5 w-5 accent-[var(--brand-primary)]" />
+            <input type="checkbox" name="confirm" className="mt-1 h-5 w-5 accent-[var(--brand-primary-action)]" />
             Saya telah meninjau seluruh isi rencana ini dan bertanggung jawab secara profesional atasnya.
           </label>
           <button type="submit" className="mt-4 rounded-md bg-action px-7 py-3 text-lg font-semibold text-white">Tandatangani rencana</button>
@@ -164,8 +177,8 @@ export async function PlanTab({ id }: { id: string }) {
         {list.length === 0 ? <p className="mt-2 text-base text-body">Belum ada rencana.</p> : (
           <ol className="mt-3 space-y-4">
             {list.map((p) => (
-              <li key={p.id} className="border-b border-line pb-4 last:border-0">
-                <p className="flex flex-wrap items-center gap-2 text-base font-semibold text-navy">Versi {p.version} <Status s={p.status} /></p>
+              <li key={p.id} className={p.status === "signed" ? "rounded-lg border-2 border-copper p-4" : "border-b border-line pb-4 last:border-0"}>
+                <p className="flex flex-wrap items-center gap-2 text-base font-semibold text-navy">Versi {p.version} <Status s={p.status} />{p.status === "signed" && <PatientVisibleBadge />}</p>
                 <p className="text-[13px] font-medium text-body">{p.signed_at ? `Ditandatangani ${fmtDate(p.signed_at)} oleh ${p.signed_by_name}` : `Diperbarui ${fmtDate(p.updated_at)}`}</p>
                 <p className="mt-1 text-base text-navy">Fokus: {p.content.focus.join("; ") || "-"}</p>
                 {p.content.review_at && <p className="text-base text-body">Tinjau kembali: {formatDateId(p.content.review_at)}</p>}

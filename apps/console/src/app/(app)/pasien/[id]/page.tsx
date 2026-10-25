@@ -28,9 +28,9 @@ export default async function Pasien({ params, searchParams }: Props) {
   const result = d.assessment ? resultSchema.safeParse(d.assessment.result) : null;
 
   return (
-    <main className="mx-auto max-w-5xl px-4 py-10 md:px-8">
+    <main className="mx-auto max-w-7xl px-4 py-10 md:px-8">
       <Link href="/antrean" className="text-base font-semibold text-navy underline underline-offset-4">← Antrean</Link>
-      <p className="mt-4 text-[13px] font-semibold uppercase tracking-[0.12em] text-copper-ink">Pasien</p>
+      <p className="mt-4 text-[11px] font-semibold uppercase tracking-[0.08em] text-copper-ink">Pasien</p>
       <h1 className="mt-1 font-bold text-4xl text-navy">{d.patient.email}</h1>
       <p className="mt-1 text-base text-body">Terdaftar {fmtDate(d.patient.created_at)}</p>
       {info === "diterima" && (
@@ -52,20 +52,21 @@ export default async function Pasien({ params, searchParams }: Props) {
           {!prog ? (
             <p className="text-base text-body">Data progres belum dapat dimuat. Silakan coba lagi.</p>
           ) : !prog.progress_visible ? (
-            <p className="flex gap-2 rounded-lg border border-line bg-white p-6 text-base text-body shadow-soft"><EyeOff aria-hidden="true" size={20} strokeWidth={1.5} className="mt-0.5 shrink-0" />{prog.hidden_reason}</p>
+            <p className="flex gap-2 rounded-lg border border-line bg-white p-4 md:p-6 text-base text-body"><EyeOff aria-hidden="true" size={20} strokeWidth={1.5} className="mt-0.5 shrink-0" />{prog.hidden_reason}</p>
           ) : prog.progress && prog.progress.checkin_count > 0 ? (
             <>
               <p className="mb-4 text-base text-body">{prog.progress.checkin_count} check-in · terakhir {fmtDate(prog.progress.last_checkin_at!)}{prog.progress.general ? " · metrik umum (belum ada rencana ditandatangani)" : ""}</p>
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">{prog.progress.metrics.map((m) => <ProgressCard key={m.key} metric={m} />)}</div>
             </>
           ) : (
-            <p className="rounded-lg border border-line bg-white p-6 text-base text-body shadow-soft">{PROGRESS_EMPTY}</p>
+            <p className="rounded-lg border border-line bg-white p-4 md:p-6 text-base text-body">{PROGRESS_EMPTY}</p>
           )}
         </section>
       )}
 
-      {!showProgress && <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <section aria-labelledby="as" className="rounded-lg border border-line bg-white p-6 shadow-soft">
+      {!showProgress && <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-12">
+        <div className="space-y-6 lg:col-span-5">
+        <section aria-labelledby="as" className="rounded-lg border border-line bg-white p-4 md:p-6">
           <h2 id="as" className="text-xl font-semibold leading-7 text-navy">Assessment</h2>
           {!d.assessment_visible ? (
             <p className="mt-3 flex gap-2 text-base text-body">
@@ -94,40 +95,7 @@ export default async function Pasien({ params, searchParams }: Props) {
           )}
         </section>
 
-        <section aria-labelledby="rq" className="space-y-4">
-          <h2 id="rq" className="text-xl font-semibold leading-7 text-navy">Permintaan konsultasi</h2>
-          {d.requests.length === 0 && <p className="text-base text-body">Belum ada permintaan.</p>}
-          {d.requests.map((r) => (
-            <article key={r.id} className="rounded-lg border border-line bg-white p-6 shadow-soft">
-              <p className="text-[13px] font-medium text-body">{fmtDate(r.created_at)} · {statusLabel[r.status]}</p>
-              <h3 className="mt-1 text-xl font-semibold leading-7 text-navy">{r.program_name}</h3>
-              {r.voucher_code && <p><span className="mt-1 inline-flex items-center gap-1 rounded-md border border-line bg-sand px-2 py-0.5 font-mono text-[13px] font-semibold text-navy" title="Kode voucher yang dipakai"><Ticket aria-hidden="true" size={13} strokeWidth={1.75} />{r.voucher_code}</span></p>}
-              {r.prep ? (
-                <dl className="mt-3 space-y-3 text-base text-navy">
-                  <div><dt className="text-[13px] font-medium text-body">Tujuan</dt><dd>{r.prep.tujuan || "-"}</dd></div>
-                  <div><dt className="text-[13px] font-medium text-body">Keluhan</dt><dd>{r.prep.keluhan || "-"}</dd></div>
-                  <div>
-                    <dt className="text-[13px] font-medium text-body">Pertanyaan untuk profesional</dt>
-                    <dd>{r.prep.pertanyaan.length ? <ul className="list-inside list-disc">{r.prep.pertanyaan.map((q) => <li key={q}>{q}</li>)}</ul> : "-"}</dd>
-                  </div>
-                  <div><dt className="text-[13px] font-medium text-body">Konteks assessment</dt><dd>{r.prep.konteks_assessment || "-"}</dd></div>
-                </dl>
-              ) : (
-                <p className="mt-3 flex gap-2 text-base text-body"><EyeOff aria-hidden="true" size={20} strokeWidth={1.5} className="mt-0.5 shrink-0" />Isi persiapan disembunyikan karena persetujuan assessment tidak aktif.</p>
-              )}
-              {r.consultation && (
-                <p className="mt-3 text-base text-navy">
-                  Terjadwal {fmtDate(r.consultation.scheduled_at)} ·{" "}
-                  <Link href={`/konsultasi/${r.consultation.id}`} className="font-semibold underline underline-offset-4">Buka catatan konsultasi</Link> ·{" "}
-                  <a href={r.consultation.meeting_url} rel="noopener noreferrer" className="font-semibold underline underline-offset-4">Tautan pertemuan</a>
-                </p>
-              )}
-              {r.status === "submitted" && <div className="mt-4"><AcceptDialog requestId={r.id} patientId={d.patient.id} /></div>}
-            </article>
-          ))}
-        </section>
-
-        <section aria-labelledby="bc" className="rounded-lg border border-line bg-white p-6 shadow-soft lg:col-span-2">
+        <section aria-labelledby="bc" className="rounded-lg border border-line bg-white p-4 md:p-6">
           <h2 id="bc" className="text-xl font-semibold leading-7 text-navy">Beauty Code snapshot</h2>
           {!d.external_context.consent_active ? (
             <p className="mt-3 flex gap-2 text-base text-body"><EyeOff aria-hidden="true" size={20} strokeWidth={1.5} className="mt-0.5 shrink-0" />Pasien belum memberi persetujuan untuk membagikan konteks dari aplikasi lain, jadi data ini disembunyikan.</p>
@@ -168,6 +136,42 @@ export default async function Pasien({ params, searchParams }: Props) {
             </>
           )}
         </section>
+        </div>
+        <div className="lg:col-span-7">
+        <section aria-labelledby="rq" className="space-y-4">
+          <h2 id="rq" className="text-xl font-semibold leading-7 text-navy">Permintaan konsultasi</h2>
+          {d.requests.length === 0 && <p className="text-base text-body">Belum ada permintaan.</p>}
+          {d.requests.map((r) => (
+            <article key={r.id} className="rounded-lg border border-line bg-white p-4 md:p-6">
+              <p className="text-[13px] font-medium text-body">{fmtDate(r.created_at)} · {statusLabel[r.status]}</p>
+              <h3 className="mt-1 text-xl font-semibold leading-7 text-navy">{r.program_name}</h3>
+              {r.voucher_code && <p><span className="mt-1 inline-flex items-center gap-1 rounded-md border border-line bg-sand px-2 py-0.5 font-mono text-[13px] font-semibold text-navy" title="Kode voucher yang dipakai"><Ticket aria-hidden="true" size={13} strokeWidth={1.75} />{r.voucher_code}</span></p>}
+              {r.prep ? (
+                <dl className="mt-3 space-y-3 text-base text-navy">
+                  <div><dt className="text-[13px] font-medium text-body">Tujuan</dt><dd>{r.prep.tujuan || "-"}</dd></div>
+                  <div><dt className="text-[13px] font-medium text-body">Keluhan</dt><dd>{r.prep.keluhan || "-"}</dd></div>
+                  <div>
+                    <dt className="text-[13px] font-medium text-body">Pertanyaan untuk profesional</dt>
+                    <dd>{r.prep.pertanyaan.length ? <ul className="list-inside list-disc">{r.prep.pertanyaan.map((q) => <li key={q}>{q}</li>)}</ul> : "-"}</dd>
+                  </div>
+                  <div><dt className="text-[13px] font-medium text-body">Konteks assessment</dt><dd>{r.prep.konteks_assessment || "-"}</dd></div>
+                </dl>
+              ) : (
+                <p className="mt-3 flex gap-2 text-base text-body"><EyeOff aria-hidden="true" size={20} strokeWidth={1.5} className="mt-0.5 shrink-0" />Isi persiapan disembunyikan karena persetujuan assessment tidak aktif.</p>
+              )}
+              {r.consultation && (
+                <p className="mt-3 text-base text-navy">
+                  Terjadwal {fmtDate(r.consultation.scheduled_at)} ·{" "}
+                  <Link href={`/konsultasi/${r.consultation.id}`} className="font-semibold underline underline-offset-4">Buka catatan konsultasi</Link> ·{" "}
+                  <a href={r.consultation.meeting_url} rel="noopener noreferrer" className="font-semibold underline underline-offset-4">Tautan pertemuan</a>
+                </p>
+              )}
+              {r.status === "submitted" && <div className="mt-4"><AcceptDialog requestId={r.id} patientId={d.patient.id} /></div>}
+            </article>
+          ))}
+        </section>
+
+        </div>
       </div>}
     </main>
   );
