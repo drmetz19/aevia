@@ -95,7 +95,9 @@ Landing klinik mengikuti `landing.png` (hero + CTA, 3 langkah, kartu program dar
 Console antrean (kartu/tabel Stitch, badge status, kode voucher) dan detail pasien 2 kolom: kiri ringkasan (identitas, consent, assessment, riwayat konsultasi, foto bila consent); kanan blok SOAP S/O/A/P berhuruf + resep + rencana; catatan SOAP ditandai "Hanya tim klinis" (indigo), rencana bertanda tangan ditandai "Terlihat pasien" (border cyan + ikon mata).
 
 ### Acceptance criteria
-- [ ] Detail pasien menampilkan blok S, O, A, P berlabel dan penanda "Hanya tim klinis" pada SOAP
-- [ ] Rencana bertanda tangan bertanda "Terlihat pasien"
-- [ ] Alur lama (simpan SOAP, terbitkan resep, tandatangani rencana) tetap lulus test + smoke
-- [ ] Lebar 1280 2 kolom; 390 satu kolom tanpa overflow
+- [x] Detail pasien menampilkan blok S, O, A, P berlabel dan penanda "Hanya tim klinis" pada SOAP
+- [x] Rencana bertanda tangan bertanda "Terlihat pasien"
+- [x] Alur lama (simpan SOAP, terbitkan resep, tandatangani rencana) tetap lulus test + smoke
+- [x] Lebar 1280 2 kolom; 390 satu kolom tanpa overflow
+
+- [x] Regresi lulus 2026-10-25

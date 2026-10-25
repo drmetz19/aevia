@@ -209,7 +209,7 @@ export default async function Konsultasi({ params, searchParams }: Props) {
                     </h3>
                     <span className="hidden shrink-0 text-[12px] font-semibold text-slate sm:inline">{source}</span>
                   </div>
-                  <textarea id={name} name={name} rows={4} maxLength={5000} defaultValue={k.soap[name]} className={`${area} mt-3 bg-white`} />
+                  <textarea id={name} name={name} rows={4} maxLength={5000} defaultValue={k.soap[name]} className={`${area} mt-3 !bg-white`} />
                 </section>
               ))}
               <div className="flex flex-wrap items-center gap-4">
