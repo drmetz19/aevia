@@ -35,10 +35,10 @@ Ganti nilai token, font, radius, dan gaya kartu/tombol bersama ke Stitch; tambah
 Migrasi 0017; admin klinik mengatur tampilan harga & akses per program di Pengaturan → Program; API publik mengembalikan field baru dan menyembunyikan harga bila coming_soon; halaman program pasien memakai kartu harga Stitch ("Segera hadir" / angka, badge "Perlu kode voucher" bila access=voucher). Seed demo: program DrMetz coming_soon + voucher.
 
 ### Acceptance criteria
-- [ ] Admin klinik menyimpan program dengan price_mode=coming_soon & access=voucher; GET staf mengembalikan nilainya
-- [ ] API publik program: price_idr null + price_mode coming_soon untuk program tsb
-- [ ] Halaman program pasien menampilkan "Segera hadir" (bukan angka) dan penanda voucher; program amount tetap menampilkan Rupiah
-- [ ] Profesional (bukan admin) ditolak mengubah program (403)
+- [x] Admin klinik menyimpan program dengan price_mode=coming_soon & access=voucher; GET staf mengembalikan nilainya
+- [x] API publik program: price_idr null + price_mode coming_soon untuk program tsb
+- [x] Halaman program pasien menampilkan "Segera hadir" (bukan angka) dan penanda voucher; program amount tetap menampilkan Rupiah
+- [x] Profesional (bukan admin) ditolak mengubah program (403)
 
 ---
 
