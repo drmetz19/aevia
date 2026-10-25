@@ -50,10 +50,10 @@ Migrasi 0017; admin klinik mengatur tampilan harga & akses per program di Pengat
 Migrasi 0018 (vouchers + redemptions + RLS); endpoint staf daftar/buat/nonaktifkan; menu Pengaturan → Voucher (form kode, program/semua, kuota, kedaluwarsa; tabel kode · program · terpakai/kuota · kedaluwarsa · status; tombol nonaktifkan). Kode dinormalisasi huruf besar, unik per klinik; audit `voucher.create`/`voucher.deactivate`.
 
 ### Acceptance criteria
-- [ ] Admin membuat voucher "UJI2026" (semua program, kuota 5) → muncul di daftar dengan terpakai 0/5
-- [ ] Kode duplikat (beda huruf besar/kecil) di klinik sama ditolak 409; klinik lain boleh memakai kode sama
-- [ ] Voucher klinik A tidak terlihat oleh staf klinik B (RLS)
-- [ ] Nonaktifkan → status Nonaktif; tercatat di audit
+- [x] Admin membuat voucher "UJI2026" (semua program, kuota 5) → muncul di daftar dengan terpakai 0/5
+- [x] Kode duplikat (beda huruf besar/kecil) di klinik sama ditolak 409; klinik lain boleh memakai kode sama
+- [x] Voucher klinik A tidak terlihat oleh staf klinik B (RLS)
+- [x] Nonaktifkan → status Nonaktif; tercatat di audit
 
 ---
 
