@@ -158,6 +158,8 @@ export const programs = pgTable(
     summary: text("summary").notNull().default(""),
     durationWeeks: integer("duration_weeks"),
     priceIdr: integer("price_idr"),
+    priceMode: text("price_mode", { enum: ["amount", "coming_soon"] }).notNull().default("amount"),
+    access: text("access", { enum: ["open", "voucher"] }).notNull().default("open"),
     includes: jsonb("includes").$type<string[]>().notNull().default([]),
     active: boolean("active").notNull().default(true),
     sortOrder: integer("sort_order").notNull().default(0),

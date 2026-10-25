@@ -246,6 +246,34 @@ describe("program CRUD", () => {
   });
 });
 
+describe("program: tampilan harga & akses", () => {
+  it("admin simpan coming_soon + voucher, GET staf mengembalikannya; publik menyembunyikan harga; profesional 403; default amount/open", async () => {
+    const ca = await staff("admin@demo-partner.test");
+    const base = { summary: "", duration_weeks: null, includes: ["Satu"], active: true };
+    const def = (await call("POST", "/v1/staff/programs", ca, { ...base, name: "Paket Default", price_idr: 100000 })).json();
+    expect(def).toMatchObject({ price_mode: "amount", access: "open", price_idr: 100000 });
+
+    const created = await call("POST", "/v1/staff/programs", ca, { ...base, name: "Paket Segera", price_idr: 900000, price_mode: "coming_soon", access: "voucher" });
+    expect(created.statusCode).toBe(201);
+    const p = created.json();
+    expect(p).toMatchObject({ price_mode: "coming_soon", access: "voucher", price_idr: 900000 });
+    const staffList = (await call("GET", "/v1/staff/programs", ca)).json().programs;
+    expect(staffList.find((x: { id: string }) => x.id === p.id)).toMatchObject({ price_mode: "coming_soon", access: "voucher" });
+
+    const pub = (await app.inject("/v1/clinics/demo-partner/programs")).json().programs;
+    expect(pub.find((x: { id: string }) => x.id === p.id)).toMatchObject({ price_idr: null, price_mode: "coming_soon", access: "voucher" });
+    expect(pub.find((x: { id: string }) => x.id === def.id)).toMatchObject({ price_idr: 100000, price_mode: "amount", access: "open" });
+
+    const upd = await call("PUT", `/v1/staff/programs/${p.id}`, ca, { ...base, name: "Paket Segera", price_idr: 900000, price_mode: "amount", access: "open" });
+    expect(upd.json()).toMatchObject({ price_mode: "amount", access: "open" });
+    expect((await app.inject("/v1/clinics/demo-partner/programs")).json().programs.find((x: { id: string }) => x.id === p.id).price_idr).toBe(900000);
+
+    expect((await call("POST", "/v1/staff/programs", ca, { ...base, name: "Salah", price_idr: null, price_mode: "gratis" })).statusCode).toBe(400);
+    const prof = await staff("dr.metz@drmetz.test");
+    expect((await call("PUT", `/v1/staff/programs/${p.id}`, prof, { ...base, name: "Paket Segera", price_idr: 1, price_mode: "coming_soon", access: "voucher" })).statusCode).toBe(403);
+  });
+});
+
 describe("tim klinik", () => {
   it("undang staf; email unik platform; nonaktif → tak bisa masuk dan token lama ditolak; guard admin terakhir/diri sendiri; aktifkan lagi", async () => {
     const ca = await staff("admin@demo-partner.test");

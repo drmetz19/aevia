@@ -63,7 +63,8 @@ describe("katalog program", () => {
       "Program Pendampingan Kulit 8 Minggu",
       "Program Komposisi Tubuh 12 Minggu",
     ]);
-    expect(a[0].price_idr).toBe(450000);
+    expect(a[0]).toMatchObject({ price_idr: 450000, price_mode: "amount", access: "open" });
+    expect(a[1]).toMatchObject({ price_idr: null, price_mode: "coming_soon", access: "voucher" });
     expect(a[1].duration_weeks).toBe(8);
     const b = (await app.inject("/v1/clinics/demo-partner/programs")).json().programs;
     expect(b.map((p: { name: string }) => p.name)).toEqual(["Konsultasi Awal"]);

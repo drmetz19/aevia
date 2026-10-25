@@ -15,13 +15,15 @@ const view = (p: Row): StaffProgram => ({
   summary: p.summary,
   duration_weeks: p.durationWeeks,
   price_idr: p.priceIdr,
+  price_mode: p.priceMode,
+  access: p.access,
   includes: p.includes,
   active: p.active,
 });
 const snap = (p: Row | Input) =>
   "durationWeeks" in p
-    ? { name: p.name, summary: p.summary, duration_weeks: p.durationWeeks, price_idr: p.priceIdr, includes: p.includes, active: p.active }
-    : { name: p.name, summary: p.summary, duration_weeks: p.duration_weeks, price_idr: p.price_idr, includes: p.includes, active: p.active };
+    ? { name: p.name, summary: p.summary, duration_weeks: p.durationWeeks, price_idr: p.priceIdr, price_mode: p.priceMode, access: p.access, includes: p.includes, active: p.active }
+    : { name: p.name, summary: p.summary, duration_weeks: p.duration_weeks, price_idr: p.price_idr, price_mode: p.price_mode, access: p.access, includes: p.includes, active: p.active };
 const audit = (tx: Tx, c: Ctx, id: string, action: string, before: unknown, after: unknown) =>
   writeAudit(tx, { clinicId: c.clinicId, actorType: "staff", actorId: c.actorId, entity: "program", entityId: id, action, before, after, at: c.now });
 const notFound = () => new AuthError(404, "program_not_found", "Program ini belum ditemukan di klinik Anda.");
@@ -49,6 +51,8 @@ export async function createProgram(c: Ctx, body: Input) {
         summary: body.summary,
         durationWeeks: body.duration_weeks,
         priceIdr: body.price_idr,
+        priceMode: body.price_mode,
+        access: body.access,
         includes: body.includes,
         active: body.active,
         sortOrder: Math.max(0, ...all.map((x) => x.sort)) + 1,
@@ -66,7 +70,7 @@ export async function updateProgram(c: Ctx, id: string, body: Input) {
     if (!before) throw notFound();
     const [row] = await tx
       .update(programs)
-      .set({ name: body.name, summary: body.summary, durationWeeks: body.duration_weeks, priceIdr: body.price_idr, includes: body.includes, active: body.active })
+      .set({ name: body.name, summary: body.summary, durationWeeks: body.duration_weeks, priceIdr: body.price_idr, priceMode: body.price_mode, access: body.access, includes: body.includes, active: body.active })
       .where(eq(programs.id, id))
       .returning();
     await audit(tx, c, id, "program.update", snap(before), snap(body));

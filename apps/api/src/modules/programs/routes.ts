@@ -28,7 +28,9 @@ export const programRoutes: FastifyPluginAsyncZod<{ db: Db }> = async (app, { db
           name: p.name,
           summary: p.summary,
           duration_weeks: p.durationWeeks,
-          price_idr: p.priceIdr,
+          price_idr: p.priceMode === "coming_soon" ? null : p.priceIdr,
+          price_mode: p.priceMode,
+          access: p.access,
           includes: p.includes,
         })),
       };

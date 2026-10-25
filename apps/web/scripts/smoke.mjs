@@ -188,6 +188,7 @@ try {
   // --- Phase 4: program, prep, antrean ---
   const prog = (await (await fetch(`${WEB}/c/drmetz/program`, { headers: cookie })).text()).replace(/<!-- -->/g, "");
   check(prog.includes("Konsultasi Healthy Aging") && prog.includes("Program Pendampingan Kulit 8 Minggu") && prog.includes("Rp"), "katalog: 3 program drmetz + harga dari DB");
+  check(prog.includes("Segera hadir") && prog.includes("Perlu kode voucher") && !prog.includes("1.850.000") && prog.includes("450.000"), "katalog: 'Segera hadir' + penanda voucher (harga tersembunyi); program amount tetap Rupiah");
   check(!/permanen|body reset|garansi|instan/i.test(text(prog)), "katalog tanpa klaim terlarang");
   const progs = (await (await fetch(`${API}/v1/clinics/drmetz/programs`)).json()).programs;
   const kons = (await (await fetch(`${WEB}/c/drmetz/konsultasi?program=${progs[0].id}`, { headers: cookie })).text()).replace(/<!-- -->/g, "");
@@ -375,6 +376,7 @@ try {
     const pg = await fetch(`${CON}${path}`, { headers: caC });
     const body = await pg.text();
     check(pg.status === 200 && body.includes(needle), `console ${path} memuat "${needle}"`);
+    if (path === "/pengaturan/program") check(body.includes("Tampilan harga") && body.includes("Perlu kode voucher"), "console program: pilihan tampilan harga & akses");
     if (path === "/pengaturan/brand") check(body.includes("data-aevia-mark") && body.includes('aria-current="page"'), "console shell: logo Aevia Konsult + item aktif di sidebar");
   }
   const denied = await fetch(`${CON}/pengaturan/brand`, { headers: sCookie, redirect: "manual" });

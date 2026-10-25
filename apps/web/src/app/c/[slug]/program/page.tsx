@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowRight, Check, Clock } from "lucide-react";
+import { ArrowRight, Check, Clock, Ticket } from "lucide-react";
 import { PatientShell } from "@/components/PatientShell";
-import { PageIntro, btnNavy, card, linkCls } from "@/components/PageIntro";
+import { PageIntro, btnPrimary, card, linkCls } from "@/components/PageIntro";
 import { fetchClinic } from "@/lib/api";
 import { fetchPrograms, requirePatient, rupiah } from "@/lib/session";
 
@@ -25,30 +25,41 @@ export default async function Program({ params }: { params: Promise<{ slug: stri
               <li
                 key={p.id}
                 style={{ "--d": i + 1 } as React.CSSProperties}
-                className="reveal card-lift relative flex flex-col overflow-hidden rounded-lg border border-line bg-surface p-5 shadow-soft sm:p-6"
+                className="reveal card-lift flex flex-col rounded-lg border border-line bg-surface p-4 sm:p-6"
               >
-                <span aria-hidden="true" className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-copper via-copper/60 to-transparent" />
-                <p className="inline-flex w-fit items-center gap-1.5 rounded-pill bg-sand px-3 py-1 text-[12px] font-semibold uppercase tracking-[0.12em] text-copper-ink">
-                  <Clock aria-hidden="true" size={13} strokeWidth={2} />
-                  {p.duration_weeks ? `${p.duration_weeks} minggu` : "Konsultasi"}
-                </p>
+                <div className="flex items-start justify-between gap-3">
+                  <p className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.08em] text-slate">
+                    <Clock aria-hidden="true" size={13} strokeWidth={1.75} />
+                    {p.duration_weeks ? `Durasi ${p.duration_weeks} minggu` : "Konsultasi"}
+                  </p>
+                  {p.access === "voucher" && (
+                    <span className="inline-flex shrink-0 items-center gap-1 rounded-pill border border-line bg-sand px-2 py-0.5 text-[11px] font-semibold text-navy">
+                      <Ticket aria-hidden="true" size={12} strokeWidth={1.75} />
+                      Perlu kode voucher
+                    </span>
+                  )}
+                </div>
                 <h2 className="mt-3 text-xl font-semibold leading-7 text-navy">{p.name}</h2>
                 <p className="mt-2 text-base text-body">{p.summary}</p>
-                <ul className="mt-4 flex-1 space-y-2">
+                <div className="mt-5">
+                  <p className="text-[12px] font-semibold text-slate">Total biaya program</p>
+                  {p.price_mode === "coming_soon" ? (
+                    <p className="text-[28px] font-bold leading-9 text-navy">Segera hadir</p>
+                  ) : (
+                    <p className="text-[28px] font-bold leading-9 text-navy [font-variant-numeric:tabular-nums]">{rupiah(p.price_idr)}</p>
+                  )}
+                </div>
+                <ul className="mt-4 flex-1 space-y-2 border-t border-line pt-4">
                   {p.includes.map((i) => (
                     <li key={i} className="flex gap-2 text-base text-navy">
-                      <span aria-hidden="true" className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-pill bg-sand text-copper-ink">
+                      <span aria-hidden="true" className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-pill bg-success/10 text-success">
                         <Check size={13} strokeWidth={2.5} />
                       </span>
                       {i}
                     </li>
                   ))}
                 </ul>
-                <div className="mt-6 border-t border-dashed border-line pt-5">
-                  <p className="text-[12px] font-semibold uppercase tracking-[0.12em] text-slate">Biaya</p>
-                  <p className="font-bold text-[32px] leading-tight text-navy">{rupiah(p.price_idr)}</p>
-                </div>
-                <Link href={`/c/${slug}/konsultasi?program=${p.id}`} className={`mt-4 ${btnNavy} sm:w-full`}>
+                <Link href={`/c/${slug}/konsultasi?program=${p.id}`} className={`mt-5 ${btnPrimary} sm:w-full`}>
                   Siapkan konsultasi <ArrowRight aria-hidden="true" size={18} strokeWidth={1.75} />
                 </Link>
               </li>

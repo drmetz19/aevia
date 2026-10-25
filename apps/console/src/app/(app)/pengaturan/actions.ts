@@ -94,6 +94,8 @@ function programBody(fd: FormData) {
     summary: str(fd, "summary"),
     duration_weeks: num("duration_weeks"),
     price_idr: num("price_idr"),
+    price_mode: str(fd, "price_mode") === "coming_soon" ? "coming_soon" : "amount",
+    access: str(fd, "access") === "voucher" ? "voucher" : "open",
     includes: str(fd, "includes").split("\n").map((l) => l.trim()).filter(Boolean),
     active: str(fd, "active") === "on",
   };

@@ -64,6 +64,8 @@ export async function seed({ db }: Pick<Db, "db">) {
         summary: "Pendampingan bertahap untuk kesehatan kulit, dengan tinjauan berkala bersama profesional.",
         durationWeeks: 8,
         priceIdr: 1850000,
+        priceMode: "coming_soon" as const,
+        access: "voucher" as const,
         includes: ["Analisis kulit awal", "Rencana perawatan personal", "Check-in dan tinjauan berkala"],
         sortOrder: 2,
       },

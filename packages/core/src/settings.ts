@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { programSchema } from "./consultation";
+import { programAccessSchema, programPriceModeSchema, programSchema } from "./consultation";
 import { brandModeSchema } from "./clinic";
 import { normalizeHex } from "./color";
 
@@ -74,6 +74,8 @@ export const programInputSchema = z.object({
   summary: z.string().trim().max(400).default(""),
   duration_weeks: z.number().int().min(1, "Durasi minimal 1 minggu.").max(104).nullable(),
   price_idr: z.number().int().min(0, "Harga tidak boleh negatif.").max(1_000_000_000).nullable(),
+  price_mode: programPriceModeSchema.default("amount"),
+  access: programAccessSchema.default("open"),
   includes: z.array(z.string().trim().min(1).max(120)).max(10),
   active: z.boolean().default(true),
 });

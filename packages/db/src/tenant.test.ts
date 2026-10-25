@@ -129,3 +129,17 @@ describe("runner migrasi", () => {
     }
   }, 60_000);
 });
+
+describe("harga & akses program (0017)", () => {
+  it("default amount/open; nilai di luar daftar ditolak; SQL migrasi aman diulang", async () => {
+    const row = (await d.withTenant(b, (tx) => tx.select().from(programs)))[0]!;
+    expect(row).toMatchObject({ priceMode: "amount", access: "open" });
+    const seeded = await d.withTenant(a, (tx) => tx.select().from(programs).where(eq(programs.slug, "pendampingan-kulit-8-minggu")));
+    expect(seeded[0]).toMatchObject({ priceMode: "coming_soon", access: "voucher" });
+    await expect(d.db.execute(sql`UPDATE programs SET price_mode = 'gratis' WHERE id = ${row.id}`)).rejects.toThrow();
+    await expect(d.db.execute(sql`UPDATE programs SET access = 'rahasia' WHERE id = ${row.id}`)).rejects.toThrow();
+    const { readFileSync } = await import("node:fs");
+    const ddl = readFileSync(new URL("../migrations/0017_program_pricing.sql", import.meta.url), "utf8");
+    for (const stmt of ddl.split("--> statement-breakpoint")) await d.db.execute(sql.raw(stmt));
+  });
+});

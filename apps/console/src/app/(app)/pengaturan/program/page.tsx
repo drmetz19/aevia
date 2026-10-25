@@ -4,7 +4,24 @@ import { PageHead, ActionForm, inputCls, labelCls, primaryCls, ghostCls, Submit 
 import { SettingsTabs } from "@/components/SettingsTabs";
 import { deleteProgram, saveProgram } from "../actions";
 
+function Choice({ id, name, legend, value, options }: { id: string; name: string; legend: string; value: string; options: [string, string][] }) {
+  return (
+    <fieldset>
+      <legend className={labelCls}>{legend}</legend>
+      <div className="mt-2 flex flex-wrap gap-2">
+        {options.map(([v, label]) => (
+          <label key={v} className="flex min-h-11 cursor-pointer items-center gap-2 rounded-md border border-line bg-white px-4 text-base text-navy has-[:checked]:border-copper has-[:checked]:bg-[#ECFEFF] has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-[var(--brand-accent)]">
+            <input type="radio" name={name} value={v} defaultChecked={value === v} id={`${id}-${v}`} className="h-4 w-4 accent-[var(--brand-primary-action)]" />
+            {label}
+          </label>
+        ))}
+      </div>
+    </fieldset>
+  );
+}
+
 function ProgramFields({ p }: { p?: StaffProgram }) {
+  const uid = p?.id ?? "new";
   return (
     <>
       {p && <input type="hidden" name="id" value={p.id} />}
@@ -18,10 +35,12 @@ function ProgramFields({ p }: { p?: StaffProgram }) {
           <input id={`dur-${p?.id ?? "new"}`} name="duration_weeks" type="number" min={1} defaultValue={p?.duration_weeks ?? ""} className={inputCls} />
         </div>
         <div>
-          <label className={labelCls} htmlFor={`price-${p?.id ?? "new"}`}>Harga (Rupiah, kosong = ditentukan klinik)</label>
+          <label className={labelCls} htmlFor={`price-${p?.id ?? "new"}`}>Harga (Rupiah, kosong = ditentukan klinik; disembunyikan bila “Segera hadir”)</label>
           <input id={`price-${p?.id ?? "new"}`} name="price_idr" type="number" min={0} defaultValue={p?.price_idr ?? ""} className={inputCls} />
         </div>
       </div>
+      <Choice id={`mode-${uid}`} name="price_mode" legend="Tampilan harga" value={p?.price_mode ?? "amount"} options={[["amount", "Tampilkan harga"], ["coming_soon", "Segera hadir"]]} />
+      <Choice id={`acc-${uid}`} name="access" legend="Akses" value={p?.access ?? "open"} options={[["open", "Terbuka"], ["voucher", "Perlu kode voucher"]]} />
       <label className={labelCls} htmlFor={`inc-${p?.id ?? "new"}`}>Yang termasuk (satu per baris)</label>
       <textarea id={`inc-${p?.id ?? "new"}`} name="includes" defaultValue={p?.includes.join("\n")} rows={3} className={inputCls} />
       <label className="flex items-center gap-3 text-base text-body">
@@ -46,7 +65,7 @@ export default async function Program() {
           <li key={p.id} className="rounded-lg border border-line bg-white p-6 shadow-soft">
             <details>
               <summary className="cursor-pointer text-xl font-semibold text-navy">
-                {p.name} <span className="text-[13px] font-medium text-body">{p.active ? "· Tampil" : "· Disembunyikan"}</span>
+                {p.name} <span className="text-[13px] font-medium text-body">{p.active ? "· Tampil" : "· Disembunyikan"}{p.price_mode === "coming_soon" ? " · Segera hadir" : ""}{p.access === "voucher" ? " · Perlu voucher" : ""}</span>
               </summary>
               <ActionForm action={saveProgram} className="mt-4 space-y-3">
                                   <>

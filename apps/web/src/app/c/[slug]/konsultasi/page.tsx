@@ -92,7 +92,7 @@ export default async function Konsultasi({ params, searchParams }: Props) {
             <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-copper-light">Program dipilih</p>
             <h2 className="mt-1 text-xl font-semibold leading-7">{program.name}</h2>
             <p className="mt-2 hidden text-[15px] text-white/75 sm:block">{program.summary}</p>
-            <p className="mt-3 font-bold text-[32px] leading-tight">{rupiah(program.price_idr)}</p>
+            <p className="mt-3 font-bold text-[32px] leading-tight">{program.price_mode === "coming_soon" ? "Segera hadir" : rupiah(program.price_idr)}</p>
             <Link href={`/c/${slug}/program`} className="mt-3 inline-block text-[15px] font-semibold text-white underline decoration-copper-light decoration-2 underline-offset-4">
               Pilih program lain
             </Link>

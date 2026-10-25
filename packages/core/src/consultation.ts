@@ -15,6 +15,11 @@ export const prepSchema = z.object({
 });
 export type Prep = z.infer<typeof prepSchema>;
 
+export const programPriceModeSchema = z.enum(["amount", "coming_soon"]);
+export const programAccessSchema = z.enum(["open", "voucher"]);
+export type ProgramPriceMode = z.infer<typeof programPriceModeSchema>;
+export type ProgramAccess = z.infer<typeof programAccessSchema>;
+
 export const programSchema = z.object({
   id: z.string(),
   slug: z.string(),
@@ -22,6 +27,8 @@ export const programSchema = z.object({
   summary: z.string(),
   duration_weeks: z.number().nullable(),
   price_idr: z.number().nullable(),
+  price_mode: programPriceModeSchema,
+  access: programAccessSchema,
   includes: z.array(z.string()),
 });
 export type Program = z.infer<typeof programSchema>;
