@@ -65,11 +65,11 @@ Migrasi 0018 (vouchers + redemptions + RLS); endpoint staf daftar/buat/nonaktifk
 Halaman konsultasi pasien menjadi intake 2 kolom ala Stitch (stepper Assessment → Program → Kirim; kiri isian + kolom kode voucher; kanan ringkasan program & klinik); kolom voucher wajib bila access=voucher. Penukaran atomik saat kirim permintaan; 6 pesan galat; antrean & detail permintaan console menampilkan kode voucher.
 
 ### Acceptance criteria
-- [ ] Program access=voucher tanpa kode → pesan voucher_required; dengan kode valid → permintaan terkirim, used_count +1, redemption tercatat
-- [ ] Kode salah / kedaluwarsa / kuota habis / bukan untuk program / sudah dipakai pasien sama → masing-masing pesan sesuai, permintaan tidak dibuat
-- [ ] Dua penukaran bersamaan pada sisa kuota 1 → hanya satu berhasil
-- [ ] Antrean console menampilkan kode voucher pada permintaan tersebut
-- [ ] Program access=open tetap bisa dikirim tanpa kode
+- [x] Program access=voucher tanpa kode → pesan voucher_required; dengan kode valid → permintaan terkirim, used_count +1, redemption tercatat
+- [x] Kode salah / kedaluwarsa / kuota habis / bukan untuk program / sudah dipakai pasien sama → masing-masing pesan sesuai, permintaan tidak dibuat
+- [x] Dua penukaran bersamaan pada sisa kuota 1 → hanya satu berhasil
+- [x] Antrean console menampilkan kode voucher pada permintaan tersebut
+- [x] Program access=open tetap bisa dikirim tanpa kode
 
 ---
 

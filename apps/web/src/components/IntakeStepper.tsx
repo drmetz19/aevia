@@ -8,9 +8,9 @@ export function IntakeStepper({ assessmentDone }: { assessmentDone: boolean }) {
     { label: "Kirim permintaan", done: false, current: true },
   ];
   return (
-    <ol aria-label="Langkah permintaan konsultasi" className="flex items-center gap-2 text-[13px] font-semibold sm:gap-3">
+    <ol aria-label="Langkah permintaan konsultasi" className="flex items-center gap-1.5 text-[13px] font-semibold sm:gap-3">
       {steps.map((s, i) => (
-        <li key={s.label} aria-current={s.current ? "step" : undefined} className="flex items-center gap-2 sm:gap-3">
+        <li key={s.label} aria-current={s.current ? "step" : undefined} className="flex items-center gap-1.5 whitespace-nowrap sm:gap-3">
           <span
             aria-hidden="true"
             className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-pill text-[12px] ${
@@ -23,7 +23,7 @@ export function IntakeStepper({ assessmentDone }: { assessmentDone: boolean }) {
             <span className="sr-only">{s.done ? "Selesai: " : s.current ? "Langkah saat ini: " : ""}</span>
             {s.label}
           </span>
-          {i < steps.length - 1 && <span aria-hidden="true" className="h-px w-4 bg-line sm:w-10" />}
+          {i < steps.length - 1 && <span aria-hidden="true" className="h-px w-2 bg-line sm:w-10" />}
         </li>
       ))}
     </ol>

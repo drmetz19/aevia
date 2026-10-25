@@ -60,7 +60,7 @@ export default async function Konsultasi({ params, searchParams }: Props) {
             )}
           </section>
 
-          <aside aria-label="Ringkasan program" className="order-first h-fit space-y-4 lg:sticky lg:top-24 lg:order-none">
+          <aside aria-label="Ringkasan program" className="h-fit space-y-4 lg:sticky lg:top-24">
             <div className={card}>
               <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-copper-ink">Program dipilih</p>
               <h2 className="mt-1 text-xl font-semibold leading-7 text-navy">{program.name}</h2>

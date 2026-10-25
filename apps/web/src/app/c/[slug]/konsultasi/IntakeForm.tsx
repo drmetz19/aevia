@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
-import { Send, Ticket } from "lucide-react";
+import { AlertCircle, Send, Ticket } from "lucide-react";
 import type { Prep } from "@aevia/core";
 import { SubmitButton } from "@/components/SubmitButton";
 import { btnPrimary } from "@/components/PageIntro";
@@ -41,12 +41,15 @@ export function IntakeForm({ slug, programId, voucherRequired, prep, initialMess
         autoCapitalize="characters"
         autoComplete="off"
         spellCheck={false}
-        aria-invalid={state.voucherError ? true : undefined}
+        aria-invalid={state.voucherError ? "true" : undefined}
         aria-describedby={state.voucherError ? "voucher-err" : "voucher-help"}
-        className="field mt-2 font-mono uppercase tracking-wide"
+        className="field mt-2 font-mono uppercase tracking-wide aria-[invalid=true]:!border-critical aria-[invalid=true]:!shadow-[0_0_0_1px_var(--status-critical)]"
       />
       {state.voucherError ? (
-        <p id="voucher-err" role="alert" className="mt-2 text-[14px] font-medium text-critical">{state.voucherError}</p>
+        <p id="voucher-err" role="alert" className="mt-2 flex gap-1.5 text-[14px] font-medium text-critical">
+          <AlertCircle aria-hidden="true" size={16} strokeWidth={1.75} className="mt-0.5 shrink-0" />
+          <span>{state.voucherError}</span>
+        </p>
       ) : (
         <p id="voucher-help" className="mt-2 text-[13px] text-slate">
           {voucherRequired ? "Program ini memerlukan kode dari klinik. Hubungi klinik bila Anda belum memilikinya." : "Isi bila klinik memberi Anda kode khusus."}

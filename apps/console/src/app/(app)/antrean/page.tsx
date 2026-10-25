@@ -5,6 +5,11 @@ import { queueSchema } from "@aevia/core";
 import { fmtDate, requireStaff, staffFetch } from "@/lib/api";
 
 const statusLabel = { submitted: "Menunggu ditinjau", accepted: "Diterima", declined: "Ditolak" } as const;
+const statusPill = {
+  submitted: "border-current/25 bg-[var(--status-warning-bg)] text-[var(--status-warning)]",
+  accepted: "border-current/25 bg-[var(--status-success-bg)] text-[var(--status-success)]",
+  declined: "border-line bg-sand text-body",
+} as const;
 
 export default async function Antrean() {
   const me = await requireStaff();
@@ -55,8 +60,8 @@ export default async function Antrean() {
                     )}
                   </td>
                   <td data-label="Diajukan" className="px-4 py-3 text-body">{fmtDate(i.created_at)}</td>
-                  <td data-label="Status" className="px-4 py-3 font-semibold text-navy">
-                    {statusLabel[i.status]}
+                  <td data-label="Status" className="px-4 py-3">
+                    <span className={`inline-flex whitespace-nowrap rounded-pill border px-2 py-0.5 text-[11px] font-semibold ${statusPill[i.status]}`}>{statusLabel[i.status]}</span>
                     {i.scheduled_at && <span className="block text-[13px] font-medium text-body">{fmtDate(i.scheduled_at)}</span>}
                   </td>
                 </tr>
