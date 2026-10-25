@@ -132,7 +132,8 @@
   width: 48px;
   height: 28px;
   border-radius: 999px;
-  background: var(--aevia-border);
+  /* Keadaan mati: slate #94A3B8 agar kontras ≥3:1 di kartu putih (WCAG 1.4.11). */
+  background: #94a3b8;
   cursor: pointer;
   transition: background-color 0.25s;
 }

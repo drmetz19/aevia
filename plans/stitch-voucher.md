@@ -19,11 +19,11 @@
 Ganti nilai token, font, radius, dan gaya kartu/tombol bersama ke Stitch; tambah komponen logo Aevia Konsult (mark + lengkap) di web & console; badge "powered by Aevia Konsult" pada header pasien cobrand; heading tidak lagi serif; tombol radius 8 (bukan pill) di komponen bersama; shell console (sidebar putih, item aktif cyan, kanvas slate).
 
 ### Acceptance criteria
-- [ ] `/c/drmetz` memuat teks "Aevia Konsult" dan mark logo SVG; `/c/demo-partner` tanpa kata "Aevia" (teks, title, alt)
-- [ ] Token default: `--brand-accent` #0E7490, latar #F8FAFC, teks #0F172A; heading memakai Plus Jakarta Sans (tidak ada `DM Serif` di CSS yang dimuat)
-- [ ] Whitelabel demo-partner tetap menimpa `--brand-primary` (#1F4D3F) seperti sebelumnya
-- [ ] Console `/masuk` & halaman staf memakai logo Aevia Konsult di sidebar/header
-- [ ] typecheck, test, smoke lulus (pemeriksaan smoke lama yang memeriksa copy lama disesuaikan)
+- [x] `/c/drmetz` memuat teks "Aevia Konsult" dan mark logo SVG; `/c/demo-partner` tanpa kata "Aevia" (teks, title, alt)
+- [x] Token default: `--brand-accent` #0E7490, latar #F8FAFC, teks #0F172A; heading memakai Plus Jakarta Sans (tidak ada `DM Serif` di CSS yang dimuat)
+- [x] Whitelabel demo-partner tetap menimpa `--brand-primary` (#1F4D3F) seperti sebelumnya
+- [x] Console `/masuk` & halaman staf memakai logo Aevia Konsult di sidebar/header
+- [x] typecheck, test, smoke lulus (pemeriksaan smoke lama yang memeriksa copy lama disesuaikan)
 
 ---
 

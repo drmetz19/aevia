@@ -26,9 +26,9 @@ export function ClinicHeader({ clinic, nav = false, active }: { clinic: PublicCl
         </Link>
         {nav && <PatientTopNav slug={clinic.slug} active={active} />}
         {clinic.brand_mode === "cobrand" && (
-          <p className="flex shrink-0 items-center gap-2 text-[13px] font-medium text-slate">
+          <p className="flex shrink-0 items-center gap-1.5 text-[11px] font-medium leading-tight text-slate sm:gap-2 sm:text-[13px]">
             <AeviaMark size={24} decorative />
-            <span className="sr-only sm:not-sr-only">powered by Aevia Konsult</span>
+            <span className="max-w-[72px] sm:max-w-none">powered by Aevia Konsult</span>
           </p>
         )}
       </div>

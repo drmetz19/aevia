@@ -12,7 +12,7 @@ export function AuthShell({ eyebrow, title, lead, children }: { eyebrow: string;
       <section className="flex items-center justify-center px-4 py-12">
         <div className="w-full max-w-sm rounded-lg border border-line bg-white p-6">
           <AeviaLogo size={32} className="md:hidden" />
-          <p className="mt-4 text-[13px] font-semibold uppercase tracking-[0.12em] text-copper-ink md:mt-0">{eyebrow}</p>
+          <p className="mt-4 text-[11px] font-semibold uppercase tracking-[0.08em] text-copper-ink md:mt-0">{eyebrow}</p>
           <h1 className="mt-1 text-[28px] font-semibold leading-9 text-navy">{title}</h1>
           <p className="mt-2 text-base text-body">{lead}</p>
           {children}

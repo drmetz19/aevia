@@ -63,7 +63,7 @@ export function ActionForm({
 export function PageHead({ eyebrow, title, lead }: { eyebrow: string; title: string; lead: string }) {
   return (
     <>
-      <p className="text-[13px] font-semibold uppercase tracking-[0.12em] text-copper-ink">{eyebrow}</p>
+      <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-copper-ink">{eyebrow}</p>
       <h1 className="mt-1 text-[28px] font-bold leading-9 text-navy md:text-4xl md:leading-[44px]">{title}</h1>
       <p className="mt-2 max-w-2xl text-base text-body">{lead}</p>
     </>
