@@ -140,9 +140,9 @@ export default async function ClinicLanding({ params }: Props) {
           </div>
         </section>
 
-        <section aria-labelledby="faq" className="mx-auto max-w-3xl px-4 pb-10 md:px-8 md:pb-16">
+        <section aria-labelledby="faq" className="mx-auto max-w-6xl px-4 pb-10 md:px-8 md:pb-16">
           <h2 id="faq" className="text-[22px] font-semibold leading-[30px] text-navy sm:text-[28px] sm:leading-9">Pertanyaan yang sering diajukan</h2>
-          <div className="mt-6 space-y-3">
+          <div className="mt-6 max-w-3xl space-y-3">
             {faq(clinic.name).map(({ q, a }) => (
               <details key={q} className="group rounded-lg border border-line bg-surface p-4 open:border-line-strong">
                 <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 text-base font-semibold text-navy [&::-webkit-details-marker]:hidden">
