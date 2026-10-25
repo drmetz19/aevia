@@ -1,6 +1,7 @@
 import { adminClinicListSchema } from "@aevia/core";
 import { fmtDate, requireStaff, staffFetch } from "@/lib/api";
-import { PageHead, ActionForm, inputCls, labelCls, primaryCls, ghostCls, Submit } from "@/components/Ui";
+import { PageHead, ActionForm, Submit } from "@/components/Ui";
+import { inputCls, labelCls, primaryCls, ghostCls } from "@/lib/ui-classes";
 import { createClinic, verifyDomain } from "../../pengaturan/actions";
 
 export default async function Klinik() {

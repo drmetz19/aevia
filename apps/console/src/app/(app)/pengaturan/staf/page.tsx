@@ -1,6 +1,7 @@
 import { teamListSchema } from "@aevia/core";
 import { requireStaff, staffFetch } from "@/lib/api";
-import { PageHead, ActionForm, inputCls, labelCls, primaryCls, ghostCls, Submit } from "@/components/Ui";
+import { PageHead, ActionForm, Submit } from "@/components/Ui";
+import { inputCls, labelCls, primaryCls, ghostCls } from "@/lib/ui-classes";
 import { SettingsTabs } from "@/components/SettingsTabs";
 import { inviteStaff, setStaffActive } from "../actions";
 

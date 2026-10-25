@@ -122,8 +122,9 @@ export async function createVoucher(_p: SettingsState, fd: FormData): Promise<Se
   return done(r, "Voucher dibuat.", "/pengaturan/voucher");
 }
 export async function setVoucherActive(_p: SettingsState, fd: FormData): Promise<SettingsState> {
-  const active = str(fd, "active") === "true";
-  return done(await call("PATCH", `/v1/staff/vouchers/${str(fd, "id")}`, { active }), active ? "Voucher diaktifkan." : "Voucher dinonaktifkan.", "/pengaturan/voucher");
+  const [id, flag] = str(fd, "toggle").split(":");
+  const active = flag === "true";
+  return done(await call("PATCH", `/v1/staff/vouchers/${id}`, { active }), active ? "Voucher diaktifkan." : "Voucher dinonaktifkan.", "/pengaturan/voucher");
 }
 
 export async function inviteStaff(_p: SettingsState, fd: FormData): Promise<SettingsState> {

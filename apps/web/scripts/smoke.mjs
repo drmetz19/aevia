@@ -376,11 +376,13 @@ try {
   check(vc.status === 201 && (await vc.json()).code === "UJI2026", "voucher: admin buat 'uji2026' → disimpan UJI2026");
   check((await post(`${API}/v1/staff/vouchers`, { code: "Uji2026" }, ca)).status === 409, "voucher: kode duplikat beda huruf → 409");
   const vpg = (await (await fetch(`${CON}/pengaturan/voucher`, { headers: caC })).text()).replace(/<!-- -->/g, "");
+  check(!vpg.includes("Attempted to call") && /<input[^>]*id="v-code"[^>]*class="[^"]*border-line[^"]*"/.test(vpg.replace(/\n/g, " ")), "console /pengaturan/voucher: input kode ber-kelas (tanpa 'Attempted to call')");
   check(vpg.includes("UJI2026") && vpg.includes("0/5") && vpg.includes("Aktif") && vpg.includes("Buat voucher"), "console /pengaturan/voucher: daftar voucher terpakai 0/5, status Aktif");
   for (const [path, needle] of [["/pengaturan/brand", "Pemeriksaan keterbacaan"], ["/pengaturan/program", "Tambah program"], ["/pengaturan/staf", "Undang staf"]]) {
     const pg = await fetch(`${CON}${path}`, { headers: caC });
     const body = await pg.text();
     check(pg.status === 200 && body.includes(needle), `console ${path} memuat "${needle}"`);
+    if (path === "/pengaturan/program") check(!body.includes("Attempted to call") && /<input[^>]*id="price-new"[^>]*class="[^"]*border-line/.test(body), "console program: input harga ber-kelas (bukan client reference)");
     if (path === "/pengaturan/program") check(body.includes("Tampilan harga") && body.includes("Perlu kode voucher"), "console program: pilihan tampilan harga & akses");
     if (path === "/pengaturan/brand") check(body.includes("data-aevia-mark") && body.includes('aria-current="page"'), "console shell: logo Aevia Konsult + item aktif di sidebar");
   }

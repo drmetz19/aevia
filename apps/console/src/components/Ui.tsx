@@ -2,13 +2,12 @@
 
 import { useActionState, type ReactNode } from "react";
 import { useFormStatus } from "react-dom";
+import { inputCls, labelCls, primaryCls, dangerCls, ghostCls } from "@/lib/ui-classes";
 import type { SettingsState } from "@/app/(app)/pengaturan/actions";
 
-export const inputCls = "w-full rounded-md border border-line bg-white px-4 py-3 text-base text-navy";
-export const labelCls = "block text-[13px] font-semibold text-navy";
-export const primaryCls = "rounded-md bg-action px-6 py-3 text-base font-semibold text-white hover:brightness-90 disabled:opacity-60";
-export const dangerCls = "rounded-md border border-critical bg-white px-5 py-2 text-base font-semibold text-critical hover:bg-[#FFE4E6] disabled:opacity-60";
-export const ghostCls = "rounded-md border border-line bg-white px-5 py-2 text-base font-semibold text-navy hover:bg-ivory disabled:opacity-60";
+
+/** Konstanta kelas ada di `@/lib/ui-classes` (modul server-safe); diekspor ulang demi kompatibilitas. */
+export { inputCls, labelCls, primaryCls, dangerCls, ghostCls };
 
 export function Notice({ s }: { s: SettingsState }) {
   return (
@@ -46,17 +45,21 @@ export function ActionForm({
   children,
   className = "space-y-4",
   encType,
+  noticeFirst = false,
 }: {
   action: (p: SettingsState, fd: FormData) => Promise<SettingsState>;
   children: ReactNode;
   className?: string;
   encType?: string;
+  /** Notice tampil di atas isi (mis. form yang membungkus tabel). */
+  noticeFirst?: boolean;
 }) {
   const [s, run] = useActionState<SettingsState, FormData>(action, {});
   return (
     <form action={run} className={className} encType={encType}>
+      {noticeFirst && <Notice s={s} />}
       {children}
-      <Notice s={s} />
+      {!noticeFirst && <Notice s={s} />}
     </form>
   );
 }

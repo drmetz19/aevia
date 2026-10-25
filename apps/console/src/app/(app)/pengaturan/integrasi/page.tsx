@@ -1,7 +1,8 @@
 import { SCOPES, SCOPE_LABELS, connectorOverviewSchema, deliveryViewSchema, integrationOverviewSchema } from "@aevia/core";
 import { z } from "zod";
 import { fmtDate, requireStaff, staffFetch } from "@/lib/api";
-import { PageHead, ActionForm, Submit, inputCls, labelCls, primaryCls, ghostCls } from "@/components/Ui";
+import { PageHead, ActionForm, Submit } from "@/components/Ui";
+import { inputCls, labelCls, primaryCls, ghostCls } from "@/lib/ui-classes";
 import { SettingsTabs } from "@/components/SettingsTabs";
 import { saveBeautycode, saveKliniksistem, syncBeautycode, testKliniksistem, createApiKey, createOauthClient, createWebhook, deleteWebhook, revokeApiKey, revokeOauthClient, testWebhook, toggleWebhook } from "../actions";
 

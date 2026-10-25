@@ -1,6 +1,7 @@
 import { brandSettingsSchema, llmUsageSchema } from "@aevia/core";
 import { publicFileUrl, requireStaff, staffFetch } from "@/lib/api";
-import { PageHead, ActionForm, inputCls, labelCls, primaryCls, ghostCls, Submit } from "@/components/Ui";
+import { PageHead, ActionForm, Submit } from "@/components/Ui";
+import { inputCls, labelCls, primaryCls, ghostCls } from "@/lib/ui-classes";
 import { SettingsTabs } from "@/components/SettingsTabs";
 import { BrandForm } from "./BrandForm";
 import { proposeAssistant, removeLogo, setLlm, uploadLogo } from "../actions";

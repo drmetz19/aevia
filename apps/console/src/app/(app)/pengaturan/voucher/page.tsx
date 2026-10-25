@@ -1,14 +1,15 @@
 import { staffProgramListSchema, staffVoucherListSchema, type StaffVoucher, type VoucherStatus } from "@aevia/core";
 import { requireStaff, staffFetch } from "@/lib/api";
-import { PageHead, ActionForm, inputCls, labelCls, primaryCls, ghostCls, dangerCls, Submit } from "@/components/Ui";
+import { PageHead, ActionForm, Submit } from "@/components/Ui";
+import { inputCls, labelCls, primaryCls, ghostCls, dangerCls } from "@/lib/ui-classes";
 import { SettingsTabs } from "@/components/SettingsTabs";
 import { createVoucher, setVoucherActive } from "../actions";
 
 const BADGE: Record<VoucherStatus, { label: string; cls: string }> = {
-  active: { label: "Aktif", cls: "border-[#047857]/30 bg-[#D1FAE5] text-[#047857]" },
+  active: { label: "Aktif", cls: "border-current/25 bg-[var(--status-success-bg)] text-[var(--status-success)]" },
   inactive: { label: "Nonaktif", cls: "border-line bg-sand text-body" },
-  expired: { label: "Kedaluwarsa", cls: "border-[#BE123C]/30 bg-[#FFE4E6] text-[#BE123C]" },
-  exhausted: { label: "Habis", cls: "border-[#B45309]/30 bg-[#FEF3C7] text-[#B45309]" },
+  expired: { label: "Kedaluwarsa", cls: "border-current/25 bg-[var(--status-critical-bg)] text-[var(--status-critical)]" },
+  exhausted: { label: "Habis", cls: "border-current/25 bg-[var(--status-warning-bg)] text-[var(--status-warning)]" },
 };
 const day = new Intl.DateTimeFormat("id-ID", { day: "numeric", month: "short", year: "numeric", timeZone: "Asia/Jakarta" });
 
@@ -16,23 +17,22 @@ function Row({ v }: { v: StaffVoucher }) {
   const b = BADGE[v.status];
   return (
     <tr className="border-b border-line last:border-0">
-      <td data-label="Kode" className="px-4 py-3 font-mono text-base font-semibold text-navy [overflow-wrap:anywhere]">{v.code}</td>
+      <td data-label="Kode" className="whitespace-nowrap px-4 py-3 font-mono text-base font-semibold text-navy">{v.code}</td>
       <td data-label="Program" className="px-4 py-3 text-body">{v.program_name ?? "Semua program"}</td>
       <td data-label="Terpakai" className="px-4 py-3 font-mono tabular-nums text-navy">{v.used_count}/{v.max_uses ?? "∞"}</td>
-      <td data-label="Kedaluwarsa" className="px-4 py-3 text-body">{v.expires_at ? day.format(new Date(v.expires_at)) : "Tanpa batas"}</td>
+      <td data-label="Kedaluwarsa" className="whitespace-nowrap px-4 py-3 text-body">{v.expires_at ? day.format(new Date(v.expires_at)) : "Tanpa batas"}</td>
       <td data-label="Status" className="px-4 py-3">
         <span className={`inline-flex rounded-pill border px-2 py-0.5 text-[11px] font-semibold ${b.cls}`}>{b.label}</span>
       </td>
       <td className="px-4 py-3">
-        <ActionForm action={setVoucherActive} className="space-y-2">
-          <>
-            <input type="hidden" name="id" value={v.id} />
-            <input type="hidden" name="active" value={v.active ? "false" : "true"} />
-            <Submit className={v.active ? dangerCls : ghostCls} confirm={v.active ? `Nonaktifkan voucher ${v.code}? Pasien tidak bisa memakainya lagi.` : undefined}>
-              {v.active ? "Nonaktifkan" : "Aktifkan"}
-            </Submit>
-          </>
-        </ActionForm>
+        <Submit
+          name="toggle"
+          value={`${v.id}:${v.active ? "false" : "true"}`}
+          className={v.active ? dangerCls : ghostCls}
+          confirm={v.active ? `Nonaktifkan voucher ${v.code}? Pasien tidak bisa memakainya lagi.` : undefined}
+        >
+          {v.active ? "Nonaktifkan" : "Aktifkan"}
+        </Submit>
       </td>
     </tr>
   );
@@ -87,7 +87,8 @@ export default async function Voucher() {
       {vouchers.length === 0 ? (
         <p className="mt-8 rounded-lg border border-line bg-white p-6 text-base text-body">Belum ada voucher. Buat satu di atas untuk mulai membagikan akses.</p>
       ) : (
-        <div className="mt-8 overflow-x-auto rounded-lg border border-line bg-white">
+        <ActionForm action={setVoucherActive} className="mt-8 space-y-3" noticeFirst>
+        <div className="overflow-x-auto rounded-lg border border-line bg-white">
           <table className="table-stack w-full min-w-[720px] text-left text-base">
             <caption className="sr-only">Daftar voucher klinik</caption>
             <thead className="border-b border-line text-[13px] font-medium text-body">
@@ -107,6 +108,7 @@ export default async function Voucher() {
             </tbody>
           </table>
         </div>
+        </ActionForm>
       )}
     </main>
   );

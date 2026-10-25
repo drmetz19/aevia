@@ -51,20 +51,18 @@ export default async function Program({ params }: { params: Promise<{ slug: stri
                     </li>
                   ))}
                 </ul>
-                <div className="mt-auto flex min-h-[76px] flex-col justify-end border-t border-line pt-4">
-                  {p.price_mode === "coming_soon" ? (
-                    <p className="text-[28px] font-bold leading-9 text-navy">Segera hadir</p>
-                  ) : (
-                    <>
-                      <p className="text-[12px] font-semibold text-slate">Total biaya program</p>
-                      <p className="text-[28px] font-bold leading-9 text-navy [font-variant-numeric:tabular-nums]">{rupiah(p.price_idr)}</p>
-                    </>
-                  )}
+                <div className="mt-auto border-t border-line pt-4">
+                  <p className="text-[12px] font-semibold leading-4 text-slate">{p.price_mode === "coming_soon" ? "Harga" : "Total biaya program"}</p>
+                  <p className="text-[28px] font-bold leading-9 text-navy [font-variant-numeric:tabular-nums]">
+                    {p.price_mode === "coming_soon" ? "Segera hadir" : rupiah(p.price_idr)}
+                  </p>
                 </div>
                 <Link href={`/c/${slug}/konsultasi?program=${p.id}`} className={`mt-4 ${btnPrimary} sm:w-full`}>
                   Siapkan konsultasi <ArrowRight aria-hidden="true" size={18} strokeWidth={1.75} />
                 </Link>
-                {p.access === "voucher" && <p className="mt-2 text-center text-[13px] text-slate">Siapkan kode voucher dari klinik.</p>}
+                <p className="mt-2 min-h-[18px] text-center text-[13px] leading-[18px] text-slate">
+                  {p.access === "voucher" ? "Siapkan kode voucher dari klinik." : ""}
+                </p>
               </li>
             ))}
           </ul>

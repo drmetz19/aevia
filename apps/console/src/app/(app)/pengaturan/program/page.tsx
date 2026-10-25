@@ -1,6 +1,7 @@
 import { staffProgramListSchema, type StaffProgram } from "@aevia/core";
 import { requireStaff, staffFetch } from "@/lib/api";
-import { PageHead, ActionForm, inputCls, labelCls, primaryCls, dangerCls, Submit } from "@/components/Ui";
+import { PageHead, ActionForm, Submit } from "@/components/Ui";
+import { inputCls, labelCls, primaryCls, dangerCls } from "@/lib/ui-classes";
 import { SettingsTabs } from "@/components/SettingsTabs";
 import { deleteProgram, saveProgram } from "../actions";
 

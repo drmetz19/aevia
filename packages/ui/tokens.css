@@ -117,6 +117,7 @@ textarea {
   .table-stack td[data-label]::before {
     content: attr(data-label);
     display: block;
+    font-family: var(--font-sans);
     font-size: 13px;
     line-height: 18px;
     font-weight: 500;
