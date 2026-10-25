@@ -83,7 +83,8 @@ try {
 
   const dm = await (await fetch(`${WEB}/c/drmetz`)).text();
   check(dm.includes("DrMetz"), "/c/drmetz memuat nama DrMetz");
-  check(dm.includes("powered by AEVIA"), "/c/drmetz memuat 'powered by AEVIA'");
+  check(dm.includes("powered by Aevia Konsult") && dm.includes("data-aevia-mark"), "/c/drmetz memuat 'powered by Aevia Konsult' + mark logo SVG");
+  check(!dm.includes("DM Serif"), "/c/drmetz tanpa font DM Serif");
   check(dm.replace(/<!-- -->/g, "").includes("Sovia adalah AI"), "/c/drmetz memuat 'Sovia adalah AI'");
   check(dm.includes("Mulai assessment") && dm.includes("/c/drmetz/assessment"), "CTA Mulai assessment → /assessment");
   for (const s of ["Assessment", "Konsultasi", "Rencana personal", "Follow-up &amp; progres"])
@@ -148,7 +149,7 @@ try {
   const mid = (await (await fetch(`${WEB}/c/drmetz/assessment`, { headers: cookie })).text()).replace(/<!-- -->/g, "");
   check(mid.includes('role="progressbar"') && mid.includes("Pertanyaan 1 dari 20"), "chat: progress bar + satu pertanyaan per langkah");
   check(mid.includes('type="radio"') && mid.includes("Lanjut"), "pertanyaan pilihan berupa form radio (no-JS)");
-  check(!/aevia/i.test(text(mid).replace(/Sovia · AI Guide by AEVIA|powered by AEVIA/g, "")), "tidak ada AEVIA selain header/badge cobrand");
+  check(!/aevia/i.test(text(mid).replace(/Sovia · AI Guide by AEVIA|powered by Aevia Konsult/g, "")), "tidak ada AEVIA selain header/badge cobrand");
 
   const emerg = await post(`${API}/v1/assessments/${st1.id}/answers`, { question_id: "tujuan-t", text: "kadang nyeri dada" }, token);
   const eb = await emerg.json();
@@ -266,7 +267,7 @@ try {
   check(plan.includes("Reviewed by Professional") && plan.includes("Professional Plan"), "rencana: trust badges");
   check(plan.includes("Sovia adalah AI") && plan.includes("Sovia menjelaskan rencana Anda"), "rencana: bubble penjelasan Sovia");
   check(plan.includes("Resep dari dr. Metz") && plan.includes("Tretinoin"), "rencana: resep terbit read-only");
-  check(plan.includes("powered by AEVIA") || plan.includes("ditampilkan melalui AEVIA"), "cobrand: menyebut AEVIA sebagai platform");
+  check(plan.includes("powered by Aevia Konsult") || plan.includes("ditampilkan melalui AEVIA"), "cobrand: menyebut Aevia Konsult sebagai platform");
   check((await (await fetch(`${WEB}/c/drmetz/beranda`, { headers: cookie })).text()).includes("Lihat rencana"), "beranda: tombol Lihat rencana");
   const aud = (await (await fetch(`${CON}/konsultasi/${kid}?tab=audit`, { headers: sCookie })).text()).replace(/<!-- -->/g, "");
   check(aud.includes("Rencana ditandatangani") && aud.includes("Resep diterbitkan") && aud.includes("Subjective (S)"), "audit: label manusiawi (S/O/A/P, rencana, resep)");
@@ -310,6 +311,7 @@ try {
   // Password staf: halaman, link dari email (log dev), atur password, login
   const masukHtml = await (await fetch(`${CON}/masuk`)).text();
   check(masukHtml.includes('type="password"') && masukHtml.includes("Lupa atau belum punya password?"), "console /masuk: form password + link lupa password");
+  check(masukHtml.includes("data-aevia-mark") && masukHtml.includes('aria-label="Aevia Konsult"'), "console /masuk: logo Aevia Konsult");
   check((await (await fetch(`${CON}/masuk/kode`)).text()).includes("Kirim kode masuk"), "console /masuk/kode: OTP tetap tersedia");
   check((await fetch(`${CON}/lupa-password`)).status === 200, "console /lupa-password 200");
   check((await (await fetch(`${CON}/atur-password?token=x`)).text()).includes("belum lengkap atau sudah tidak berlaku"), "console /atur-password token rusak → pesan + minta link baru");
@@ -371,7 +373,9 @@ try {
 
   for (const [path, needle] of [["/pengaturan/brand", "Pemeriksaan keterbacaan"], ["/pengaturan/program", "Tambah program"], ["/pengaturan/staf", "Undang staf"]]) {
     const pg = await fetch(`${CON}${path}`, { headers: caC });
-    check(pg.status === 200 && (await pg.text()).includes(needle), `console ${path} memuat "${needle}"`);
+    const body = await pg.text();
+    check(pg.status === 200 && body.includes(needle), `console ${path} memuat "${needle}"`);
+    if (path === "/pengaturan/brand") check(body.includes("data-aevia-mark") && body.includes('aria-current="page"'), "console shell: logo Aevia Konsult + item aktif di sidebar");
   }
   const denied = await fetch(`${CON}/pengaturan/brand`, { headers: sCookie, redirect: "manual" });
   check(denied.status >= 300 && denied.status < 400, "console pengaturan: profesional dialihkan");

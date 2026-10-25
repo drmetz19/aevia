@@ -31,7 +31,7 @@ export default async function Pasien({ params, searchParams }: Props) {
     <main className="mx-auto max-w-5xl px-4 py-10 md:px-8">
       <Link href="/antrean" className="text-base font-semibold text-navy underline underline-offset-4">← Antrean</Link>
       <p className="mt-4 text-[13px] font-semibold uppercase tracking-[0.12em] text-copper-ink">Pasien</p>
-      <h1 className="mt-1 font-serif text-4xl text-navy">{d.patient.email}</h1>
+      <h1 className="mt-1 font-bold text-4xl text-navy">{d.patient.email}</h1>
       <p className="mt-1 text-base text-body">Terdaftar {fmtDate(d.patient.created_at)}</p>
       {info === "diterima" && (
         <p role="status" className="mt-4 rounded-md bg-sand px-4 py-3 text-base text-navy">Selesai. Konsultasi sudah dijadwalkan dan pasien dapat melihatnya.</p>
@@ -40,7 +40,7 @@ export default async function Pasien({ params, searchParams }: Props) {
       <nav aria-label="Bagian pasien" className="mt-6 flex gap-2">
         {([["ringkasan", "Ringkasan"], ["progres", "Progres"]] as const).map(([k, l]) => (
           <Link key={k} href={`/pasien/${id}${k === "progres" ? "?tab=progres" : ""}`} aria-current={(showProgress ? "progres" : "ringkasan") === k ? "page" : undefined}
-            className={`rounded-pill px-5 py-2 text-base font-semibold ${(showProgress ? "progres" : "ringkasan") === k ? "bg-navy text-white" : "border border-line bg-white text-navy"}`}>
+            className={`rounded-md px-5 py-2 text-base font-semibold ${(showProgress ? "progres" : "ringkasan") === k ? "bg-action text-white" : "border border-line bg-white text-navy"}`}>
             {l}
           </Link>
         ))}
@@ -151,7 +151,7 @@ export default async function Pasien({ params, searchParams }: Props) {
                   return items.map((i) => (
                     <div key={i.label} className="min-w-0">
                       <dt className="text-[13px] font-medium text-body">{i.label}</dt>
-                      <dd className="font-serif text-2xl text-navy [overflow-wrap:anywhere] sm:text-3xl">{i.value}</dd>
+                      <dd className="font-bold text-2xl text-navy [overflow-wrap:anywhere] sm:text-3xl">{i.value}</dd>
                     </div>
                   ));
                 })()}

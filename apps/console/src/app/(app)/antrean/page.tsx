@@ -14,7 +14,7 @@ export default async function Antrean() {
   return (
     <main className="mx-auto max-w-5xl px-4 py-10 md:px-8">
       <p className="text-[13px] font-semibold uppercase tracking-[0.12em] text-copper-ink">Antrean</p>
-      <h1 className="mt-1 font-serif text-4xl text-navy">Permintaan konsultasi</h1>
+      <h1 className="mt-1 font-bold text-4xl text-navy">Permintaan konsultasi</h1>
       <p className="mt-2 text-base text-body">Permintaan terbaru dari pasien klinik Anda. Yang menunggu ditinjau tampil lebih dulu.</p>
       {items.length === 0 ? (
         <p className="mt-8 rounded-lg border border-line bg-white p-6 text-base text-body">Belum ada permintaan konsultasi.</p>

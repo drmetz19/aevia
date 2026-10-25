@@ -46,7 +46,7 @@ export default async function Program({ params }: { params: Promise<{ slug: stri
                 </ul>
                 <div className="mt-6 border-t border-dashed border-line pt-5">
                   <p className="text-[12px] font-semibold uppercase tracking-[0.12em] text-slate">Biaya</p>
-                  <p className="font-serif text-[32px] leading-tight text-navy">{rupiah(p.price_idr)}</p>
+                  <p className="font-bold text-[32px] leading-tight text-navy">{rupiah(p.price_idr)}</p>
                 </div>
                 <Link href={`/c/${slug}/konsultasi?program=${p.id}`} className={`mt-4 ${btnNavy} sm:w-full`}>
                   Siapkan konsultasi <ArrowRight aria-hidden="true" size={18} strokeWidth={1.75} />

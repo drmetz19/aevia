@@ -48,13 +48,13 @@ export default async function Hasil({ params }: { params: Promise<{ slug: string
         )}
 
         <section aria-labelledby="prioritas" className="hero-atmos panel-deep reveal mt-8 p-6 text-white sm:p-8">
-          <h2 id="prioritas" className="text-balance font-serif text-2xl leading-tight sm:text-[28px]">
+          <h2 id="prioritas" className="text-balance font-bold text-2xl leading-tight sm:text-[28px]">
             Tiga area yang layak dibahas lebih dulu
           </h2>
           <ol className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-3">
             {r.priorities.map((p, i) => (
               <li key={p} className="flex items-center gap-3 rounded-md border border-white/12 bg-white/[0.06] px-4 py-3 sm:flex-col sm:items-start">
-                <span aria-hidden="true" className="font-serif text-3xl leading-none text-copper-light">{i + 1}</span>
+                <span aria-hidden="true" className="font-bold text-3xl leading-none text-copper-light">{i + 1}</span>
                 <span className="text-base font-semibold">{areaLabel(p)}</span>
               </li>
             ))}

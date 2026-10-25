@@ -9,7 +9,7 @@ export function AcceptDialog({ requestId, patientId }: { requestId: string; pati
   const input = "mt-1 w-full rounded-md border border-line bg-ivory px-4 py-3 text-base text-navy";
   return (
     <>
-      <button type="button" onClick={() => ref.current?.showModal()} className="rounded-pill bg-navy px-6 py-3 text-base font-semibold text-white">
+      <button type="button" onClick={() => ref.current?.showModal()} className="rounded-md bg-action px-6 py-3 text-base font-semibold text-white">
         Terima dan jadwalkan
       </button>
       <dialog ref={ref} aria-labelledby={`t-${requestId}`} className="m-auto w-[min(92vw,440px)] rounded-lg border border-line bg-white p-6 shadow-soft backdrop:bg-black/40">
@@ -27,8 +27,8 @@ export function AcceptDialog({ requestId, patientId }: { requestId: string; pati
           </div>
           {state.error && <p role="alert" className="text-base text-critical">{state.error}</p>}
           <div className="flex gap-3">
-            <button type="submit" disabled={pending} className="rounded-pill bg-navy px-6 py-3 text-base font-semibold text-white">Simpan jadwal</button>
-            <button type="button" onClick={() => ref.current?.close()} className="rounded-pill border border-navy px-6 py-3 text-base font-semibold text-navy">Batal</button>
+            <button type="submit" disabled={pending} className="rounded-md bg-action px-6 py-3 text-base font-semibold text-white">Simpan jadwal</button>
+            <button type="button" onClick={() => ref.current?.close()} className="rounded-md border border-line bg-surface px-6 py-3 text-base font-semibold text-navy">Batal</button>
           </div>
         </form>
       </dialog>

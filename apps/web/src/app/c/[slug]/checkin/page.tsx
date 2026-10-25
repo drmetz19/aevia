@@ -36,7 +36,7 @@ export default async function Checkin({ params, searchParams }: { params: Promis
                   <p className="clear-both pt-0.5 text-[13px] font-medium text-body">Skala 1 sampai 5 ({f.key === "stres" ? "5 = paling tenang" : "5 = paling baik"})</p>
                   <div className="mt-3 grid grid-cols-5 gap-2">
                     {[1, 2, 3, 4, 5].map((n) => (
-                      <label key={n} className="flex cursor-pointer flex-col items-center rounded-md border border-line bg-ivory px-1 py-3 font-serif text-xl text-navy transition active:scale-95 has-[:checked]:border-navy has-[:checked]:bg-navy has-[:checked]:text-white has-[:checked]:shadow-soft has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-[var(--brand-accent)]">
+                      <label key={n} className="flex cursor-pointer flex-col items-center rounded-md border border-line bg-ivory px-1 py-3 font-bold text-xl text-navy transition active:scale-95 has-[:checked]:border-navy has-[:checked]:bg-navy has-[:checked]:text-white has-[:checked]:shadow-soft has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-[var(--brand-accent)]">
                         <input type="radio" name={`v:${f.key}`} value={n} required aria-label={`${n}, ${scaleAnchors(f.key)[n - 1]}`} className="sr-only" />
                         {n}
                         <span className="mt-1 hidden text-center font-sans text-[12px] font-medium leading-tight opacity-80 sm:block">{scaleAnchors(f.key)[n - 1]}</span>

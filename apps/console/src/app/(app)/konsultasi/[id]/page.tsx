@@ -103,7 +103,7 @@ export default async function Konsultasi({ params, searchParams }: Props) {
     <main className="mx-auto max-w-7xl px-4 py-8 md:px-8">
       <Link href={`/pasien/${k.patient.id}`} className="text-base font-semibold text-navy underline underline-offset-4">← {k.patient.email}</Link>
       <p className="mt-4 text-[13px] font-semibold uppercase tracking-[0.12em] text-copper-ink">Konsultasi</p>
-      <h1 className="mt-1 font-serif text-4xl text-navy">{k.program_name}</h1>
+      <h1 className="mt-1 font-bold text-4xl text-navy">{k.program_name}</h1>
 
       <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-[320px_minmax(0,1fr)]">
         <aside aria-label="Ringkasan pasien" className="order-last space-y-4 lg:order-none">
@@ -146,7 +146,7 @@ export default async function Konsultasi({ params, searchParams }: Props) {
                 key={t.key}
                 href={`/konsultasi/${id}?tab=${t.key}`}
                 aria-current={active === t.key ? "page" : undefined}
-                className={`rounded-pill px-5 py-2 text-base font-semibold ${active === t.key ? "bg-navy text-white" : "border border-line bg-white text-navy"}`}
+                className={`rounded-md px-5 py-2 text-base font-semibold ${active === t.key ? "bg-action text-white" : "border border-line bg-white text-navy"}`}
               >
                 {t.label}
               </Link>
@@ -166,7 +166,7 @@ export default async function Konsultasi({ params, searchParams }: Props) {
                 </div>
               ))}
               <div className="flex flex-wrap items-center gap-4">
-                <button type="submit" className="rounded-pill bg-navy px-6 py-3 text-base font-semibold text-white">Simpan SOAP</button>
+                <button type="submit" className="rounded-md bg-action px-6 py-3 text-base font-semibold text-white">Simpan SOAP</button>
                 {k.soap.updated_at && <p className="text-[13px] font-medium text-body">Terakhir disimpan {fmtDate(k.soap.updated_at)}</p>}
               </div>
             </form>
@@ -180,7 +180,7 @@ export default async function Konsultasi({ params, searchParams }: Props) {
                   return (
                     <li key={p.key} className="min-w-0 rounded-lg border border-line bg-white p-4 shadow-soft">
                       <p className="text-[13px] font-medium text-body">{p.label}</p>
-                      <p className="mt-1 font-serif text-4xl text-navy">{v ?? "–"}</p>
+                      <p className="mt-1 font-bold text-4xl text-navy">{v ?? "–"}</p>
                       <div aria-hidden="true" className="mt-2 h-1.5 overflow-hidden rounded-pill bg-sand"><div className="h-full bg-copper" style={{ width: `${v ?? 0}%` }} /></div>
                     </li>
                   );
@@ -203,7 +203,7 @@ export default async function Konsultasi({ params, searchParams }: Props) {
                   <label htmlFor="notes" className="block text-[13px] font-medium text-navy">Catatan analisis</label>
                   <textarea id="notes" name="notes" rows={3} maxLength={3000} defaultValue={skin.notes} className={area} />
                 </div>
-                <button type="submit" className="rounded-pill bg-navy px-6 py-3 text-base font-semibold text-white">Simpan analisis</button>
+                <button type="submit" className="rounded-md bg-action px-6 py-3 text-base font-semibold text-white">Simpan analisis</button>
               </form>
 
               <section aria-labelledby="foto" className="space-y-4 rounded-lg border border-line bg-white p-6 shadow-soft">
@@ -224,7 +224,7 @@ export default async function Konsultasi({ params, searchParams }: Props) {
                           <option value="front">Depan</option><option value="left">Kiri</option><option value="right">Kanan</option><option value="other">Lainnya</option>
                         </select>
                       </div>
-                      <button type="submit" className="rounded-pill border border-navy px-6 py-2 text-base font-semibold text-navy">Unggah foto</button>
+                      <button type="submit" className="rounded-md border border-line bg-surface px-6 py-2 text-base font-semibold text-navy">Unggah foto</button>
                     </form>
                     {skin.photos.length === 0 && <p className="text-base text-body">Belum ada foto untuk konsultasi ini.</p>}
                     {skin.photos.map((p, i) =>

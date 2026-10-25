@@ -37,11 +37,11 @@ export default function ConsoleError({ error, retry }: { error: Error & { digest
       </p>
       {!reloading && (
         <div className="mt-5 flex flex-wrap gap-3">
-          <button type="button" onClick={() => window.location.reload()} className="rounded-pill bg-navy px-6 py-3 text-base font-semibold text-white">
+          <button type="button" onClick={() => window.location.reload()} className="rounded-md bg-action px-6 py-3 text-base font-semibold text-white">
             Muat ulang halaman
           </button>
           {!stale && (
-            <button type="button" onClick={() => retry()} className="rounded-pill border border-navy px-5 py-2 text-base font-semibold text-navy">
+            <button type="button" onClick={() => retry()} className="rounded-md border border-line bg-surface px-5 py-2 text-base font-semibold text-navy">
               Coba lagi
             </button>
           )}

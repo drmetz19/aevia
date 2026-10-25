@@ -56,7 +56,7 @@ export async function RxTab({ id }: { id: string }) {
             </div>
           </fieldset>
         ))}
-        <button type="submit" className="rounded-pill bg-navy px-6 py-3 text-base font-semibold text-white">Simpan draf resep</button>
+        <button type="submit" className="rounded-md bg-action px-6 py-3 text-base font-semibold text-white">Simpan draf resep</button>
       </form>
 
       {draft && (
@@ -65,7 +65,7 @@ export async function RxTab({ id }: { id: string }) {
           <input type="hidden" name="rx_id" value={draft.id} />
           <h2 className={h2}>Terbitkan resep</h2>
           <p className="mt-1 text-base text-body">Setelah diterbitkan, pasien dapat melihat resep ini (hanya baca) dan isinya terkunci.</p>
-          <button type="submit" className="mt-3 rounded-pill bg-copper px-7 py-3 text-lg font-semibold text-white">Terbitkan resep</button>
+          <button type="submit" className="mt-3 rounded-md bg-action px-7 py-3 text-lg font-semibold text-white">Terbitkan resep</button>
         </form>
       )}
 
@@ -142,7 +142,7 @@ export async function PlanTab({ id }: { id: string }) {
           <label htmlFor="review_at" className={lab}>{PLAN_HEADINGS.review}</label>
           <input id="review_at" name="review_at" type="date" defaultValue={c?.review_at ?? ""} className={input} />
         </div>
-        <button type="submit" className="rounded-pill bg-navy px-6 py-3 text-base font-semibold text-white">Simpan draf rencana</button>
+        <button type="submit" className="rounded-md bg-action px-6 py-3 text-base font-semibold text-white">Simpan draf rencana</button>
       </form>
 
       {draft && (
@@ -155,7 +155,7 @@ export async function PlanTab({ id }: { id: string }) {
             <input type="checkbox" name="confirm" className="mt-1 h-5 w-5 accent-[var(--brand-primary)]" />
             Saya telah meninjau seluruh isi rencana ini dan bertanggung jawab secara profesional atasnya.
           </label>
-          <button type="submit" className="mt-4 rounded-pill bg-copper px-7 py-3 text-lg font-semibold text-white">Tandatangani rencana</button>
+          <button type="submit" className="mt-4 rounded-md bg-action px-7 py-3 text-lg font-semibold text-white">Tandatangani rencana</button>
         </form>
       )}
 

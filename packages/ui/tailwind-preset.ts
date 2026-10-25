@@ -3,6 +3,7 @@ export const aeviaPreset = {
   theme: {
     extend: {
       colors: {
+        action: "var(--brand-primary-action)",
         navy: "var(--brand-primary)",
         copper: "var(--brand-accent)",
         "copper-ink": "var(--brand-accent-ink)",
@@ -13,7 +14,7 @@ export const aeviaPreset = {
         body: "var(--aevia-body)",
       },
       fontFamily: { serif: ["var(--font-serif)"], sans: ["var(--font-sans)"] },
-      borderRadius: { lg: "20px", pill: "36px" },
+      borderRadius: { md: "8px", lg: "16px", pill: "9999px" },
     },
   },
 };

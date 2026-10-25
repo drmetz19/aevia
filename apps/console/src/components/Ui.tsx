@@ -6,8 +6,8 @@ import type { SettingsState } from "@/app/(app)/pengaturan/actions";
 
 export const inputCls = "w-full rounded-md border border-line bg-white px-4 py-3 text-base text-navy";
 export const labelCls = "block text-[13px] font-semibold text-navy";
-export const primaryCls = "rounded-pill bg-navy px-6 py-3 text-base font-semibold text-white disabled:opacity-60";
-export const ghostCls = "rounded-pill border border-navy px-5 py-2 text-base font-semibold text-navy disabled:opacity-60";
+export const primaryCls = "rounded-md bg-action px-6 py-3 text-base font-semibold text-white hover:brightness-90 disabled:opacity-60";
+export const ghostCls = "rounded-md border border-line bg-white px-5 py-2 text-base font-semibold text-navy hover:bg-ivory disabled:opacity-60";
 
 export function Notice({ s }: { s: SettingsState }) {
   return (
@@ -64,7 +64,7 @@ export function PageHead({ eyebrow, title, lead }: { eyebrow: string; title: str
   return (
     <>
       <p className="text-[13px] font-semibold uppercase tracking-[0.12em] text-copper-ink">{eyebrow}</p>
-      <h1 className="mt-1 font-serif text-4xl text-navy">{title}</h1>
+      <h1 className="mt-1 text-[28px] font-bold leading-9 text-navy md:text-4xl md:leading-[44px]">{title}</h1>
       <p className="mt-2 max-w-2xl text-base text-body">{lead}</p>
     </>
   );

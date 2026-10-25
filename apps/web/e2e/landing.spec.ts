@@ -1,9 +1,9 @@
 import { expect, test } from "@playwright/test";
 
-test("/c/drmetz: nama DrMetz + powered by AEVIA + CTA", async ({ page }) => {
+test("/c/drmetz: nama DrMetz + powered by Aevia Konsult + CTA", async ({ page }) => {
   await page.goto("/c/drmetz");
   await expect(page.getByRole("banner").getByText("DrMetz")).toBeVisible();
-  await expect(page.getByText("powered by AEVIA")).toBeVisible();
+  await expect(page.getByText("powered by Aevia Konsult")).toBeVisible();
   await expect(page.getByText("Sovia adalah AI")).toBeVisible();
   await expect(page.getByRole("list").getByRole("heading", { name: "Follow-up & progres" })).toBeVisible();
   await page.getByRole("link", { name: /Mulai assessment/ }).click();

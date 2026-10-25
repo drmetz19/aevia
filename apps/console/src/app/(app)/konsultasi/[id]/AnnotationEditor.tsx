@@ -145,7 +145,7 @@ export function AnnotationEditor({ photoId, src, angle, initial }: { photoId: st
       </div>
 
       <div className="flex flex-wrap items-center gap-4">
-        <button type="button" aria-pressed={drawMode} onClick={() => setDrawMode((v) => !v)} className={`rounded-pill border border-navy px-5 py-2 text-base font-semibold ${drawMode ? "bg-navy text-white" : "text-navy"}`}>
+        <button type="button" aria-pressed={drawMode} onClick={() => setDrawMode((v) => !v)} className={`rounded-md border border-line bg-surface px-5 py-2 text-base font-semibold ${drawMode ? "bg-navy text-white" : "text-navy"}`}>
           Mode gambar (layar sentuh): {drawMode ? "aktif" : "nonaktif"}
         </button>
       </div>
@@ -187,12 +187,12 @@ export function AnnotationEditor({ photoId, src, angle, initial }: { photoId: st
               </label>
             </div>
             <div className="flex gap-3">
-              <button type="submit" className="rounded-pill bg-navy px-5 py-2 text-base font-semibold text-white">Tambahkan</button>
-              <button type="button" onClick={() => { returnFocus.current = true; setDraft(null); }} className="rounded-pill border border-navy px-5 py-2 text-base font-semibold text-navy">Batal</button>
+              <button type="submit" className="rounded-md bg-action px-5 py-2 text-base font-semibold text-white">Tambahkan</button>
+              <button type="button" onClick={() => { returnFocus.current = true; setDraft(null); }} className="rounded-md border border-line bg-surface px-5 py-2 text-base font-semibold text-navy">Batal</button>
             </div>
           </form>
         ) : (
-          <button ref={openBtn} type="button" onClick={() => setDraft({ type: "point", x: 0.5, y: 0.5, w: 0.1, h: 0.1, label: "", severity: "medium" })} className="rounded-pill border border-navy px-5 py-2 text-base font-semibold text-navy">
+          <button ref={openBtn} type="button" onClick={() => setDraft({ type: "point", x: 0.5, y: 0.5, w: 0.1, h: 0.1, label: "", severity: "medium" })} className="rounded-md border border-line bg-surface px-5 py-2 text-base font-semibold text-navy">
             Tambah anotasi lewat formulir
           </button>
         )}
@@ -223,7 +223,7 @@ export function AnnotationEditor({ photoId, src, angle, initial }: { photoId: st
       </section>
 
       <div className="flex flex-wrap items-center gap-3">
-        <button type="button" onClick={save} disabled={pending || !dirty} className="rounded-pill bg-navy px-6 py-3 text-base font-semibold text-white disabled:opacity-50">
+        <button type="button" onClick={save} disabled={pending || !dirty} className="rounded-md bg-action px-6 py-3 text-base font-semibold text-white disabled:opacity-50">
           Simpan anotasi
         </button>
         <p role="status" className={`text-base ${status && !status.ok ? "text-critical" : "text-navy"}`}>{status?.message}</p>

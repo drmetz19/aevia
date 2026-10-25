@@ -22,7 +22,7 @@ export default async function Masuk({ params, searchParams }: Props) {
             <span aria-hidden="true" className="h-px w-6 bg-copper-light" />
             Masuk
           </p>
-          <h1 style={{ "--d": 1 } as React.CSSProperties} className="reveal mt-2 text-balance font-serif text-[32px] leading-[1.15] sm:text-4xl">
+          <h1 style={{ "--d": 1 } as React.CSSProperties} className="reveal mt-2 text-balance font-bold text-[32px] leading-[1.15] sm:text-4xl">
             Masuk ke {clinic.name}
           </h1>
           <p style={{ "--d": 2 } as React.CSSProperties} className="reveal mt-3 text-base text-white/75">

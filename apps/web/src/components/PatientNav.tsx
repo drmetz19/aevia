@@ -51,7 +51,7 @@ export function PatientTopNav({ slug, active }: { slug: string; active?: Patient
               <Link
                 href={`/c/${slug}/${key}`}
                 aria-current={on ? "page" : undefined}
-                className={`rounded-pill px-4 py-2 text-[15px] font-semibold transition-colors ${on ? "bg-navy text-white" : "text-navy hover:bg-sand"}`}
+                className={`rounded-md px-4 py-2 text-[15px] font-semibold transition-colors ${on ? "bg-action text-white" : "text-navy hover:bg-sand"}`}
               >
                 {label}
               </Link>

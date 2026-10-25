@@ -99,7 +99,7 @@ export default async function Beranda({ params, searchParams }: { params: Promis
               <span aria-hidden="true" className="h-px w-6 bg-copper-light" />
               Beranda
             </p>
-            <h1 id="sapa" className="mt-2 text-balance font-serif text-[28px] leading-[1.15] sm:text-4xl">
+            <h1 id="sapa" className="mt-2 text-balance font-bold text-[28px] leading-[1.15] sm:text-4xl">
               Selamat datang di {clinic.name}
             </h1>
             <p className="mt-2 truncate text-[15px] text-white/70">Masuk sebagai {me.email}</p>
@@ -120,7 +120,7 @@ export default async function Beranda({ params, searchParams }: { params: Promis
               />
             </svg>
             <figcaption className="absolute inset-0 flex flex-col items-center justify-center leading-none">
-              <span className="font-serif text-xl sm:text-2xl">{done}/4</span>
+              <span className="font-bold text-xl sm:text-2xl">{done}/4</span>
             </figcaption>
           </figure>
         </div>
@@ -182,7 +182,7 @@ export default async function Beranda({ params, searchParams }: { params: Promis
                   <input type="hidden" name="slug" value={clinic.slug} />
                   <input type="hidden" name="reminder_id" value={r.id} />
                   <input type="hidden" name="next" value={target[r.kind]} />
-                  <SubmitButton pendingLabel="Membuka…" className="inline-flex w-full items-center justify-center rounded-pill bg-navy px-5 py-3 text-base font-semibold text-white transition active:scale-[0.98] sm:w-auto">{REMINDER_CTA[r.kind]}</SubmitButton>
+                  <SubmitButton pendingLabel="Membuka…" className="inline-flex w-full items-center justify-center rounded-md bg-action px-5 py-3 text-base font-semibold text-white transition active:scale-[0.98] sm:w-auto">{REMINDER_CTA[r.kind]}</SubmitButton>
                 </form>
               </li>
             ))}
@@ -265,7 +265,7 @@ export default async function Beranda({ params, searchParams }: { params: Promis
 
       <form action={logout} className="mt-8 flex justify-center">
         <input type="hidden" name="slug" value={clinic.slug} />
-        <SubmitButton pendingLabel="Keluar…" className="inline-flex items-center gap-2 rounded-pill px-5 py-2.5 text-base font-semibold text-slate transition hover:bg-sand hover:text-navy">
+        <SubmitButton pendingLabel="Keluar…" className="inline-flex items-center gap-2 rounded-md px-5 py-2.5 text-base font-semibold text-slate transition hover:bg-sand hover:text-navy">
           <LogOut aria-hidden="true" size={18} strokeWidth={1.75} />
           Keluar
         </SubmitButton>

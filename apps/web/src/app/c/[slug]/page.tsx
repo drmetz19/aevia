@@ -41,7 +41,7 @@ export default async function ClinicLanding({ params }: Props) {
             <p className="reveal inline-flex items-center gap-3 text-[13px] font-semibold uppercase tracking-[0.14em] text-copper-light">
               <span aria-hidden="true" className="h-px w-8 bg-copper-light" />{eyebrow}
             </p>
-            <h1 style={{ "--d": 1 } as React.CSSProperties} className="reveal mt-5 max-w-3xl font-serif text-[32px] leading-[1.15] sm:text-4xl md:text-5xl md:leading-[56px]">
+            <h1 style={{ "--d": 1 } as React.CSSProperties} className="reveal mt-5 max-w-3xl font-bold text-[32px] leading-[1.15] sm:text-4xl md:text-5xl md:leading-[56px]">
               Pendampingan kesehatan yang <em className="text-gradient-copper">tenang</em>, terarah, dan personal.
             </h1>
             <p style={{ "--d": 2 } as React.CSSProperties} className="reveal mt-5 max-w-xl text-base text-white/80 sm:text-lg">
@@ -51,13 +51,13 @@ export default async function ClinicLanding({ params }: Props) {
             <div style={{ "--d": 3 } as React.CSSProperties} className="reveal mt-9 flex flex-col gap-3 sm:flex-row sm:items-center">
             <Link
               href={`/c/${clinic.slug}/assessment`}
-              className="inline-flex justify-center items-center gap-2 rounded-pill bg-copper w-full text-center px-6 py-3.5 text-base font-semibold sm:px-7 sm:text-lg sm:w-auto text-white shadow-soft"
+              className="inline-flex justify-center items-center gap-2 rounded-md bg-action w-full text-center px-6 py-3.5 text-base font-semibold sm:px-7 sm:text-lg sm:w-auto text-white"
             >
               Mulai assessment <ArrowRight aria-hidden="true" size={18} strokeWidth={1.5} />
             </Link>
             <Link
               href={`/c/${clinic.slug}/masuk`}
-              className="inline-flex w-full items-center justify-center rounded-pill border border-white/60 px-6 py-3.5 text-base font-semibold text-white sm:w-auto"
+              className="inline-flex w-full items-center justify-center rounded-md border border-white/60 px-6 py-3.5 text-base font-semibold text-white sm:w-auto"
             >
               Masuk
             </Link>

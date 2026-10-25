@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { PublicClinic } from "@aevia/core";
+import { AeviaMark } from "@aevia/ui/logo";
 import { PatientTopNav, type PatientTab } from "@/components/PatientNav";
 
 export function ClinicHeader({ clinic, nav = false, active }: { clinic: PublicClinic; nav?: boolean; active?: PatientTab }) {
@@ -13,7 +14,7 @@ export function ClinicHeader({ clinic, nav = false, active }: { clinic: PublicCl
           ) : (
             <span
               aria-hidden="true"
-              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-pill bg-navy font-serif text-lg text-white shadow-[inset_0_-6px_12px_rgba(255,255,255,0.08)] ring-2 ring-copper/40 ring-offset-2 ring-offset-surface"
+              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-pill bg-navy text-lg font-bold text-white"
             >
               {clinic.name.charAt(0).toUpperCase()}
             </span>
@@ -26,13 +27,8 @@ export function ClinicHeader({ clinic, nav = false, active }: { clinic: PublicCl
         {nav && <PatientTopNav slug={clinic.slug} active={active} />}
         {clinic.brand_mode === "cobrand" && (
           <p className="flex shrink-0 items-center gap-2 text-[13px] font-medium text-slate">
-            <span
-              aria-hidden="true"
-              className="flex h-6 w-6 items-center justify-center rounded-pill bg-navy font-serif text-xs text-white"
-            >
-              A
-            </span>
-            <span className="sr-only sm:not-sr-only">powered by AEVIA</span>
+            <AeviaMark size={24} decorative />
+            <span className="sr-only sm:not-sr-only">powered by Aevia Konsult</span>
           </p>
         )}
       </div>

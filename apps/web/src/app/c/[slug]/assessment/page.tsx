@@ -13,7 +13,7 @@ type Props = { params: Promise<{ slug: string }>; searchParams: Promise<{ pesan?
 
 const engine = guardEngine(scriptEngine);
 const primary =
-  "inline-flex flex-1 items-center justify-center rounded-pill bg-navy px-6 py-3.5 text-base font-semibold text-white shadow-soft transition active:scale-[0.98] sm:flex-none";
+  "inline-flex flex-1 items-center justify-center rounded-md bg-action px-6 py-3.5 text-base font-semibold text-white shadow-soft transition active:scale-[0.98] sm:flex-none";
 
 function SoviaBubble({ clinic, children, live }: { clinic: Parameters<typeof SoviaAvatar>[0]["clinic"]; children: React.ReactNode; live?: boolean }) {
   return (
@@ -78,7 +78,7 @@ export default async function AssessmentPage({ params, searchParams }: Props) {
                   <span>
                     Pertanyaan {Math.min(active.answered + 1, active.total)} dari {active.total}
                   </span>
-                  <span className="font-serif text-base text-copper-ink">{Math.round((active.answered / active.total) * 100)}%</span>
+                  <span className="font-bold text-base text-copper-ink">{Math.round((active.answered / active.total) * 100)}%</span>
                 </div>
                 <p className="mt-1 text-[13px] font-medium text-body">{PROGRESS_LINE}</p>
                 <div
@@ -196,7 +196,7 @@ export default async function AssessmentPage({ params, searchParams }: Props) {
                           Lanjut
                         </SubmitButton>
                         {active.next_question.type === "text" && (
-                          <SubmitButton name="skip" value="1" formNoValidate className="inline-flex flex-1 items-center justify-center rounded-pill border border-navy px-6 py-3.5 text-base font-semibold text-navy transition active:scale-[0.98] sm:flex-none">
+                          <SubmitButton name="skip" value="1" formNoValidate className="inline-flex flex-1 items-center justify-center rounded-md border border-line bg-surface px-6 py-3.5 text-base font-semibold text-navy transition active:scale-[0.98] sm:flex-none">
                             Lewati
                           </SubmitButton>
                         )}

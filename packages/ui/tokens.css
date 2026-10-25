@@ -1,36 +1,58 @@
-/* Token AEVIA (desain-terkunci). --brand-* ditimpa per klinik (whitelabel). */
+/* Token Aevia Konsult / Clinical Sanctuary (desain-terkunci). --brand-* ditimpa per klinik (whitelabel). */
 :root {
-  --aevia-navy: #0b1f3a;
-  --aevia-copper: #c9825a;
-  --aevia-deep: #071426;
-  --aevia-ivory: #f7f4ef;
-  --aevia-sand: #e9ddd2;
-  --aevia-slate: #697386;
-  --aevia-body: #3a4a5e; /* navy 80% di ivory, AA untuk body 16px */
+  --aevia-navy: #0f172a;
+  --aevia-copper: #0e7490; /* deep cyan: primer (tombol, link, aktif, fokus) */
+  --aevia-deep: #0f172a;
+  --aevia-ivory: #f8fafc;
+  --aevia-sand: #f1f5f9;
+  --aevia-slate: #64748b;
+  --aevia-body: #475569;
   --aevia-white: #ffffff;
-  --aevia-border: #e6dccf;
+  --aevia-border: #e2e8f0;
+  --aevia-border-strong: #cbd5e1;
+  --aevia-glow: #06b6d4; /* aksen grafis: hanya ikon/garis/grafik */
 
   --brand-primary: var(--aevia-navy);
   --brand-accent: var(--aevia-copper);
-  --brand-accent-ink: #94512d; /* copper-ink: ≥4.5:1 di ivory/putih (5.5:1 / 6.0:1) */
+  --brand-accent-ink: #0e7490; /* ≥4.5:1 di #F8FAFC dan putih */
   --brand-dark: var(--aevia-deep);
   --brand-bg: var(--aevia-ivory);
   --brand-soft: var(--aevia-sand);
   --brand-surface: var(--aevia-white);
-  --brand-accent-light: var(--aevia-copper);
+  --brand-accent-light: var(--aevia-glow);
+  /* Tombol primer: cyan pada cobrand; whitelabel menimpanya dengan warna primer klinik (lihat brandStyle). */
+  --brand-primary-action: #0e7490;
 
-  --status-success: #2f6b4f;
-  --status-warning: #a86b1e;
-  --status-critical: #9a3b30;
+  --status-success: #047857;
+  --status-success-bg: #d1fae5;
+  --status-warning: #b45309;
+  --status-warning-bg: #fef3c7;
+  --status-critical: #be123c;
+  --status-critical-bg: #ffe4e6;
+  --status-internal: #4338ca;
+  --status-internal-bg: #eef2ff;
 
-  --radius-sm: 10px;
-  --radius-md: 20px;
-  --radius-pill: 36px;
-  --shadow-soft: 0 1px 2px rgba(11, 31, 58, 0.06), 0 8px 24px rgba(11, 31, 58, 0.06);
+  --radius-sm: 8px; /* tombol, input, chip */
+  --radius-md: 8px;
+  --radius-lg: 16px; /* kartu */
+  --radius-pill: 9999px; /* hanya badge status / avatar */
+  --shadow-soft: none; /* kartu = border 1px, tanpa shadow */
+  --shadow-hover: 0 4px 6px -1px rgba(15, 23, 42, 0.05);
   --gutter: 16px;
 
-  --font-serif: "DM Serif Display", Georgia, serif;
-  --font-sans: "Manrope", system-ui, sans-serif;
+  --font-serif: "Plus Jakarta Sans", system-ui, sans-serif; /* serif tidak dipakai lagi: diarahkan ke Plus Jakarta Sans */
+  --font-sans: "Plus Jakarta Sans", system-ui, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+@layer base {
+  h1 {
+    font-weight: 700;
+  }
+  h2,
+  h3 {
+    font-weight: 600;
+  }
 }
 
 body {
@@ -38,7 +60,7 @@ body {
   color: var(--brand-primary);
   font-family: var(--font-sans);
   font-size: 16px;
-  line-height: 26px;
+  line-height: 24px;
 }
 
 :focus-visible {

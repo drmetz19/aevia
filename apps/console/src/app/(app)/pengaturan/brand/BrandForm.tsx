@@ -17,7 +17,7 @@ export function BrandForm({ b }: { b: BrandSettings }) {
           <fieldset className="space-y-2">
             <legend className={labelCls}>Mode merek</legend>
             {[
-              ["cobrand", "Co-brand: tampil bersama “powered by AEVIA”"],
+              ["cobrand", "Co-brand: tampil bersama “powered by Aevia Konsult”"],
               ["whitelabel", "White-label: hanya merek klinik Anda"],
             ].map(([val, text]) => (
               <label key={val} className="flex items-center gap-3 text-base text-body">

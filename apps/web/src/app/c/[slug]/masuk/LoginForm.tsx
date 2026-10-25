@@ -5,7 +5,7 @@ import { requestCode, verifyCode, type FormState } from "../actions";
 
 const input = "field";
 const primary =
-  "w-full rounded-pill bg-navy px-6 py-3.5 text-base font-semibold text-white shadow-soft transition active:scale-[0.98] disabled:cursor-wait disabled:opacity-70";
+  "w-full rounded-md bg-action px-6 py-3.5 text-base font-semibold text-white shadow-soft transition active:scale-[0.98] disabled:cursor-wait disabled:opacity-70";
 
 export function LoginForm({ slug, ended }: { slug: string; ended: boolean }) {
   const [req, reqAction, reqPending] = useActionState<FormState, FormData>(requestCode, {});
@@ -55,7 +55,7 @@ export function LoginForm({ slug, ended }: { slug: string; ended: boolean }) {
               required
               autoComplete="one-time-code"
               placeholder="000000"
-              className={`${input} text-center font-serif !text-[28px] tracking-[0.5em]`}
+              className={`${input} text-center font-bold !text-[28px] tracking-[0.5em]`}
             />
             {ver.error && (
               <p role="alert" className="text-base text-critical">
