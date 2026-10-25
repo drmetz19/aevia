@@ -17,9 +17,12 @@ import {
   llmBodySchema,
   llmUsageSchema,
   programInputSchema,
+  voucherInputSchema,
   resolveDomainSchema,
   staffProgramListSchema,
   staffProgramSchema,
+  staffVoucherListSchema,
+  staffVoucherSchema,
   teamListSchema,
   teamMemberSchema,
 } from "@aevia/core";
@@ -33,6 +36,7 @@ import * as admin from "./admin";
 import * as brand from "./brand";
 import * as prog from "./programs";
 import * as team from "./team";
+import * as vouch from "./vouchers";
 
 const idParam = z.object({ id: z.uuid() });
 const slugParam = z.object({ slug: z.string().min(1).max(64) });
@@ -104,6 +108,15 @@ export const settingsRoutes: FastifyPluginAsyncZod<{ ctx: AuthCtx; storage: Stor
     await prog.deleteProgram(sc(req), req.params.id);
     return { ok: true as const };
   });
+
+  // ---- Admin klinik: voucher ----
+  app.get("/v1/staff/vouchers", { schema: { response: { 200: staffVoucherListSchema } }, preHandler: clinicAdmin }, async (req) => ({ vouchers: await vouch.listVouchers(sc(req)) }));
+  app.post("/v1/staff/vouchers", { schema: { body: voucherInputSchema, response: { 201: staffVoucherSchema } }, preHandler: clinicAdmin }, async (req, reply) =>
+    reply.code(201).send(await vouch.createVoucher(sc(req), req.body)),
+  );
+  app.patch("/v1/staff/vouchers/:id", { schema: { params: idParam, body: activeBodySchema, response: { 200: staffVoucherSchema } }, preHandler: clinicAdmin }, async (req) =>
+    vouch.setVoucherActive(sc(req), req.params.id, req.body.active),
+  );
 
   // ---- Admin klinik: tim ----
   app.get("/v1/staff/team", { schema: { response: { 200: teamListSchema } }, preHandler: clinicAdmin }, async (req) => ({ members: await team.listTeam(sc(req)) }));

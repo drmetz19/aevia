@@ -1,6 +1,6 @@
 import { asc, eq } from "drizzle-orm";
 import { programInputSchema, type StaffProgram } from "@aevia/core";
-import { consultationRequests, programs, writeAudit, type Db, type Tx } from "@aevia/db";
+import { consultationRequests, programs, vouchers, writeAudit, type Db, type Tx } from "@aevia/db";
 import type { z } from "zod";
 import { AuthError } from "../auth/otp";
 
@@ -84,6 +84,8 @@ export async function deleteProgram(c: Ctx, id: string) {
     if (!before) throw notFound();
     const [used] = await tx.select({ id: consultationRequests.id }).from(consultationRequests).where(eq(consultationRequests.programId, id)).limit(1);
     if (used) throw new AuthError(409, "program_in_use", "Program ini sudah dipakai permintaan konsultasi, jadi tidak dapat dihapus. Nonaktifkan saja agar tidak tampil di katalog.");
+    const [hasVoucher] = await tx.select({ id: vouchers.id }).from(vouchers).where(eq(vouchers.programId, id)).limit(1);
+    if (hasVoucher) throw new AuthError(409, "program_has_vouchers", "Program ini masih punya voucher, jadi tidak dapat dihapus. Nonaktifkan program atau vouchernya.");
     await tx.delete(programs).where(eq(programs.id, id));
     await audit(tx, c, id, "program.delete", snap(before), null);
   });

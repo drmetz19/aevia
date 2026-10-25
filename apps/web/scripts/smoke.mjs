@@ -372,6 +372,11 @@ try {
   const dp3 = await (await fetch(`${WEB}/c/demo-partner`)).text();
   check(text(dp3).includes("Luna"), "setelah disetujui, nama Luna tampil di web");
 
+  const vc = await post(`${API}/v1/staff/vouchers`, { code: "uji2026", program_id: null, max_uses: 5, expires_at: null }, ca);
+  check(vc.status === 201 && (await vc.json()).code === "UJI2026", "voucher: admin buat 'uji2026' → disimpan UJI2026");
+  check((await post(`${API}/v1/staff/vouchers`, { code: "Uji2026" }, ca)).status === 409, "voucher: kode duplikat beda huruf → 409");
+  const vpg = (await (await fetch(`${CON}/pengaturan/voucher`, { headers: caC })).text()).replace(/<!-- -->/g, "");
+  check(vpg.includes("UJI2026") && vpg.includes("0/5") && vpg.includes("Aktif") && vpg.includes("Buat voucher"), "console /pengaturan/voucher: daftar voucher terpakai 0/5, status Aktif");
   for (const [path, needle] of [["/pengaturan/brand", "Pemeriksaan keterbacaan"], ["/pengaturan/program", "Tambah program"], ["/pengaturan/staf", "Undang staf"]]) {
     const pg = await fetch(`${CON}${path}`, { headers: caC });
     const body = await pg.text();

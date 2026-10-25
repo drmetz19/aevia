@@ -3,6 +3,7 @@ import Link from "next/link";
 const tabs = [
   { href: "/pengaturan/brand", label: "Merek & asisten" },
   { href: "/pengaturan/program", label: "Program" },
+  { href: "/pengaturan/voucher", label: "Voucher" },
   { href: "/pengaturan/staf", label: "Staf" },
   { href: "/pengaturan/integrasi", label: "Integrasi" },
 ];

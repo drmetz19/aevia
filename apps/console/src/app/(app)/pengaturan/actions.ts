@@ -109,6 +109,23 @@ export async function deleteProgram(_p: SettingsState, fd: FormData): Promise<Se
   return done(await call("DELETE", `/v1/staff/programs/${str(fd, "id")}`), "Program dihapus.", "/pengaturan/program");
 }
 
+export async function createVoucher(_p: SettingsState, fd: FormData): Promise<SettingsState> {
+  const quota = str(fd, "max_uses");
+  const day = str(fd, "expires_on");
+  const r = await call("POST", "/v1/staff/vouchers", {
+    code: str(fd, "code"),
+    program_id: str(fd, "program_id") || null,
+    max_uses: quota === "" ? null : Number(quota),
+    // Kedaluwarsa berlaku sampai akhir hari yang dipilih (WIB).
+    expires_at: day === "" ? null : `${day}T23:59:59+07:00`,
+  });
+  return done(r, "Voucher dibuat.", "/pengaturan/voucher");
+}
+export async function setVoucherActive(_p: SettingsState, fd: FormData): Promise<SettingsState> {
+  const active = str(fd, "active") === "true";
+  return done(await call("PATCH", `/v1/staff/vouchers/${str(fd, "id")}`, { active }), active ? "Voucher diaktifkan." : "Voucher dinonaktifkan.", "/pengaturan/voucher");
+}
+
 export async function inviteStaff(_p: SettingsState, fd: FormData): Promise<SettingsState> {
   const r = await call("POST", "/v1/staff/team", { email: str(fd, "email"), name: str(fd, "name"), role: str(fd, "role") });
   return done(r, "Undangan dibuat. Staf dapat masuk dengan kode yang dikirim ke emailnya.", "/pengaturan/staf");

@@ -7,6 +7,7 @@ import type { SettingsState } from "@/app/(app)/pengaturan/actions";
 export const inputCls = "w-full rounded-md border border-line bg-white px-4 py-3 text-base text-navy";
 export const labelCls = "block text-[13px] font-semibold text-navy";
 export const primaryCls = "rounded-md bg-action px-6 py-3 text-base font-semibold text-white hover:brightness-90 disabled:opacity-60";
+export const dangerCls = "rounded-md border border-critical bg-white px-5 py-2 text-base font-semibold text-critical hover:bg-[#FFE4E6] disabled:opacity-60";
 export const ghostCls = "rounded-md border border-line bg-white px-5 py-2 text-base font-semibold text-navy hover:bg-ivory disabled:opacity-60";
 
 export function Notice({ s }: { s: SettingsState }) {
@@ -70,10 +71,10 @@ export function PageHead({ eyebrow, title, lead }: { eyebrow: string; title: str
   );
 }
 
-export function Submit({ className, disabled, name, value, children }: { className: string; disabled?: boolean; name?: string; value?: string; children: ReactNode }) {
+export function Submit({ className, disabled, name, value, children, confirm }: { className: string; disabled?: boolean; name?: string; value?: string; children: ReactNode; confirm?: string }) {
   const { pending } = useFormStatus();
   return (
-    <button type="submit" name={name} value={value} disabled={pending || disabled} className={className}>
+    <button type="submit" name={name} value={value} disabled={pending || disabled} className={className} onClick={confirm ? (e) => { if (!window.confirm(confirm)) e.preventDefault(); } : undefined}>
       {children}
     </button>
   );

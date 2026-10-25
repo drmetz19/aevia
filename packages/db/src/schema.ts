@@ -457,3 +457,33 @@ export const contactStageHistory = pgTable("contact_stage_history", {
   actorId: uuid("actor_id"),
   at: timestamp("at", { withTimezone: true }).notNull().defaultNow(),
 });
+
+/** Voucher akses program per klinik (migrasi 0018). program_id null = semua program. */
+export const vouchers = pgTable(
+  "vouchers",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    clinicId: uuid("clinic_id").notNull().references(() => clinics.id, { onDelete: "cascade" }),
+    code: text("code").notNull(),
+    programId: uuid("program_id").references(() => programs.id),
+    maxUses: integer("max_uses"),
+    usedCount: integer("used_count").notNull().default(0),
+    expiresAt: timestamp("expires_at", { withTimezone: true }),
+    active: boolean("active").notNull().default(true),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [unique().on(t.clinicId, t.code)],
+);
+
+export const voucherRedemptions = pgTable(
+  "voucher_redemptions",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    clinicId: uuid("clinic_id").notNull().references(() => clinics.id, { onDelete: "cascade" }),
+    voucherId: uuid("voucher_id").notNull().references(() => vouchers.id),
+    patientId: uuid("patient_id").notNull().references(() => patients.id, { onDelete: "cascade" }),
+    requestId: uuid("request_id").notNull().references(() => consultationRequests.id, { onDelete: "cascade" }),
+    at: timestamp("at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [unique().on(t.voucherId, t.patientId)],
+);

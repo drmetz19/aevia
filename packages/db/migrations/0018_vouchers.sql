@@ -1,0 +1,67 @@
+-- Voucher akses program (stitch-voucher). Idempoten. Kebijakan RLS memakai bentuk (SELECT …) seperti 0016.
+-- program_id NULL = berlaku untuk semua program klinik. Penukaran (voucher_redemptions) dibuat satu transaksi dengan permintaan konsultasi.
+CREATE TABLE IF NOT EXISTS vouchers (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  clinic_id uuid NOT NULL REFERENCES clinics(id) ON DELETE CASCADE,
+  code text NOT NULL CHECK (code ~ '^[A-Z0-9-]{4,32}$'),
+  program_id uuid REFERENCES programs(id),
+  max_uses integer CHECK (max_uses IS NULL OR max_uses > 0),
+  used_count integer NOT NULL DEFAULT 0 CHECK (used_count >= 0),
+  expires_at timestamptz,
+  active boolean NOT NULL DEFAULT true,
+  created_at timestamptz NOT NULL DEFAULT now(),
+  UNIQUE (clinic_id, code)
+);
+--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS voucher_redemptions (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  clinic_id uuid NOT NULL REFERENCES clinics(id) ON DELETE CASCADE,
+  voucher_id uuid NOT NULL REFERENCES vouchers(id),
+  patient_id uuid NOT NULL REFERENCES patients(id) ON DELETE CASCADE,
+  request_id uuid NOT NULL REFERENCES consultation_requests(id) ON DELETE CASCADE,
+  at timestamptz NOT NULL DEFAULT now(),
+  UNIQUE (voucher_id, patient_id)
+);
+--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS vouchers_program ON vouchers (program_id);
+--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS voucher_redemptions_clinic ON voucher_redemptions (clinic_id, voucher_id);
+--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS voucher_redemptions_patient ON voucher_redemptions (patient_id);
+--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS voucher_redemptions_request ON voucher_redemptions (request_id);
+--> statement-breakpoint
+ALTER TABLE vouchers ENABLE ROW LEVEL SECURITY;
+--> statement-breakpoint
+ALTER TABLE vouchers FORCE ROW LEVEL SECURITY;
+--> statement-breakpoint
+ALTER TABLE voucher_redemptions ENABLE ROW LEVEL SECURITY;
+--> statement-breakpoint
+ALTER TABLE voucher_redemptions FORCE ROW LEVEL SECURITY;
+--> statement-breakpoint
+DROP POLICY IF EXISTS tenant_isolation ON vouchers;
+--> statement-breakpoint
+CREATE POLICY tenant_isolation ON vouchers
+  USING (clinic_id = (SELECT nullif(current_setting('app.clinic_id', true), '')::uuid))
+  WITH CHECK (clinic_id = (SELECT nullif(current_setting('app.clinic_id', true), '')::uuid));
+--> statement-breakpoint
+DROP POLICY IF EXISTS tenant_isolation ON voucher_redemptions;
+--> statement-breakpoint
+CREATE POLICY tenant_isolation ON voucher_redemptions
+  USING (clinic_id = (SELECT nullif(current_setting('app.clinic_id', true), '')::uuid))
+  WITH CHECK (clinic_id = (SELECT nullif(current_setting('app.clinic_id', true), '')::uuid));
+--> statement-breakpoint
+GRANT SELECT, INSERT, UPDATE ON vouchers TO aevia_app;
+--> statement-breakpoint
+-- penukaran append-only
+GRANT SELECT, INSERT ON voucher_redemptions TO aevia_app;
+--> statement-breakpoint
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'anon') THEN
+    EXECUTE 'REVOKE ALL ON vouchers, voucher_redemptions FROM anon';
+  END IF;
+  IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'authenticated') THEN
+    EXECUTE 'REVOKE ALL ON vouchers, voucher_redemptions FROM authenticated';
+  END IF;
+END $$;

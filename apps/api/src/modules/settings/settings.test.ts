@@ -48,7 +48,7 @@ async function patient(slug: string, email: string) {
   await app.inject({ method: "POST", url: `/v1/clinics/${slug}/auth/otp`, payload: { email } });
   return (await app.inject({ method: "POST", url: `/v1/clinics/${slug}/auth/verify`, payload: { email, code: code(email) } })).json().token as string;
 }
-const call = (method: "GET" | "POST" | "PUT" | "DELETE", url: string, token: string | null, payload?: object, a = app) =>
+const call = (method: "GET" | "POST" | "PUT" | "DELETE" | "PATCH", url: string, token: string | null, payload?: object, a = app) =>
   a.inject({ method, url, payload, headers: token ? { authorization: `Bearer ${token}` } : {} });
 const upload = (url: string, token: string, body: Buffer, type = "image/png") =>
   app.inject({ method: "POST", url, payload: body, headers: { authorization: `Bearer ${token}`, "content-type": type } });
@@ -271,6 +271,52 @@ describe("program: tampilan harga & akses", () => {
     expect((await call("POST", "/v1/staff/programs", ca, { ...base, name: "Salah", price_idr: null, price_mode: "gratis" })).statusCode).toBe(400);
     const prof = await staff("dr.metz@drmetz.test");
     expect((await call("PUT", `/v1/staff/programs/${p.id}`, prof, { ...base, name: "Paket Segera", price_idr: 1, price_mode: "coming_soon", access: "voucher" })).statusCode).toBe(403);
+  });
+});
+
+describe("voucher program", () => {
+  it("buat (kode dinormalisasi), duplikat beda huruf 409, klinik lain boleh sama, RLS lintas klinik, nonaktif/aktif + audit, 403 profesional/pasien", async () => {
+    const ca = await staff("admin@demo-partner.test");
+    const cb = await staff("admin@drmetz.test");
+    const created = await call("POST", "/v1/staff/vouchers", ca, { code: " uji2026 ", program_id: null, max_uses: 5, expires_at: null });
+    expect(created.statusCode).toBe(201);
+    const v = created.json();
+    expect(v).toMatchObject({ code: "UJI2026", program_id: null, program_name: null, max_uses: 5, used_count: 0, active: true, status: "active" });
+
+    const dup = await call("POST", "/v1/staff/vouchers", ca, { code: "Uji2026" });
+    expect(dup.statusCode).toBe(409);
+    expect(dup.json().message).toBe("Kode ini sudah dipakai di klinik Anda.");
+    expect((await call("POST", "/v1/staff/vouchers", cb, { code: "UJI2026" })).statusCode).toBe(201);
+
+    expect((await call("POST", "/v1/staff/vouchers", ca, { code: "ab" })).statusCode).toBe(400);
+    expect((await call("POST", "/v1/staff/vouchers", ca, { code: "KODE BURUK!" })).statusCode).toBe(400);
+    expect((await call("POST", "/v1/staff/vouchers", ca, { code: "KUOTA0", max_uses: 0 })).statusCode).toBe(400);
+
+    const prog = (await app.inject("/v1/clinics/demo-partner/programs")).json().programs[0];
+    const scoped = (await call("POST", "/v1/staff/vouchers", ca, { code: "KHUSUS-1", program_id: prog.id, expires_at: "2020-01-01T00:00:00.000Z" })).json();
+    expect(scoped).toMatchObject({ program_id: prog.id, program_name: prog.name, status: "expired" });
+    // program dari klinik lain ditolak
+    const other = (await app.inject("/v1/clinics/drmetz/programs")).json().programs[0];
+    expect((await call("POST", "/v1/staff/vouchers", ca, { code: "SILANG-1", program_id: other.id })).statusCode).toBe(404);
+
+    const listA = (await call("GET", "/v1/staff/vouchers", ca)).json().vouchers.map((x: { id: string }) => x.id);
+    expect(listA).toContain(v.id);
+    const listB = (await call("GET", "/v1/staff/vouchers", cb)).json().vouchers.map((x: { id: string }) => x.id);
+    expect(listB).not.toContain(v.id);
+    expect((await call("PATCH", `/v1/staff/vouchers/${v.id}`, cb, { active: false })).statusCode).toBe(404);
+
+    const off = await call("PATCH", `/v1/staff/vouchers/${v.id}`, ca, { active: false });
+    expect(off.json()).toMatchObject({ active: false, status: "inactive" });
+    expect((await call("PATCH", `/v1/staff/vouchers/${v.id}`, ca, { active: true })).json().status).toBe("active");
+    expect((await audits(v.id)).sort()).toEqual(["voucher.activate", "voucher.create", "voucher.deactivate"]);
+
+    const prof = await staff("dr.metz@drmetz.test");
+    const pt = await patient("demo-partner", "set-vouch@contoh.test");
+    for (const tok of [prof, pt]) {
+      expect((await call("GET", "/v1/staff/vouchers", tok)).statusCode).toBe(403);
+      expect((await call("POST", "/v1/staff/vouchers", tok, { code: "TOLAK-1" })).statusCode).toBe(403);
+      expect((await call("PATCH", `/v1/staff/vouchers/${v.id}`, tok, { active: false })).statusCode).toBe(403);
+    }
   });
 });
 

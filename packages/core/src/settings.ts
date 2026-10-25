@@ -133,3 +133,33 @@ export const assistantReviewSchema = z
   .object({ decision: z.enum(["approve", "reject"]), note: z.string().trim().max(300).default("") })
   .refine((v) => v.decision === "approve" || v.note.length >= 3, { message: "Tuliskan alasan singkat saat menolak.", path: ["note"] });
 export const resolveDomainSchema = z.object({ slug: z.string() });
+
+/** Voucher akses program (dikelola admin klinik). Kode: huruf besar/angka/tanda hubung, 4–32 karakter. */
+export const VOUCHER_CODE_RE = /^[A-Z0-9-]{4,32}$/;
+export const voucherCodeSchema = z
+  .string()
+  .trim()
+  .transform((v) => v.toUpperCase())
+  .pipe(z.string().regex(VOUCHER_CODE_RE, "Kode voucher 4–32 karakter: huruf, angka, atau tanda hubung."));
+export const voucherInputSchema = z.object({
+  code: voucherCodeSchema,
+  program_id: z.uuid().nullable().default(null),
+  max_uses: z.number().int().min(1, "Kuota minimal 1.").max(1_000_000).nullable().default(null),
+  expires_at: z.iso.datetime({ offset: true }).nullable().default(null),
+});
+export const voucherStatusSchema = z.enum(["active", "inactive", "expired", "exhausted"]);
+export type VoucherStatus = z.infer<typeof voucherStatusSchema>;
+export const staffVoucherSchema = z.object({
+  id: z.string(),
+  code: z.string(),
+  program_id: z.string().nullable(),
+  program_name: z.string().nullable(),
+  max_uses: z.number().nullable(),
+  used_count: z.number(),
+  expires_at: z.string().nullable(),
+  active: z.boolean(),
+  status: voucherStatusSchema,
+  created_at: z.string(),
+});
+export type StaffVoucher = z.infer<typeof staffVoucherSchema>;
+export const staffVoucherListSchema = z.object({ vouchers: z.array(staffVoucherSchema) });
