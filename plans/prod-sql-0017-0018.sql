@@ -1,5 +1,5 @@
 -- Pasang migrasi 0017 (harga/akses program) + 0018 (voucher) di Supabase prod (SQL Editor → Run). Idempoten.
--- Jalankan SETELAH PR stitch-voucher di-merge & deploy, atau sebelum — kolom baru punya default sehingga kode lama tetap jalan.
+-- Jalankan SEBELUM PR stitch-voucher di-merge: kode baru membaca kolom/tabel ini. Kode lama tetap jalan dengan skema baru (kolom ber-default).
 BEGIN;
 -- Redesain Aevia Konsult (stitch-voucher): tampilan harga & akses per program. Idempoten.
 ALTER TABLE programs ADD COLUMN IF NOT EXISTS price_mode text NOT NULL DEFAULT 'amount';
