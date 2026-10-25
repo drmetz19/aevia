@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-import { EyeOff } from "lucide-react";
+import { EyeOff, Ticket } from "lucide-react";
 import { PROGRESS_EMPTY, SKIN_CONDITION_LABEL, areaLabel, patientDetailSchema, progressSchema, resultSchema } from "@aevia/core";
 import { ProgressCard } from "@aevia/ui/progress";
 import { z } from "zod";
@@ -101,6 +101,7 @@ export default async function Pasien({ params, searchParams }: Props) {
             <article key={r.id} className="rounded-lg border border-line bg-white p-6 shadow-soft">
               <p className="text-[13px] font-medium text-body">{fmtDate(r.created_at)} · {statusLabel[r.status]}</p>
               <h3 className="mt-1 text-xl font-semibold leading-7 text-navy">{r.program_name}</h3>
+              {r.voucher_code && <p><span className="mt-1 inline-flex items-center gap-1 rounded-md border border-line bg-sand px-2 py-0.5 font-mono text-[13px] font-semibold text-navy" title="Kode voucher yang dipakai"><Ticket aria-hidden="true" size={13} strokeWidth={1.75} />{r.voucher_code}</span></p>}
               {r.prep ? (
                 <dl className="mt-3 space-y-3 text-base text-navy">
                   <div><dt className="text-[13px] font-medium text-body">Tujuan</dt><dd>{r.prep.tujuan || "-"}</dd></div>

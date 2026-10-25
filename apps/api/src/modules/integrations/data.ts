@@ -107,6 +107,7 @@ export async function createConsultationRequest(c: Ctx, body: { patient_id: stri
   await c.db.withTenant(c.who.clinicId, (tx) => patientIn(tx, body.patient_id));
   const view = await createRequest({ db: c.db, clinicId: c.who.clinicId, patientId: body.patient_id, now: c.now }, body.program_id, body.prep, (tx, row) =>
     audit(tx, c, "consultation_request", row.id, "integration.consultation_request.create", { patient_id: body.patient_id, program_id: body.program_id }),
+    { enforce: false },
   );
   return { id: view.id, patient_id: body.patient_id, program_id: view.program_id, status: view.status, created_at: view.created_at };
 }

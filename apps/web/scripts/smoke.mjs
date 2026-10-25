@@ -205,6 +205,23 @@ try {
   const sCookie = { cookie: `ssid=${sTok}` };
   const antrean = await (await fetch(`${CON}/antrean`, { headers: sCookie })).text();
   check(antrean.includes(email) && antrean.includes("Menunggu ditinjau"), "console /antrean memuat permintaan");
+  // --- Voucher: program ber-akses voucher (Pendampingan Kulit) ---
+  const vEmail = `voucher${Date.now()}@contoh.test`;
+  await post(`${API}/v1/clinics/drmetz/auth/otp`, { email: vEmail });
+  const vTok = (await (await post(`${API}/v1/clinics/drmetz/auth/verify`, { email: vEmail, code: await otpCode(vEmail) })).json()).token;
+  const vProg = progs.find((p) => p.access === "voucher");
+  const vPrep = { tujuan: "Kulit lebih sehat", keluhan: "", pertanyaan: [], konteks_assessment: "" };
+  const konsV = (await (await fetch(`${WEB}/c/drmetz/konsultasi?program=${vProg.id}`, { headers: { cookie: `sid_drmetz=${vTok}` } })).text()).replace(/<!-- -->/g, "");
+  check(konsV.includes("Langkah permintaan konsultasi") && /<input[^>]*id="voucher_code"[^>]*required/.test(konsV) && konsV.includes("Segera hadir") && konsV.includes("Ringkasan program"), "intake: stepper, kode voucher wajib, ringkasan program 'Segera hadir'");
+  const vNo = await post(`${API}/v1/consultation-requests`, { program_id: vProg.id, prep: vPrep }, vTok);
+  const vNoBody = await vNo.json();
+  check(vNo.status === 400 && vNoBody.error === "voucher_required" && /kode voucher/.test(vNoBody.message), "voucher: program voucher tanpa kode → voucher_required");
+  const vBad = await post(`${API}/v1/consultation-requests`, { program_id: vProg.id, prep: vPrep, voucher_code: "SALAH-123" }, vTok);
+  check(vBad.status === 400 && (await vBad.json()).error === "voucher_invalid", "voucher: kode salah → voucher_invalid");
+  const vOk = await post(`${API}/v1/consultation-requests`, { program_id: vProg.id, prep: vPrep, voucher_code: " coba-aevia " }, vTok);
+  check(vOk.status === 201, "voucher: kode valid → permintaan terkirim");
+  const antreanV = await (await fetch(`${CON}/antrean`, { headers: sCookie })).text();
+  check(antreanV.includes("COBA-AEVIA"), "console /antrean menampilkan kode voucher");
   const qItems = (await (await fetch(`${API}/v1/staff/queue`, { headers: { authorization: `Bearer ${sTok}` } })).json()).items;
   const mine = qItems.find((i) => i.patient_email === email);
   const detail = await (await fetch(`${CON}/pasien/${mine.patient_id}`, { headers: sCookie })).text();

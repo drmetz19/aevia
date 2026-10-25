@@ -39,7 +39,16 @@ export const consultationStatusSchema = z.enum(["scheduled", "completed", "no_sh
 
 export const draftBodySchema = z.object({ program_id: z.uuid().optional() });
 export const draftSchema = z.object({ prep: prepSchema, status: z.literal("draft"), from_assessment: z.boolean() });
-export const createRequestSchema = z.object({ program_id: z.uuid(), prep: prepSchema });
+/** `voucher_code`: opsional; dinormalisasi (trim + huruf besar) di server. Wajib bila program ber-akses voucher. */
+export const createRequestSchema = z.object({ program_id: z.uuid(), prep: prepSchema, voucher_code: z.string().max(64).optional() });
+export const VOUCHER_ERRORS = {
+  voucher_required: [400, "Program ini memerlukan kode voucher dari klinik. Masukkan kodenya untuk melanjutkan."],
+  voucher_invalid: [400, "Kode ini belum kami kenali. Periksa kembali atau hubungi klinik."],
+  voucher_expired: [400, "Kode ini sudah melewati masa berlakunya. Hubungi klinik untuk kode yang baru."],
+  voucher_exhausted: [409, "Kuota kode ini sudah terpenuhi. Hubungi klinik untuk kode lain."],
+  voucher_not_for_program: [400, "Kode ini tidak berlaku untuk program yang Anda pilih. Periksa kembali atau hubungi klinik."],
+  voucher_already_used: [409, "Kode ini sudah pernah Anda gunakan. Hubungi klinik bila perlu bantuan."],
+} as const;
 
 export const consultationSchema = z.object({
   id: z.string(),
@@ -69,6 +78,7 @@ export const queueItemSchema = z.object({
   assessment_visible: z.boolean(),
   flagged: z.boolean().nullable(),
   scheduled_at: z.string().nullable(),
+  voucher_code: z.string().nullable(),
 });
 export const queueSchema = z.object({ items: z.array(queueItemSchema) });
 
@@ -97,6 +107,7 @@ export const patientDetailSchema = z.object({
       created_at: z.string(),
       prep: prepSchema.nullable(),
       consultation: consultationSchema.nullable(),
+      voucher_code: z.string().nullable(),
     }),
   ),
 });

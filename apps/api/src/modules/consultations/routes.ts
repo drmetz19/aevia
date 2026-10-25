@@ -26,7 +26,7 @@ export const consultationRoutes: FastifyPluginAsyncZod<{ ctx: AuthCtx; llm?: Llm
   app.post(
     "/v1/consultation-requests",
     { schema: { body: createRequestSchema, response: { 201: requestSchema } }, preHandler: guard },
-    async (req, reply) => reply.code(201).send(await createRequest(c(req), req.body.program_id, req.body.prep)),
+    async (req, reply) => reply.code(201).send(await createRequest(c(req), req.body.program_id, req.body.prep, undefined, { code: req.body.voucher_code })),
   );
   app.get(
     "/v1/consultation-requests/mine",

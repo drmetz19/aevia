@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { AlertTriangle, EyeOff } from "lucide-react";
+import { AlertTriangle, EyeOff, Ticket } from "lucide-react";
 import { queueSchema } from "@aevia/core";
 import { fmtDate, requireStaff, staffFetch } from "@/lib/api";
 
@@ -48,7 +48,12 @@ export default async function Antrean() {
                       </span>
                     )}
                   </td>
-                  <td data-label="Program" className="px-4 py-3 text-navy">{i.program_name}</td>
+                  <td data-label="Program" className="px-4 py-3 text-navy">
+                    {i.program_name}
+                    {i.voucher_code && (
+                      <span className="block"><span className="mt-1 inline-flex items-center gap-1 rounded-md border border-line bg-sand px-2 py-0.5 font-mono text-[13px] font-semibold text-navy" title="Kode voucher yang dipakai"><Ticket aria-hidden="true" size={13} strokeWidth={1.75} />{i.voucher_code}</span></span>
+                    )}
+                  </td>
                   <td data-label="Diajukan" className="px-4 py-3 text-body">{fmtDate(i.created_at)}</td>
                   <td data-label="Status" className="px-4 py-3 font-semibold text-navy">
                     {statusLabel[i.status]}

@@ -8,6 +8,8 @@ import {
   events,
   patients,
   programs,
+  voucherRedemptions,
+  vouchers,
   type Db,
 } from "@aevia/db";
 import { AuthError } from "../auth/otp";
@@ -28,12 +30,15 @@ export async function queue(c: Ctx) {
         visible: hasConsent,
         flagged: assessments.flagged,
         scheduled: consultations.scheduledAt,
+        voucher: vouchers.code,
       })
       .from(consultationRequests)
       .innerJoin(patients, eq(patients.id, consultationRequests.patientId))
       .innerJoin(programs, eq(programs.id, consultationRequests.programId))
       .leftJoin(assessments, eq(assessments.id, consultationRequests.assessmentId))
       .leftJoin(consultations, eq(consultations.requestId, consultationRequests.id))
+      .leftJoin(voucherRedemptions, eq(voucherRedemptions.requestId, consultationRequests.id))
+      .leftJoin(vouchers, eq(vouchers.id, voucherRedemptions.voucherId))
       .orderBy(
         sql`case ${consultationRequests.status} when 'submitted' then 0 else 1 end`,
         asc(consultationRequests.createdAt),
@@ -48,6 +53,7 @@ export async function queue(c: Ctx) {
       assessment_visible: Boolean(x.visible),
       flagged: x.visible ? (x.flagged ?? false) : null,
       scheduled_at: x.scheduled ? x.scheduled.toISOString() : null,
+      voucher_code: x.voucher ?? null,
     }));
   });
 }
@@ -70,10 +76,12 @@ export async function patientDetail(c: Ctx, patientId: string) {
           .limit(1)
       : [];
     const reqs = await tx
-      .select({ r: consultationRequests, p: programs.name, k: consultations })
+      .select({ r: consultationRequests, p: programs.name, k: consultations, voucher: vouchers.code })
       .from(consultationRequests)
       .innerJoin(programs, eq(programs.id, consultationRequests.programId))
       .leftJoin(consultations, eq(consultations.requestId, consultationRequests.id))
+      .leftJoin(voucherRedemptions, eq(voucherRedemptions.requestId, consultationRequests.id))
+      .leftJoin(vouchers, eq(vouchers.id, voucherRedemptions.voucherId))
       .where(eq(consultationRequests.patientId, p.id))
       .orderBy(desc(consultationRequests.createdAt));
     const external = await beautySnapshotFor(tx, p.id);
@@ -94,6 +102,7 @@ export async function patientDetail(c: Ctx, patientId: string) {
           created_at: v.created_at,
           prep: visible ? (v.prep as Prep) : null,
           consultation: v.consultation,
+          voucher_code: x.voucher ?? null,
         };
       }),
     };

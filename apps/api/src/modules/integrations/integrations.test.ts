@@ -362,7 +362,7 @@ describe("dispatcher webhook", () => {
     respond = () => 500;
     const progs = (await app.inject("/v1/clinics/drmetz/programs")).json().programs;
     const pat2 = await patient("drmetz", "int-a2@contoh.test");
-    const rq = await call("POST", "/v1/consultation-requests", pat2.token, { program_id: progs[1].id, prep: { tujuan: "x", keluhan: "", pertanyaan: [], konteks_assessment: "" } });
+    const rq = await call("POST", "/v1/consultation-requests", pat2.token, { program_id: progs[1].id, voucher_code: "COBA-AEVIA", prep: { tujuan: "x", keluhan: "", pertanyaan: [], konteks_assessment: "" } });
     expect(rq.statusCode).toBe(201);
     let r = await run();
     expect(r).toMatchObject({ attempted: 1, retrying: 1 });

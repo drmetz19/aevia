@@ -1,7 +1,7 @@
 import { sql } from "drizzle-orm";
 import { DEFAULT_SKIN_PARAMETERS } from "@aevia/core";
 import type { Db } from "./client";
-import { clinics, clinicSettings, platformAdmins, programs, staff } from "./schema";
+import { clinics, clinicSettings, platformAdmins, programs, staff, vouchers } from "./schema";
 
 export async function seed({ db }: Pick<Db, "db">) {
   await db
@@ -109,6 +109,8 @@ export async function seed({ db }: Pick<Db, "db">) {
         .onConflictDoNothing();
       const mine = programRows.filter((r) => r.clinicId === c.id);
       if (mine.length) await tx.insert(programs).values(mine).onConflictDoNothing();
+      // Voucher demo (semua program, kuota 50) agar alur voucher bisa dicoba/diuji.
+      if (c.slug === "drmetz") await tx.insert(vouchers).values({ clinicId: c.id, code: "COBA-AEVIA", maxUses: 50 }).onConflictDoNothing();
     }
   });
 }

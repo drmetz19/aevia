@@ -55,7 +55,7 @@ async function setup(email: string, photos = true) {
   const pt = await patient("drmetz", email);
   if (photos) await call("PUT", "/v1/me/consents", pt, { scope: "photos", granted: true });
   const programs = (await app.inject("/v1/clinics/drmetz/programs")).json().programs;
-  const r = (await call("POST", "/v1/consultation-requests", pt, { program_id: programs[1].id, prep: { tujuan: "t", keluhan: "", pertanyaan: [], konteks_assessment: "" } })).json();
+  const r = (await call("POST", "/v1/consultation-requests", pt, { program_id: programs[1].id, voucher_code: "COBA-AEVIA", prep: { tujuan: "t", keluhan: "", pertanyaan: [], konteks_assessment: "" } })).json();
   const st = await staff("dr.metz@drmetz.test");
   const acc = (await call("POST", `/v1/staff/consultation-requests/${r.id}/accept`, st, { scheduled_at: "2026-10-20T02:00:00.000Z", meeting_url: "https://meet.google.com/x-y-z" })).json();
   return { pt, st, id: acc.consultation.id as string };
