@@ -1,0 +1,631 @@
+<!DOCTYPE html><html class="h-full bg-surface-canvas" lang="id"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>DrMetz Care Clinical OS — Live Teleconsultation &amp; Patient 360 Workspace</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@600;700&amp;display=swap" rel="stylesheet">
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "status-stable-bg": "#D1FAE5",
+            "text-muted": "#94A3B8",
+            "primary-container": "#0e7490",
+            "tertiary-container": "#1770a8",
+            "secondary": "#006a61",
+            "surface-variant": "#d3e4fe",
+            "tertiary-fixed": "#cde5ff",
+            "confidential-internal": "#4338CA",
+            "on-tertiary": "#ffffff",
+            "outline": "#6f787d",
+            "tertiary": "#005787",
+            "surface": "#f8f9ff",
+            "surface-subtle": "#F1F5F9",
+            "border-strong": "#CBD5E1",
+            "border-subtle": "#E2E8F0",
+            "on-secondary-fixed": "#00201d",
+            "surface-container": "#e5eeff",
+            "surface-container-high": "#dce9ff",
+            "on-secondary-container": "#006f66",
+            "surface-bright": "#f8f9ff",
+            "on-tertiary-fixed-variant": "#004b74",
+            "text-primary": "#0F172A",
+            "on-error-container": "#93000a",
+            "on-secondary-fixed-variant": "#005049",
+            "inverse-on-surface": "#eaf1ff",
+            "status-emergency-bg": "#FFE4E6",
+            "status-warning-bg": "#FEF3C7",
+            "error": "#ba1a1a",
+            "confidential-internal-bg": "#EEF2FF",
+            "on-tertiary-container": "#e0eeff",
+            "secondary-container": "#86f2e4",
+            "surface-container-low": "#eff4ff",
+            "on-primary-fixed-variant": "#004d62",
+            "primary-fixed": "#b9eaff",
+            "tertiary-fixed-dim": "#94ccff",
+            "surface-canvas": "#F8FAFC",
+            "on-surface": "#0b1c30",
+            "on-background": "#0b1c30",
+            "on-primary-fixed": "#001f29",
+            "secondary-fixed": "#89f5e7",
+            "on-primary-container": "#d3f1ff",
+            "outline-variant": "#bec8cd",
+            "status-emergency": "#BE123C",
+            "surface-container-lowest": "#ffffff",
+            "surface-dim": "#cbdbf5",
+            "confidential-internal-border": "#C7D2FE",
+            "surface-tint": "#006781",
+            "status-warning": "#B45309",
+            "on-secondary": "#ffffff",
+            "inverse-primary": "#81d1f0",
+            "text-secondary": "#475569",
+            "primary": "#005a71",
+            "primary-fixed-dim": "#81d1f0",
+            "on-surface-variant": "#3f484c",
+            "status-stable": "#047857",
+            "background": "#f8f9ff",
+            "on-error": "#ffffff",
+            "surface-card": "#FFFFFF",
+            "secondary-fixed-dim": "#6bd8cb",
+            "on-tertiary-fixed": "#001d32",
+            "surface-container-highest": "#d3e4fe",
+            "on-primary": "#ffffff",
+            "inverse-surface": "#213145",
+            "error-container": "#ffdad6"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-xs": "0.25rem",
+            "space-sm": "0.5rem",
+            "margin": "2rem",
+            "space-lg": "1.5rem",
+            "space-2xl": "3rem",
+            "gutter": "1.5rem",
+            "space-md": "1rem",
+            "margin-mobile": "1rem",
+            "gutter-mobile": "0.75rem",
+            "space-xl": "2rem"
+          },
+          "fontFamily": {
+            "body-md": ["Inter"],
+            "headline-sm": ["Plus Jakarta Sans"],
+            "code-clinical": ["Inter"],
+            "body-sm": ["Inter"],
+            "label-md": ["Inter"],
+            "title-md": ["Inter"],
+            "display-lg": ["Plus Jakarta Sans"],
+            "title-lg": ["Inter"],
+            "display-lg-mobile": ["Plus Jakarta Sans"],
+            "label-sm": ["Inter"],
+            "headline-md": ["Plus Jakarta Sans"],
+            "headline-lg": ["Plus Jakarta Sans"],
+            "body-lg": ["Inter"],
+            "headline-lg-mobile": ["Plus Jakarta Sans"]
+          },
+          "fontSize": {
+            "body-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0", "fontWeight": "400" }],
+            "headline-sm": ["18px", { "lineHeight": "26px", "letterSpacing": "-0.005em", "fontWeight": "600" }],
+            "code-clinical": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500" }],
+            "body-sm": ["12px", { "lineHeight": "18px", "letterSpacing": "0.01em", "fontWeight": "400" }],
+            "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600" }],
+            "title-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.005em", "fontWeight": "600" }],
+            "display-lg": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "title-lg": ["16px", { "lineHeight": "24px", "letterSpacing": "0", "fontWeight": "600" }],
+            "display-lg-mobile": ["28px", { "lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+            "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "600" }],
+            "headline-md": ["22px", { "lineHeight": "30px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "headline-lg": ["28px", { "lineHeight": "36px", "letterSpacing": "-0.015em", "fontWeight": "600" }],
+            "body-lg": ["16px", { "lineHeight": "24px", "letterSpacing": "0", "fontWeight": "400" }],
+            "headline-lg-mobile": ["22px", { "lineHeight": "30px", "letterSpacing": "-0.01em", "fontWeight": "600" }]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+      vertical-align: middle;
+      display: inline-block;
+      line-height: 1;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 4px;
+      height: 4px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #f8fafc;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 9999px;
+    }
+    .glass-mac {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+    .watermark-audit {
+      background-image: radial-gradient(#e2e8f0 0.75px, transparent 0.75px);
+      background-size: 12px 12px;
+    }
+  </style>
+</head>
+<body class="h-full font-body-md text-body-md text-text-primary bg-surface-canvas overflow-hidden flex flex-col antialiased select-none">
+<!-- TOP BAR: Clinical OS Header (Apple Minimalist Docked Bar) -->
+<header class="h-16 bg-surface-card border-b border-border-subtle shrink-0 z-30 px-6 flex items-center justify-between">
+<!-- Left: Identity & Patient Badge -->
+<div class="flex items-center gap-5">
+<div class="flex items-center gap-2.5 pr-4 border-r border-border-subtle">
+<div class="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined text-title-lg" data-icon="shield_person">shield_person</span>
+</div>
+<div>
+<div class="font-title-lg text-title-lg text-primary tracking-tight leading-none">DrMetz Care</div>
+<div class="font-code-clinical text-code-clinical text-text-muted mt-0.5 tracking-wider uppercase">Clinical OS v3.4</div>
+</div>
+</div>
+<!-- Live Session Pill -->
+<div class="flex items-center gap-2 px-3 py-1 rounded-full bg-status-emergency-bg border border-status-emergency/20">
+<span class="relative flex h-2 w-2">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-status-emergency opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2 w-2 bg-status-emergency"></span>
+</span>
+<span class="font-label-md text-label-md text-status-emergency tracking-wide font-semibold">Live 18:42</span>
+</div>
+<!-- Patient Context Badge -->
+<div class="flex items-center gap-3 bg-surface-subtle px-3.5 py-1.5 rounded-lg border border-border-subtle">
+<div class="w-6 h-6 rounded-full bg-surface-container flex items-center justify-center text-primary font-label-md text-label-sm">
+          DN
+        </div>
+<div class="flex items-baseline gap-2">
+<span class="font-title-md text-title-md text-text-primary">Dina Nirmala</span>
+<span class="font-body-sm text-body-sm text-text-secondary">28 th • Wanita</span>
+<span class="font-code-clinical text-code-clinical text-text-muted bg-surface-card px-1.5 py-0.5 rounded border border-border-subtle">DM-2024-0988</span>
+</div>
+</div>
+<!-- Security / Encryption Indicator -->
+<div class="hidden xl:flex items-center gap-1.5 text-text-muted text-body-sm font-body-sm">
+<span class="material-symbols-outlined text-status-stable text-title-md" data-icon="verified_user">verified_user</span>
+<span class="">WebRTC 256-bit E2EE</span>
+</div>
+</div>
+<!-- Right: Operational Actions -->
+<div class="flex items-center gap-3">
+
+
+<button class="h-9 px-3.5 rounded-lg bg-secondary-container/30 text-secondary hover:bg-secondary-container/50 border border-secondary/20 font-title-md text-label-md flex items-center gap-1.5 transition-all shadow-xs active:scale-[0.98]"><span class="material-symbols-outlined text-title-md" data-icon="biometrics">biometrics</span><span class="">Buka Facial Diagnostic (MoreMe)</span></button><button class="h-9 px-4 rounded-lg bg-primary text-on-primary font-title-md text-title-md flex items-center gap-1.5 shadow-sm hover:bg-primary-container transition-all active:scale-[0.98]">
+<span class="material-symbols-outlined text-title-md" data-icon="call_end">call_end</span>
+<span class="">Selesaikan Sesi</span>
+</button>
+<div class="w-px h-6 bg-border-subtle mx-1"></div>
+<!-- Provider Profile Avatar (TopNavBar specification) -->
+<div class="flex items-center gap-2 pl-1">
+<div class="w-8 h-8 rounded-full ring-1 ring-border-strong overflow-hidden bg-surface-container flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-headline-sm" data-icon="clinical_notes">clinical_notes</span>
+</div>
+<div class="text-left hidden lg:block">
+<div class="font-title-md text-label-md leading-none text-text-primary">dr. Rian Metz, Sp.D.V.E.</div>
+<div class="font-body-sm text-label-sm text-text-muted mt-0.5">Dermatologi &amp; Venereologi</div>
+</div>
+</div>
+</div>
+</header>
+<!-- WORKSPACE BODY: 12-Column Grid (Asymmetric Split Workspace) -->
+<div class="flex-1 flex overflow-hidden">
+<!-- LEFT COLUMN: Video Stream & Patient 360 Context (5 Columns / 42% width) -->
+<section class="w-[44%] border-r border-border-subtle flex flex-col bg-surface-canvas overflow-y-auto custom-scrollbar p-5 gap-5">
+<!-- Video Face-to-Face Stage (macOS FaceTime Minimalist) -->
+<div class="relative w-full aspect-[16/10] bg-slate-900 rounded-xl overflow-hidden shadow-sm border border-border-subtle group">
+<!-- Main Patient Video Frame -->
+<div class="w-full h-full relative flex items-center justify-center bg-gradient-to-tr from-slate-950 via-slate-900 to-slate-800">
+<!-- Ambient Video Placeholder Visual -->
+<div class="absolute inset-0 opacity-85">
+<img class="w-full h-full object-cover" data-alt="Close-up of a young Indonesian woman participating in a clean daylight telemedicine dermatological consultation, soft natural window lighting, facing camera in neutral bright bedroom environment, realistic clinical video call clarity, calm expressions with subtle cheek redness." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAi_BArE84y_i-crtqi7y05FRPl1tHEjwOYmVY6Hbkhix27nqrYCMBFvcX9_iYuGhW9xtiYFJjHhcuAHQGDfdW01V8tH-lMzM-i-j2AdjzBh6NssyAOgjLhS78wvfaLzJzDjuMOBxA7W3YcGOKjU0rXLMFpr0MkqNqGBhONKPkFscd-KlN5A4J5l_NJXwe4wpy2FdI779RHx0tHewH9OFIQp_8sOSFTyYJelXwbUsqUuOO7_CLw4m9eyQ">
+</div>
+<!-- Video Overlays -->
+<div class="absolute top-3 left-3 flex items-center gap-2">
+<span class="px-2.5 py-1 rounded-md glass-mac text-text-primary font-label-md text-label-sm shadow-sm flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-status-stable"></span>
+              Pasien: Dina Nirmala (HD 1080p)
+            </span>
+<span class="px-2 py-1 rounded-md bg-black/40 text-white font-code-clinical text-label-sm backdrop-blur-md">
+              Latency: 28ms
+            </span>
+</div>
+<!-- Doctor Picture-in-Picture (PiP) Window in Bottom Corner -->
+<div class="absolute top-3 right-3 w-32 aspect-[4/3] rounded-lg overflow-hidden border-2 border-white/60 shadow-lg bg-slate-800 z-10">
+<img class="w-full h-full object-cover" data-alt="Professional clinical physician doctor in white lab coat and stethoscope speaking attentively in modern bright sterile hospital teleconsultation booth, looking into webcam, warm trustworthy lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBKNqfxtTNirqPRS4WOgHdrYcyMIel-60fstCXSU6G1PyRcot7vqvYuY5FC-9D5kheSeeZC8kENvXFAWQuLUCA1gmn224HfNIXMv5SMsxbVj9SpwMxnm5EKAs4-_7TcG3G_I7BCkL3GHd25ILp2RAgXw4aR2MtUxPuJERt3r8WKVS9HeHiRuZwe8P87WqThaa9-n7guuhkwirJzLCNm9FbkRwluNSO6ObLSwjyKSNjVcEUluDcuSuYNbQ">
+<div class="absolute bottom-1 right-1 px-1.5 py-0.5 rounded bg-black/60 text-white font-label-sm text-[10px] backdrop-blur-sm">
+              dr. Rian
+            </div>
+</div>
+<!-- Apple macOS-style Floating Video Dock -->
+<div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 px-3 py-2 rounded-full glass-mac border border-white/40 shadow-xl z-20">
+<button class="w-9 h-9 rounded-full flex items-center justify-center bg-surface-subtle text-text-primary hover:bg-white transition active:scale-95">
+<span class="material-symbols-outlined text-title-lg" data-icon="mic">mic</span>
+</button>
+<button class="w-9 h-9 rounded-full flex items-center justify-center bg-surface-subtle text-text-primary hover:bg-white transition active:scale-95">
+<span class="material-symbols-outlined text-title-lg" data-icon="videocam">videocam</span>
+</button>
+<button class="w-9 h-9 rounded-full flex items-center justify-center bg-surface-subtle text-text-primary hover:bg-white transition active:scale-95">
+<span class="material-symbols-outlined text-title-lg" data-icon="screen_share">screen_share</span>
+</button>
+<div class="w-px h-5 bg-border-strong mx-1"></div>
+<button class="w-9 h-9 rounded-full flex items-center justify-center bg-status-emergency-bg text-status-emergency hover:bg-status-emergency hover:text-white transition active:scale-95">
+<span class="material-symbols-outlined text-title-lg" data-icon="pause_presentation">pause_presentation</span>
+</button>
+<button class="w-9 h-9 rounded-full flex items-center justify-center bg-primary text-on-primary hover:bg-primary-container transition active:scale-95 shadow-sm">
+<span class="material-symbols-outlined text-title-lg" data-icon="photo_camera">photo_camera</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Patient Beauty Code & Physiological Diagnostics Panel (Bento Module) -->
+<div class="bg-surface-card rounded-xl border border-border-subtle p-4 shadow-sm">
+<div class="flex items-center justify-between pb-3 border-b border-border-subtle">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-title-lg" data-icon="monitoring">monitoring</span>
+<h3 class="font-headline-sm text-headline-sm text-text-primary">Observasi Beauty Code &amp; Biometrik</h3>
+</div>
+<button class="inline-flex items-center gap-1 px-2.5 py-1 text-label-sm font-label-md rounded-lg bg-primary-fixed text-primary hover:bg-primary hover:text-on-primary border border-primary/20 transition-all shadow-xs"><span class="material-symbols-outlined text-label-md" data-icon="document_scanner">document_scanner</span><span class="">Buka Scan MoreMe AI</span></button><span class="font-label-sm text-label-sm text-status-stable bg-status-stable-bg px-2 py-0.5 rounded border border-status-stable/20">
+            Tersinkronisasi via Consent
+          </span>
+</div>
+<div class="grid grid-cols-3 gap-3 pt-3.5">
+<!-- Metric 1: Skin Barrier Index -->
+<div class="p-3 rounded-lg bg-surface-subtle border border-border-subtle flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md text-text-secondary">Skin Barrier Index</span>
+<span class="material-symbols-outlined text-status-warning text-title-md" data-icon="warning">warning</span>
+</div>
+<div class="mt-2 flex items-baseline gap-1">
+<span class="font-headline-lg text-headline-lg text-text-primary">54</span>
+<span class="font-body-sm text-text-muted">/100</span>
+</div>
+<span class="mt-1 font-label-sm text-label-sm text-status-warning font-medium">Perlu Perhatian (Impaired)</span>
+</div>
+<!-- Metric 2: Tidur & Pemulihan -->
+<div class="p-3 rounded-lg bg-surface-subtle border border-border-subtle flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md text-text-secondary">Rata-rata Tidur</span>
+<span class="material-symbols-outlined text-primary text-title-md" data-icon="bedtime">bedtime</span>
+</div>
+<div class="mt-2 flex items-baseline gap-1">
+<span class="font-headline-lg text-headline-lg text-text-primary">6.1</span>
+<span class="font-body-sm text-text-muted">jam/hari</span>
+</div>
+<span class="mt-1 font-label-sm text-label-sm text-text-secondary font-medium">Defisit REM (Hidrasi -18%)</span>
+</div>
+<!-- Metric 3: Log Pemicu Diet -->
+<div class="p-3 rounded-lg bg-surface-subtle border border-border-subtle flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md text-text-secondary">Pemicu Diet 14H</span>
+<span class="material-symbols-outlined text-status-emergency text-title-md" data-icon="restaurant">restaurant</span>
+</div>
+<div class="mt-2 font-headline-sm text-headline-sm text-text-primary leading-tight">
+              Dairy &amp; Gula
+            </div>
+<span class="mt-1 font-label-sm text-label-sm text-status-emergency font-medium">3x Korelasi Flare-up</span>
+</div>
+</div><div class="mt-3 pt-2.5 border-t border-border-subtle flex items-center justify-between bg-surface-subtle/80 p-2.5 rounded-lg border"><div class="flex items-center gap-2"><div class="w-7 h-7 rounded-md bg-secondary-fixed flex items-center justify-center text-secondary"><span class="material-symbols-outlined text-title-md" data-icon="biometrics">biometrics</span></div><div><div class="font-title-md text-label-md text-text-primary flex items-center gap-1.5">Diagnostic Spektral 8-Spektrum (MoreMe)<span class="font-label-sm text-[10px] text-status-stable bg-status-stable-bg px-1.5 py-0.5 rounded border border-status-stable/20 font-medium">Tersedia Scan Baru</span></div><div class="font-body-sm text-label-sm text-text-muted">Analisis Pori, Eritema UV, Sebum &amp; Porfirin 3D</div></div></div><button class="h-8 px-3 rounded-md bg-primary text-on-primary hover:bg-primary-container font-title-md text-label-sm flex items-center gap-1 transition shadow-xs"><span class="material-symbols-outlined text-label-md" data-icon="open_in_new">open_in_new</span><span class="">Buka Diagnostic</span></button></div>
+</div>
+<!-- Clinical Photos Intake (3-Angle Zoom Inspection) -->
+<div class="bg-surface-card rounded-xl border border-border-subtle p-4 shadow-sm">
+<div class="flex items-center justify-between pb-3 border-b border-border-subtle">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-title-lg" data-icon="view_kanban">view_kanban</span>
+<h3 class="font-headline-sm text-headline-sm text-text-primary">Foto Klinis Mandiri (Pre-Consult Intake)</h3>
+</div>
+<span class="font-body-sm text-text-muted">Diunggah: Hari ini, 10:15 WIB</span>
+</div>
+<div class="grid grid-cols-3 gap-3 pt-3.5">
+<!-- Angle 1: Frontal -->
+<div class="group relative rounded-lg border border-border-subtle overflow-hidden bg-slate-100 aspect-square">
+<img class="w-full h-full object-cover" data-alt="Dermatology clinical photograph frontal portrait view of female patient facial skin showing localized mild cheek redness and small follicular papules with natural clinical lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBsjaynZunsN-RpDvekJMNMlFjTFHPN1Qbg1R4pbQ-ijLiU3AGiRIIc47PVjsv4LV3hUm7B4XGRZP0x5h4q58xr7CR_vljItGiIZvnz9XdWtNuZNB3vcVXxC4YpzOszJMW-27zbvk6mwbU2ccfIw372ZEfOPWk7yAjfxVLFT-BgZyNuytC-OIPZ57NWiLPmHjuNdugZ3Lhmd2th9CFtTjzc1A9AEQL3CV_p0Vja38es_DlYDpUT1n68aw">
+<div class="absolute inset-0 bg-slate-900/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+<button class="p-1.5 bg-white rounded-full text-text-primary hover:scale-110 transition shadow">
+<span class="material-symbols-outlined text-title-md" data-icon="zoom_in">zoom_in</span>
+</button>
+</div>
+<span class="absolute bottom-1.5 left-1.5 px-2 py-0.5 rounded bg-black/70 text-white font-label-sm text-[10px] backdrop-blur-sm">
+              Sudut Depan
+            </span>
+</div>
+<!-- Angle 2: Left Cheek -->
+<div class="group relative rounded-lg border border-border-subtle overflow-hidden bg-slate-100 aspect-square">
+<img class="w-full h-full object-cover" data-alt="Dermatology close-up clinical photo of patient left cheek profile showing pinpoint micro-comedones and cutaneous irritation over the zygomatic arch." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAIu542sagJVxtzwFmn5aGQmk7mBvP_Nut__kfV9s8xPwhRej80k4oAeq_EJKpLjDxBehZbYTYuGhfSDuDrrVuGCgi_vPZ9_LLWPRADZyA3XmPfA8G20kggGT7nxuKk9Z_TxqtzM170tzw934eMYMV0sd4fmDTmVH0vAC-Wf9BN7atXOrzwWlOg52619motfiSq1HFgnG5Px6i-uv20uJLTX9Uo2DRlRT-SdKiHH0kI8hA2FTVWCv720w">
+<div class="absolute inset-0 bg-slate-900/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+<button class="p-1.5 bg-white rounded-full text-text-primary hover:scale-110 transition shadow">
+<span class="material-symbols-outlined text-title-md" data-icon="zoom_in">zoom_in</span>
+</button>
+</div>
+<span class="absolute bottom-1.5 left-1.5 px-2 py-0.5 rounded bg-black/70 text-white font-label-sm text-[10px] backdrop-blur-sm">
+              Sudut Kiri (45°)
+            </span>
+</div>
+<!-- Angle 3: Right Jawline -->
+<div class="group relative rounded-lg border border-border-subtle overflow-hidden bg-slate-100 aspect-square">
+<img class="w-full h-full object-cover" data-alt="Dermatology close-up macro view of patient right mandibular jawline indicating resolving inflammatory papules with minimal hyperpigmentation." src="https://lh3.googleusercontent.com/aida-public/AB6AXuASFnvt9YRae0W5BqbGoA5JX0f-r0_NONiHursqKDV22DE-S_fh4uIVImtF0qd7DUaqW7zMq6LomhcLEfusjj_r6C3sC2a8gR2B0v8en0Xqu0otiIpy86olOZyOzRlZb4ITthLI0VLjKkQvDRY-tQJcvSg-zgawu1_Jvvj_3jV0eBjZD05JFcKa0DpIrxeRCRNEDcl4LONDudq1Vd_pzoaJgy405lSO16bXqpdomO3_aiwQFbLu5W0mSQ">
+<div class="absolute inset-0 bg-slate-900/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+<button class="p-1.5 bg-white rounded-full text-text-primary hover:scale-110 transition shadow">
+<span class="material-symbols-outlined text-title-md" data-icon="zoom_in">zoom_in</span>
+</button>
+</div>
+<span class="absolute bottom-1.5 left-1.5 px-2 py-0.5 rounded bg-black/70 text-white font-label-sm text-[10px] backdrop-blur-sm">
+              Sudut Kanan (Rahang)
+            </span>
+</div>
+</div>
+</div>
+<!-- Active Medication & Topical Regimen Tracker -->
+<div class="bg-surface-card rounded-xl border border-border-subtle p-4 shadow-sm">
+<div class="flex items-center justify-between pb-3 border-b border-border-subtle">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-title-lg" data-icon="medication">medication</span>
+<h3 class="font-headline-sm text-headline-sm text-text-primary">Riwayat Resep &amp; Bahan Aktif Berjalan</h3>
+</div>
+<span class="font-label-md text-label-md text-text-secondary">3 Bahan Terdeteksi</span>
+</div>
+<div class="space-y-2.5 pt-3">
+<div class="flex items-center justify-between p-2.5 rounded-lg bg-surface-subtle border border-border-subtle">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-md bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-title-md" data-icon="science">science</span>
+</div>
+<div>
+<div class="font-title-md text-title-md text-text-primary">Tretinoin (Retinoid) 0.05% Cream</div>
+<div class="font-body-sm text-body-sm text-text-secondary">Topikal malam hari • Digunakan sejak 4 minggu lalu</div>
+</div>
+</div>
+<span class="font-label-sm text-label-sm text-status-warning bg-status-warning-bg px-2 py-0.5 rounded border border-status-warning/20">
+              Pemicu Suspek Peeling
+            </span>
+</div>
+<div class="flex items-center justify-between p-2.5 rounded-lg bg-surface-subtle border border-border-subtle">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-md bg-surface-container flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-title-md" data-icon="water_drop">water_drop</span>
+</div>
+<div>
+<div class="font-title-md text-title-md text-text-primary">Niacinamide 5% + Zinc PCA 1% Serum</div>
+<div class="font-body-sm text-body-sm text-text-secondary">Topikal pagi/malam • Adherensi baik 92%</div>
+</div>
+</div>
+<span class="font-label-sm text-label-sm text-status-stable bg-status-stable-bg px-2 py-0.5 rounded border border-status-stable/20">
+              Ditoleransi Baik
+            </span>
+</div>
+<div class="flex items-center justify-between p-2.5 rounded-lg bg-surface-subtle border border-border-subtle">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-md bg-surface-container flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined text-title-md" data-icon="pill">pill</span>
+</div>
+<div>
+<div class="font-title-md text-title-md text-text-primary">Doxycycline Hyclate 50 mg</div>
+<div class="font-body-sm text-body-sm text-text-secondary">Oral 1x sehari setelah makan siang • Selesai siklus 10 hari</div>
+</div>
+</div>
+<span class="font-label-sm text-label-sm text-text-muted bg-surface-card px-2 py-0.5 rounded border border-border-subtle">
+              Selesai (Tapering)
+            </span>
+</div>
+</div>
+</div>
+</section>
+<!-- RIGHT COLUMN: Clinical Workspace & Structured SOAP Editor (7 Columns / 56% width) -->
+<main class="w-[56%] flex flex-col bg-surface-card overflow-hidden">
+<!-- Upper Navigation Tabs (Provider Workspace Navigation) -->
+<div class="border-b border-border-subtle px-6 pt-3 bg-surface-card flex items-center justify-between">
+<div class="flex items-center gap-6">
+<button class="pb-3 border-b-2 border-primary text-primary font-title-md text-title-md flex items-center gap-2">
+<span class="material-symbols-outlined text-title-md" data-icon="edit_note">edit_note</span>
+            Catatan Klinis (SOAP)
+          </button>
+<button class="pb-3 border-b-2 border-transparent text-text-secondary hover:text-text-primary font-title-md text-title-md flex items-center gap-2 transition">
+<span class="material-symbols-outlined text-title-md" data-icon="checklist">checklist</span>
+            Care Plan &amp; Intervensi
+          </button>
+<button class="pb-3 border-b-2 border-transparent text-text-secondary hover:text-text-primary font-title-md text-title-md flex items-center gap-2 transition">
+<span class="material-symbols-outlined text-title-md" data-icon="prescriptions">prescriptions</span>
+            Resep &amp; BPOM
+          </button>
+<button class="pb-3 border-b-2 border-transparent text-text-secondary hover:text-text-primary font-title-md text-title-md flex items-center gap-2 transition">
+<span class="material-symbols-outlined text-title-md" data-icon="history">history</span>
+            Riwayat Sesi (4)
+          </button>
+</div>
+<!-- Consultation Timer & Auto-Save Indicator -->
+<div class="flex items-center gap-2 pb-3">
+<span class="w-2 h-2 rounded-full bg-status-stable"></span>
+<span class="font-body-sm text-body-sm text-text-muted">Tersimpan otomatis ke cloud</span>
+</div>
+</div>
+<!-- Confidentiality Mode Bar (MANDATORY STRICT PRD TOGGLE) -->
+<div class="px-6 py-2.5 bg-surface-subtle border-b border-border-subtle flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="font-label-md text-label-md text-text-secondary">Visibilitas Output:</span>
+<!-- Segmented Control Button -->
+<div class="inline-flex p-0.5 rounded-lg bg-surface-card border border-border-strong shadow-xs">
+<button class="px-3 py-1 rounded-md text-label-md font-label-md bg-confidential-internal-bg text-confidential-internal border border-confidential-internal-border flex items-center gap-1.5 transition" id="toggle-internal">
+<span class="material-symbols-outlined text-label-md" data-icon="lock">lock</span>
+              Internal Note (Hanya Tim Medis)
+            </button>
+<button class="px-3 py-1 rounded-md text-label-md font-label-md text-text-secondary hover:text-text-primary flex items-center gap-1.5 transition" id="toggle-patient">
+<span class="material-symbols-outlined text-label-md" data-icon="visibility">visibility</span>
+              Patient Summary (Sinkron ke Pasien)
+            </button>
+</div>
+</div>
+<!-- Protocol Watermark Indicator -->
+<div class="flex items-center gap-1 text-confidential-internal font-code-clinical text-label-sm">
+<span class="material-symbols-outlined text-label-md" data-icon="verified_user">verified_user</span>
+<span class="">HIPAA &amp; Kemenkes SatuSehat Verified</span>
+</div>
+</div>
+<!-- Main Editor Container (Scrollable) -->
+<div class="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-6">
+<!-- Structured SOAP Editor Cards -->
+<div class="space-y-4">
+<div class="flex items-center justify-between">
+<h2 class="font-headline-sm text-headline-sm text-text-primary flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-primary"></span>
+              Pencatatan Rekam Medis Elektronik (SOAP Format)
+            </h2>
+<div class="flex gap-2">
+<button class="px-2.5 py-1 text-label-sm font-label-md rounded border border-border-subtle hover:bg-surface-subtle text-text-secondary flex items-center gap-1">
+<span class="material-symbols-outlined text-label-md" data-icon="auto_awesome">auto_awesome</span>
+                Template Dermatologi Ringkas
+              </button>
+</div>
+</div>
+<!-- S - Subjective -->
+<div class="rounded-xl border border-border-subtle bg-surface-card p-4 hover:border-border-strong transition">
+<div class="flex items-center justify-between mb-2">
+<label class="font-title-md text-title-md text-primary flex items-center gap-2">
+<span class="w-6 h-6 rounded-md bg-surface-container flex items-center justify-center font-bold text-label-md text-primary">S</span>
+                Subjektif (Subjective Complaints &amp; Onset)
+              </label>
+<span class="font-label-sm text-label-sm text-text-muted">Dilaporkan oleh Pasien</span>
+</div>
+<textarea class="w-full rounded-lg border-border-subtle text-body-md font-body-md text-text-primary focus:border-primary focus:ring-1 focus:ring-primary p-2.5 bg-surface-subtle resize-none" placeholder="Masukkan keluhan subjektif pasien..." rows="2">Pasien mengeluhkan kemerahan perih setelah mencuci muka sejak 3 hari lalu. Muncul bruntusan kemerahan (breakout) di area rahang dan dagu. Skala sensasi perih/nyeri dilaporkan 4/10 saat terkena toner berkandungan alkohol.</textarea>
+</div>
+<!-- O - Objective -->
+<div class="rounded-xl border border-border-subtle bg-surface-card p-4 hover:border-border-strong transition">
+<div class="flex items-center justify-between mb-2">
+<label class="font-title-md text-title-md text-primary flex items-center gap-2">
+<span class="w-6 h-6 rounded-md bg-surface-container flex items-center justify-center font-bold text-label-md text-primary">O</span>
+                Objektif (Clinical Inspection &amp; Diagnostic Markers)
+              </label>
+<span class="font-label-sm text-label-sm text-status-warning font-semibold">Tanda Klinis Primer Terdeteksi</span>
+</div>
+<textarea class="w-full rounded-lg border-border-subtle text-body-md font-body-md text-text-primary focus:border-primary focus:ring-1 focus:ring-primary p-2.5 bg-surface-subtle resize-none" placeholder="Masukkan observasi objektif dokter..." rows="2">Tampak eritema difus grade 1 pada kedua area malar pipi, skuama halus minimal peri-nasal. Multiple closed comedones dan papula inflamasi diskret di margin mandibula bilateral (diameter 2-3 mm). Skin barrier compromise level 2 akibat deskuamasi berlebih.</textarea>
+</div>
+<!-- A - Assessment -->
+<div class="rounded-xl border border-border-subtle bg-surface-card p-4 hover:border-border-strong transition">
+<div class="flex items-center justify-between mb-2">
+<label class="font-title-md text-title-md text-primary flex items-center gap-2">
+<span class="w-6 h-6 rounded-md bg-surface-container flex items-center justify-center font-bold text-label-md text-primary">A</span>
+                Asesmen &amp; Diagnosis Klinis (ICD-10 Mapped)
+              </label>
+<span class="font-code-clinical text-code-clinical text-text-muted">ICD-10: L70.0 / L30.9</span>
+</div>
+<div class="flex flex-wrap gap-2 mb-2">
+<span class="px-2.5 py-1 rounded-full bg-status-warning-bg text-status-warning border border-status-warning/30 font-label-md text-label-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-label-md" data-icon="flag">flag</span>
+                Acne Vulgaris Papulopustular Grade II
+              </span>
+<span class="px-2.5 py-1 rounded-full bg-status-emergency-bg text-status-emergency border border-status-emergency/30 font-label-md text-label-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-label-md" data-icon="error_outline">error_outline</span>
+                Cutaneous Lipid Barrier Impairment (Iatrogenic)
+              </span>
+</div>
+<textarea class="w-full rounded-lg border-border-subtle text-body-md font-body-md text-text-primary focus:border-primary focus:ring-1 focus:ring-primary p-2.5 bg-surface-subtle resize-none" placeholder="Catatan diagnostik lanjutan..." rows="1">Iritasi sekunder pasca-aplikasi Tretinoin tanpa proteksi hidrasi emolien cukup; mikrobioma kulit terganggu.</textarea>
+</div>
+<!-- P - Plan & Intervention -->
+<div class="rounded-xl border border-border-subtle bg-surface-card p-4 hover:border-border-strong transition">
+<div class="flex items-center justify-between mb-2">
+<label class="font-title-md text-title-md text-primary flex items-center gap-2">
+<span class="w-6 h-6 rounded-md bg-surface-container flex items-center justify-center font-bold text-label-md text-primary">P</span>
+                Rencana Tindakan Medis (Plan &amp; Prescription Directives)
+              </label>
+<span class="font-label-sm text-label-sm text-status-stable font-semibold">Siap Disinkronkan</span>
+</div>
+<div class="p-3 bg-surface-subtle rounded-lg border border-border-subtle space-y-2">
+<div class="flex items-start gap-2">
+<span class="material-symbols-outlined text-primary text-title-md mt-0.5" data-icon="check_circle">check_circle</span>
+<span class="font-body-md text-body-md text-text-primary"><strong>Hentikan Sementara Tretinoin 0.05%:</strong> Rehat selama minimal 7 hari hingga sensasi stinging/perih sepenuhnya resolut.</span>
+</div>
+<div class="flex items-start gap-2">
+<span class="material-symbols-outlined text-primary text-title-md mt-0.5" data-icon="check_circle">check_circle</span>
+<span class="font-body-md text-body-md text-text-primary"><strong>Introduksi Barrier Lipid Concentrate:</strong> Ceramide NP 3:1:1 + Ectoin 2% diaplikasikan tipis 2x sehari (Pagi &amp; Malam).</span>
+</div>
+<div class="flex items-start gap-2">
+<span class="material-symbols-outlined text-primary text-title-md mt-0.5" data-icon="check_circle">check_circle</span>
+<span class="font-body-md text-body-md text-text-primary"><strong>Jadwalkan Tele-Monitoring Kontrol Ulang:</strong> Hari ke-14 (Evaluasi perbaikan barrier sebelum reintroduksi retinoid).</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Quick Patient Summary Builder (Sync Card) -->
+<div class="rounded-xl border border-confidential-internal-border bg-confidential-internal-bg/40 p-4 relative overflow-hidden">
+<div class="flex items-center justify-between pb-2.5 mb-2.5 border-b border-confidential-internal-border">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-confidential-internal text-title-lg" data-icon="mark_chat_read">mark_chat_read</span>
+<h3 class="font-title-lg text-title-lg text-confidential-internal">Ringkasan Ramah Pasien (Patient-Facing Action Items)</h3>
+</div>
+<span class="font-label-sm text-label-sm text-confidential-internal bg-white px-2 py-0.5 rounded border border-confidential-internal-border">
+              Muncul di Tab "Program Saya" Pasien
+            </span>
+</div>
+<div class="space-y-2 font-body-md text-body-md text-text-primary">
+<p class="leading-relaxed">
+              Halo Dina, kulit Anda saat ini sedang mengalami iritasi lapisan pelindung (skin barrier) yang sensitif. Untuk 7 hari ke depan:
+            </p>
+<ul class="list-disc list-inside space-y-1 text-body-sm font-body-sm pl-1 text-text-secondary">
+<li class="">Jangan gunakan krim malam kuning (Tretinoin) terlebih dahulu.</li>
+<li class="">Gunakan pelembap Barrier Concentrate yang baru diresepkan setiap selesai cuci muka.</li>
+<li class="">Kurangi konsumsi susu sapi &amp; minuman manis sementara waktu untuk meredakan radang rahang.</li>
+</ul>
+</div>
+</div>
+</div>
+<!-- Action Footer (Locked & Fixed Elevation) -->
+<footer class="h-18 px-6 py-3.5 border-t border-border-subtle bg-surface-card flex items-center justify-between z-20">
+<div class="flex items-center gap-3">
+<div class="flex items-center gap-1.5 text-text-secondary font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-status-stable text-title-md" data-icon="cloud_done">cloud_done</span>
+<span class="">Draf tersimpan (18:42:10)</span>
+</div>
+<span class="text-border-strong">•</span>
+<button class="font-label-md text-label-md text-text-secondary hover:text-text-primary flex items-center gap-1 transition">
+<span class="material-symbols-outlined text-title-md" data-icon="print">print</span>
+            Cetak PDF Resmi
+          </button>
+</div>
+<div class="flex items-center gap-3">
+<button class="h-10 px-4 rounded-lg border border-border-strong bg-white hover:bg-surface-subtle text-text-primary font-label-md text-label-md transition active:scale-[0.98]">
+            Simpan Draf Saja
+          </button>
+<button class="h-10 px-5 rounded-lg bg-primary-container text-on-primary font-title-md text-title-md flex items-center gap-2 shadow hover:bg-primary transition active:scale-[0.98]">
+<span class="material-symbols-outlined text-title-lg" data-icon="send">send</span>
+<span class="">Simpan SOAP &amp; Publikasikan Summary ke Pasien</span>
+</button>
+</div>
+</footer>
+</main>
+</div>
+<!-- Interactive Script for Minimalist State Toggle -->
+<script>
+    const btnInternal = document.getElementById('toggle-internal');
+    const btnPatient = document.getElementById('toggle-patient');
+
+    btnInternal.addEventListener('click', () => {
+      btnInternal.className = "px-3 py-1 rounded-md text-label-md font-label-md bg-confidential-internal-bg text-confidential-internal border border-confidential-internal-border flex items-center gap-1.5 transition";
+      btnPatient.className = "px-3 py-1 rounded-md text-label-md font-label-md text-text-secondary hover:text-text-primary flex items-center gap-1.5 transition";
+    });
+
+    btnPatient.addEventListener('click', () => {
+      btnPatient.className = "px-3 py-1 rounded-md text-label-md font-label-md bg-status-stable-bg text-status-stable border border-status-stable/30 flex items-center gap-1.5 transition";
+      btnInternal.className = "px-3 py-1 rounded-md text-label-md font-label-md text-text-secondary hover:text-text-primary flex items-center gap-1.5 transition";
+    });
+  </script>
+
+
+
+
+</body></html>

@@ -94,6 +94,8 @@ function programBody(fd: FormData) {
     summary: str(fd, "summary"),
     duration_weeks: num("duration_weeks"),
     price_idr: num("price_idr"),
+    price_mode: str(fd, "price_mode") === "coming_soon" ? "coming_soon" : "amount",
+    access: str(fd, "access") === "voucher" ? "voucher" : "open",
     includes: str(fd, "includes").split("\n").map((l) => l.trim()).filter(Boolean),
     active: str(fd, "active") === "on",
   };
@@ -105,6 +107,24 @@ export async function saveProgram(_p: SettingsState, fd: FormData): Promise<Sett
 }
 export async function deleteProgram(_p: SettingsState, fd: FormData): Promise<SettingsState> {
   return done(await call("DELETE", `/v1/staff/programs/${str(fd, "id")}`), "Program dihapus.", "/pengaturan/program");
+}
+
+export async function createVoucher(_p: SettingsState, fd: FormData): Promise<SettingsState> {
+  const quota = str(fd, "max_uses");
+  const day = str(fd, "expires_on");
+  const r = await call("POST", "/v1/staff/vouchers", {
+    code: str(fd, "code"),
+    program_id: str(fd, "program_id") || null,
+    max_uses: quota === "" ? null : Number(quota),
+    // Kedaluwarsa berlaku sampai akhir hari yang dipilih (WIB).
+    expires_at: day === "" ? null : `${day}T23:59:59+07:00`,
+  });
+  return done(r, "Voucher dibuat.", "/pengaturan/voucher");
+}
+export async function setVoucherActive(_p: SettingsState, fd: FormData): Promise<SettingsState> {
+  const [id, flag] = str(fd, "toggle").split(":");
+  const active = flag === "true";
+  return done(await call("PATCH", `/v1/staff/vouchers/${id}`, { active }), active ? "Voucher diaktifkan." : "Voucher dinonaktifkan.", "/pengaturan/voucher");
 }
 
 export async function inviteStaff(_p: SettingsState, fd: FormData): Promise<SettingsState> {

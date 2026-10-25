@@ -1,6 +1,6 @@
 import { asc, eq } from "drizzle-orm";
 import { programInputSchema, type StaffProgram } from "@aevia/core";
-import { consultationRequests, programs, writeAudit, type Db, type Tx } from "@aevia/db";
+import { consultationRequests, programs, vouchers, writeAudit, type Db, type Tx } from "@aevia/db";
 import type { z } from "zod";
 import { AuthError } from "../auth/otp";
 
@@ -15,13 +15,15 @@ const view = (p: Row): StaffProgram => ({
   summary: p.summary,
   duration_weeks: p.durationWeeks,
   price_idr: p.priceIdr,
+  price_mode: p.priceMode,
+  access: p.access,
   includes: p.includes,
   active: p.active,
 });
 const snap = (p: Row | Input) =>
   "durationWeeks" in p
-    ? { name: p.name, summary: p.summary, duration_weeks: p.durationWeeks, price_idr: p.priceIdr, includes: p.includes, active: p.active }
-    : { name: p.name, summary: p.summary, duration_weeks: p.duration_weeks, price_idr: p.price_idr, includes: p.includes, active: p.active };
+    ? { name: p.name, summary: p.summary, duration_weeks: p.durationWeeks, price_idr: p.priceIdr, price_mode: p.priceMode, access: p.access, includes: p.includes, active: p.active }
+    : { name: p.name, summary: p.summary, duration_weeks: p.duration_weeks, price_idr: p.price_idr, price_mode: p.price_mode, access: p.access, includes: p.includes, active: p.active };
 const audit = (tx: Tx, c: Ctx, id: string, action: string, before: unknown, after: unknown) =>
   writeAudit(tx, { clinicId: c.clinicId, actorType: "staff", actorId: c.actorId, entity: "program", entityId: id, action, before, after, at: c.now });
 const notFound = () => new AuthError(404, "program_not_found", "Program ini belum ditemukan di klinik Anda.");
@@ -49,6 +51,8 @@ export async function createProgram(c: Ctx, body: Input) {
         summary: body.summary,
         durationWeeks: body.duration_weeks,
         priceIdr: body.price_idr,
+        priceMode: body.price_mode,
+        access: body.access,
         includes: body.includes,
         active: body.active,
         sortOrder: Math.max(0, ...all.map((x) => x.sort)) + 1,
@@ -66,7 +70,7 @@ export async function updateProgram(c: Ctx, id: string, body: Input) {
     if (!before) throw notFound();
     const [row] = await tx
       .update(programs)
-      .set({ name: body.name, summary: body.summary, durationWeeks: body.duration_weeks, priceIdr: body.price_idr, includes: body.includes, active: body.active })
+      .set({ name: body.name, summary: body.summary, durationWeeks: body.duration_weeks, priceIdr: body.price_idr, priceMode: body.price_mode, access: body.access, includes: body.includes, active: body.active })
       .where(eq(programs.id, id))
       .returning();
     await audit(tx, c, id, "program.update", snap(before), snap(body));
@@ -80,6 +84,8 @@ export async function deleteProgram(c: Ctx, id: string) {
     if (!before) throw notFound();
     const [used] = await tx.select({ id: consultationRequests.id }).from(consultationRequests).where(eq(consultationRequests.programId, id)).limit(1);
     if (used) throw new AuthError(409, "program_in_use", "Program ini sudah dipakai permintaan konsultasi, jadi tidak dapat dihapus. Nonaktifkan saja agar tidak tampil di katalog.");
+    const [hasVoucher] = await tx.select({ id: vouchers.id }).from(vouchers).where(eq(vouchers.programId, id)).limit(1);
+    if (hasVoucher) throw new AuthError(409, "program_has_vouchers", "Program ini masih punya voucher, jadi tidak dapat dihapus. Nonaktifkan program atau vouchernya.");
     await tx.delete(programs).where(eq(programs.id, id));
     await audit(tx, c, id, "program.delete", snap(before), null);
   });

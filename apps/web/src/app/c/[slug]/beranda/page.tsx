@@ -95,11 +95,11 @@ export default async function Beranda({ params, searchParams }: { params: Promis
         <div aria-hidden="true" className="orb" />
         <div className="flex items-start justify-between gap-4">
           <div className="min-w-0">
-            <p className="inline-flex items-center gap-3 text-[13px] font-semibold uppercase tracking-[0.14em] text-copper-light">
+            <p className="inline-flex items-center gap-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-copper-light">
               <span aria-hidden="true" className="h-px w-6 bg-copper-light" />
               Beranda
             </p>
-            <h1 id="sapa" className="mt-2 text-balance font-serif text-[28px] leading-[1.15] sm:text-4xl">
+            <h1 id="sapa" className="mt-2 text-balance font-bold text-[28px] leading-[1.15] sm:text-4xl">
               Selamat datang di {clinic.name}
             </h1>
             <p className="mt-2 truncate text-[15px] text-white/70">Masuk sebagai {me.email}</p>
@@ -120,13 +120,13 @@ export default async function Beranda({ params, searchParams }: { params: Promis
               />
             </svg>
             <figcaption className="absolute inset-0 flex flex-col items-center justify-center leading-none">
-              <span className="font-serif text-xl sm:text-2xl">{done}/4</span>
+              <span className="font-bold text-xl sm:text-2xl">{done}/4</span>
             </figcaption>
           </figure>
         </div>
 
         <div className="mt-6 rounded-md border border-white/12 bg-white/[0.06] p-4 backdrop-blur-sm sm:p-5">
-          <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-copper-light">Langkah berikutnya</p>
+          <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-copper-light">Langkah berikutnya</p>
           <p className="mt-1 text-lg font-semibold leading-snug">{next.title}</p>
           <p className="mt-1 text-[15px] text-white/75">{next.note}</p>
           {next.cta &&
@@ -143,13 +143,13 @@ export default async function Beranda({ params, searchParams }: { params: Promis
       </section>
 
       {info === "terkirim" && (
-        <p role="status" className="reveal mt-5 flex gap-3 rounded-md border border-success/30 bg-surface px-4 py-3 text-base text-navy shadow-soft">
+        <p role="status" className="reveal mt-5 flex gap-3 rounded-md border border-success/30 bg-surface px-4 py-3 text-base text-navy">
           <CircleCheck aria-hidden="true" className="mt-0.5 shrink-0 text-success" size={20} strokeWidth={1.75} />
           Selesai. Permintaan konsultasi Anda sudah terkirim dan akan ditinjau tim klinik.
         </p>
       )}
       {info === "ada" && (
-        <p role="status" className="reveal mt-5 flex gap-3 rounded-md border border-line bg-surface px-4 py-3 text-base text-navy shadow-soft">
+        <p role="status" className="reveal mt-5 flex gap-3 rounded-md border border-line bg-surface px-4 py-3 text-base text-navy">
           <CircleCheck aria-hidden="true" className="mt-0.5 shrink-0 text-copper-ink" size={20} strokeWidth={1.75} />
           Permintaan untuk program ini sudah kami terima dan sedang ditinjau tim klinik.
         </p>
@@ -175,14 +175,14 @@ export default async function Beranda({ params, searchParams }: { params: Promis
               <li
                 key={r.id}
                 style={{ "--d": i } as React.CSSProperties}
-                className="reveal flex flex-col gap-3 rounded-lg border border-line border-l-4 border-l-copper bg-surface p-4 shadow-soft sm:flex-row sm:items-center sm:justify-between"
+                className="reveal flex flex-col gap-3 rounded-lg border border-line border-l-4 border-l-copper bg-surface p-4 sm:flex-row sm:items-center sm:justify-between"
               >
                 <p className="text-base text-navy">{r.message}</p>
                 <form action={markReminderReadAction} className="w-full sm:w-auto">
                   <input type="hidden" name="slug" value={clinic.slug} />
                   <input type="hidden" name="reminder_id" value={r.id} />
                   <input type="hidden" name="next" value={target[r.kind]} />
-                  <SubmitButton pendingLabel="Membuka…" className="inline-flex w-full items-center justify-center rounded-pill bg-navy px-5 py-3 text-base font-semibold text-white transition active:scale-[0.98] sm:w-auto">{REMINDER_CTA[r.kind]}</SubmitButton>
+                  <SubmitButton pendingLabel="Membuka…" className="inline-flex w-full items-center justify-center rounded-md bg-action px-5 py-3 text-base font-semibold text-white transition active:scale-[0.98] sm:w-auto">{REMINDER_CTA[r.kind]}</SubmitButton>
                 </form>
               </li>
             ))}
@@ -213,11 +213,11 @@ export default async function Beranda({ params, searchParams }: { params: Promis
                 {st.state === "done" ? <Check size={16} strokeWidth={2.5} /> : i + 1}
               </span>
               <div
-                className={`min-w-0 flex-1 rounded-lg border bg-surface px-4 py-3 shadow-soft lg:border-0 lg:p-0 lg:shadow-none ${
+                className={`min-w-0 flex-1 rounded-lg border bg-surface px-4 py-3 lg:border-0 lg:p-0 lg:shadow-none ${
                   st.state === "todo" ? "border-line" : "border-copper/50"
                 }`}
               >
-                <span className="block text-[12px] font-semibold uppercase tracking-[0.12em] text-slate">Langkah {i + 1}</span>
+                <span className="block text-[11px] font-semibold uppercase tracking-[0.08em] text-slate">Langkah {i + 1}</span>
                 <span className="block text-base font-semibold text-navy">{st.title}</span>
                 <span className={`mt-0.5 block text-[14px] font-medium ${st.state === "todo" ? "text-body" : "text-copper-ink"}`}>{st.status}</span>
               </div>
@@ -233,7 +233,7 @@ export default async function Beranda({ params, searchParams }: { params: Promis
             <li key={label} style={{ "--d": i + 2 } as React.CSSProperties} className="reveal">
               <Link
                 href={href}
-                className="card-lift group flex h-full flex-col justify-between gap-4 rounded-lg border border-line bg-surface p-4 shadow-soft active:scale-[0.98]"
+                className="card-lift group flex h-full flex-col justify-between gap-4 rounded-lg border border-line bg-surface p-4 active:scale-[0.98]"
               >
                 <span className="flex h-10 w-10 items-center justify-center rounded-pill bg-sand text-copper-ink transition-colors group-hover:bg-navy group-hover:text-white">
                   <Icon aria-hidden="true" size={20} strokeWidth={1.75} />
@@ -248,7 +248,7 @@ export default async function Beranda({ params, searchParams }: { params: Promis
         </ul>
       </section>
 
-      <section className="mt-10 flex items-start gap-4 rounded-lg border border-line bg-surface p-5 shadow-soft" aria-labelledby="pers">
+      <section className="mt-10 flex items-start gap-4 rounded-lg border border-line bg-surface p-5" aria-labelledby="pers">
         <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-pill bg-sand text-navy">
           <ShieldCheck aria-hidden="true" size={22} strokeWidth={1.75} />
         </span>
@@ -265,7 +265,7 @@ export default async function Beranda({ params, searchParams }: { params: Promis
 
       <form action={logout} className="mt-8 flex justify-center">
         <input type="hidden" name="slug" value={clinic.slug} />
-        <SubmitButton pendingLabel="Keluar…" className="inline-flex items-center gap-2 rounded-pill px-5 py-2.5 text-base font-semibold text-slate transition hover:bg-sand hover:text-navy">
+        <SubmitButton pendingLabel="Keluar…" className="inline-flex items-center gap-2 rounded-md px-5 py-2.5 text-base font-semibold text-slate transition hover:bg-sand hover:text-navy">
           <LogOut aria-hidden="true" size={18} strokeWidth={1.75} />
           Keluar
         </SubmitButton>

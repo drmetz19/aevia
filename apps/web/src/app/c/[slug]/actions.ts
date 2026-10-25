@@ -120,32 +120,44 @@ export async function completeAction(fd: FormData) {
   redirect(`/c/${slug}/assessment/hasil`);
 }
 
-export async function submitRequestAction(fd: FormData) {
+export interface RequestFormState {
+  error?: string;
+  /** Galat kode voucher: tampil di dekat kolom kode. */
+  voucherError?: string;
+  /** Isian terakhir, dipulihkan ketika kirim gagal agar tidak hilang. */
+  values?: { tujuan: string; keluhan: string; pertanyaan: string; konteks_assessment: string; voucher_code: string };
+}
+
+export async function submitRequestAction(_prev: RequestFormState, fd: FormData): Promise<RequestFormState> {
   const slug = String(fd.get("slug") ?? "");
   const programId = String(fd.get("program_id") ?? "");
   if (!SLUG_RE.test(slug) || !/^[0-9a-f-]{36}$/.test(programId)) redirect("/");
-  const lines = String(fd.get("pertanyaan") ?? "")
+  const text = (k: string, max: number) => String(fd.get(k) ?? "").trim().slice(0, max);
+  const values = {
+    tujuan: text("tujuan", 600),
+    keluhan: text("keluhan", 1200),
+    pertanyaan: String(fd.get("pertanyaan") ?? "").slice(0, 3000),
+    konteks_assessment: text("konteks_assessment", 1200),
+    voucher_code: text("voucher_code", 64),
+  };
+  const lines = values.pertanyaan
     .split("\n")
     .map((l) => l.trim())
     .filter(Boolean)
     .slice(0, 8)
     .map((l) => l.slice(0, 300));
-  const prep = {
-    tujuan: String(fd.get("tujuan") ?? "").trim().slice(0, 600),
-    keluhan: String(fd.get("keluhan") ?? "").trim().slice(0, 1200),
-    pertanyaan: lines,
-    konteks_assessment: String(fd.get("konteks_assessment") ?? "").trim().slice(0, 1200),
-  };
-  if (!prep.tujuan) {
-    redirect(`/c/${slug}/konsultasi?program=${programId}&pesan=${encodeURIComponent("Ada satu bagian yang belum terisi. Mohon tuliskan tujuan Anda.")}`);
-  }
-  const res = await apiAuthed(slug, "/v1/consultation-requests", { method: "POST", body: JSON.stringify({ program_id: programId, prep }) });
+  const prep = { tujuan: values.tujuan, keluhan: values.keluhan, pertanyaan: lines, konteks_assessment: values.konteks_assessment };
+  if (!prep.tujuan) return { error: "Ada satu bagian yang belum terisi. Mohon tuliskan tujuan Anda.", values };
+  const res = await apiAuthed(slug, "/v1/consultation-requests", {
+    method: "POST",
+    body: JSON.stringify({ program_id: programId, prep, ...(values.voucher_code ? { voucher_code: values.voucher_code } : {}) }),
+  });
   if (!res || res.status === 401 || res.status === 403) redirect(sessionEnded(slug));
+  if (res.ok) redirect(`/c/${slug}/beranda?info=terkirim`);
+  const body = (await res.json().catch(() => ({}))) as { error?: string; message?: string };
+  if (body.error?.startsWith("voucher_")) return { voucherError: body.message ?? "Kode voucher belum dapat dipakai. Periksa kembali atau hubungi klinik.", values };
   if (res.status === 409) redirect(`/c/${slug}/beranda?info=ada`);
-  if (!res.ok) {
-    redirect(`/c/${slug}/konsultasi?program=${programId}&pesan=${encodeURIComponent("Terjadi kendala di sisi kami. Silakan coba lagi sebentar lagi.")}`);
-  }
-  redirect(`/c/${slug}/beranda?info=terkirim`);
+  return { error: "Terjadi kendala di sisi kami. Silakan coba lagi sebentar lagi.", values };
 }
 
 export async function submitCheckinAction(fd: FormData) {

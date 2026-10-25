@@ -1,7 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { eq, sql } from "drizzle-orm";
 import { createDb, type Db } from "./client";
-import { clinics, clinicSettings, consents, events, patients, programs, auditLogs, checkins, reminders } from "./schema";
+import { clinics, clinicSettings, consents, events, patients, programs, auditLogs, checkins, reminders, vouchers } from "./schema";
 import { seed } from "./seed";
 
 let d: Db;
@@ -128,4 +128,33 @@ describe("runner migrasi", () => {
       await m.close();
     }
   }, 60_000);
+});
+
+describe("harga & akses program (0017)", () => {
+  it("default amount/open; nilai di luar daftar ditolak; SQL migrasi aman diulang", async () => {
+    const row = (await d.withTenant(b, (tx) => tx.select().from(programs)))[0]!;
+    expect(row).toMatchObject({ priceMode: "amount", access: "open" });
+    const seeded = await d.withTenant(a, (tx) => tx.select().from(programs).where(eq(programs.slug, "pendampingan-kulit-8-minggu")));
+    expect(seeded[0]).toMatchObject({ priceMode: "coming_soon", access: "voucher" });
+    await expect(d.db.execute(sql`UPDATE programs SET price_mode = 'gratis' WHERE id = ${row.id}`)).rejects.toThrow();
+    await expect(d.db.execute(sql`UPDATE programs SET access = 'rahasia' WHERE id = ${row.id}`)).rejects.toThrow();
+    const { readFileSync } = await import("node:fs");
+    const ddl = readFileSync(new URL("../migrations/0017_program_pricing.sql", import.meta.url), "utf8");
+    for (const stmt of ddl.split("--> statement-breakpoint")) await d.db.execute(sql.raw(stmt));
+  });
+});
+
+describe("voucher (0018)", () => {
+  it("RLS: klinik B tak melihat voucher A; kode unik per klinik; format kode dijaga DB; migrasi aman diulang", async () => {
+    await d.withTenant(a, (tx) => tx.insert(vouchers).values({ clinicId: a, code: "RLS-UJI" }));
+    expect((await d.withTenant(b, (tx) => tx.select().from(vouchers))).filter((v) => v.code === "RLS-UJI")).toEqual([]);
+    expect((await d.withTenant(a, (tx) => tx.select().from(vouchers))).some((v) => v.code === "RLS-UJI")).toBe(true);
+    await d.withTenant(b, (tx) => tx.insert(vouchers).values({ clinicId: b, code: "RLS-UJI" }));
+    await expect(d.withTenant(a, (tx) => tx.insert(vouchers).values({ clinicId: a, code: "RLS-UJI" }))).rejects.toThrow();
+    await expect(d.withTenant(a, (tx) => tx.insert(vouchers).values({ clinicId: a, code: "kecil" }))).rejects.toThrow();
+    await expect(d.withTenant(a, (tx) => tx.insert(vouchers).values({ clinicId: b, code: "SILANG-A" }))).rejects.toThrow();
+    const { readFileSync } = await import("node:fs");
+    const ddl = readFileSync(new URL("../migrations/0018_vouchers.sql", import.meta.url), "utf8");
+    for (const stmt of ddl.split("--> statement-breakpoint")) await d.db.execute(sql.raw(stmt));
+  });
 });

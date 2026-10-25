@@ -1,9 +1,9 @@
 import { expect, test } from "@playwright/test";
 
-test("/c/drmetz: nama DrMetz + powered by AEVIA + CTA", async ({ page }) => {
+test("/c/drmetz: nama DrMetz + powered by Aevia Konsult + CTA", async ({ page }) => {
   await page.goto("/c/drmetz");
   await expect(page.getByRole("banner").getByText("DrMetz")).toBeVisible();
-  await expect(page.getByText("powered by AEVIA")).toBeVisible();
+  await expect(page.getByText("powered by Aevia Konsult")).toBeVisible();
   await expect(page.getByText("Sovia adalah AI")).toBeVisible();
   await expect(page.getByRole("list").getByRole("heading", { name: "Follow-up & progres" })).toBeVisible();
   await page.getByRole("link", { name: /Mulai assessment/ }).click();
@@ -26,9 +26,20 @@ test("slug tak dikenal → halaman 404 ramah", async ({ page }) => {
   await expect(page.getByText("Klinik belum ditemukan")).toBeVisible();
 });
 
-test("mobile 390: tanpa scroll horizontal", async ({ page }) => {
-  await page.setViewportSize({ width: 390, height: 800 });
+for (const path of ["/c/drmetz", "/c/drmetz/masuk", "/c/demo-partner", "/c/demo-partner/masuk"]) {
+  test(`mobile 390: ${path} tanpa scroll horizontal`, async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 800 });
+    await page.goto(path);
+    const overflow = await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth);
+    expect(overflow).toBe(false);
+  });
+}
+
+test("/c/drmetz: kartu program dari data + FAQ", async ({ page }) => {
   await page.goto("/c/drmetz");
-  const overflow = await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth);
-  expect(overflow).toBe(false);
+  await expect(page.getByText("Segera hadir").first()).toBeVisible();
+  await expect(page.getByText("Perlu kode voucher").first()).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Pertanyaan yang sering diajukan" })).toBeVisible();
+  const text = await page.locator("body").innerText();
+  expect(text).not.toMatch(/wajib|gagal|permanen|garansi|instan/i);
 });

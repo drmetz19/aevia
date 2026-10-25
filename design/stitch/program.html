@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+
+<html lang="id"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>DrMetz Care — Program Slimming &amp; Metabolic Body Reset (12-Week Intensive)</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "on-background": "#0b1c30",
+            "tertiary-fixed-dim": "#94ccff",
+            "surface-container": "#e5eeff",
+            "surface-variant": "#d3e4fe",
+            "surface-bright": "#f8f9ff",
+            "tertiary-container": "#1770a8",
+            "on-tertiary-fixed": "#001d32",
+            "tertiary-fixed": "#cde5ff",
+            "background": "#f8f9ff",
+            "on-error-container": "#93000a",
+            "text-secondary": "#475569",
+            "confidential-internal-bg": "#EEF2FF",
+            "surface-dim": "#cbdbf5",
+            "outline": "#6f787d",
+            "inverse-on-surface": "#eaf1ff",
+            "on-surface": "#0b1c30",
+            "on-tertiary-fixed-variant": "#004b74",
+            "secondary-fixed-dim": "#6bd8cb",
+            "inverse-surface": "#213145",
+            "border-strong": "#CBD5E1",
+            "primary-fixed": "#b9eaff",
+            "surface-canvas": "#F8FAFC",
+            "on-secondary-fixed": "#00201d",
+            "text-muted": "#94A3B8",
+            "surface-subtle": "#F1F5F9",
+            "status-warning": "#B45309",
+            "primary-fixed-dim": "#81d1f0",
+            "status-emergency": "#BE123C",
+            "inverse-primary": "#81d1f0",
+            "confidential-internal": "#4338CA",
+            "error": "#ba1a1a",
+            "surface-card": "#FFFFFF",
+            "status-emergency-bg": "#FFE4E6",
+            "surface-container-low": "#eff4ff",
+            "on-secondary-container": "#006f66",
+            "tertiary": "#005787",
+            "on-primary-fixed": "#001f29",
+            "surface-container-high": "#dce9ff",
+            "on-error": "#ffffff",
+            "error-container": "#ffdad6",
+            "border-subtle": "#E2E8F0",
+            "surface": "#f8f9ff",
+            "surface-container-highest": "#d3e4fe",
+            "primary": "#005a71",
+            "on-tertiary-container": "#e0eeff",
+            "status-stable": "#047857",
+            "on-secondary": "#ffffff",
+            "on-surface-variant": "#3f484c",
+            "confidential-internal-border": "#C7D2FE",
+            "primary-container": "#0e7490",
+            "text-primary": "#0F172A",
+            "secondary-fixed": "#89f5e7",
+            "on-primary-container": "#d3f1ff",
+            "surface-tint": "#006781",
+            "secondary": "#006a61",
+            "outline-variant": "#bec8cd",
+            "secondary-container": "#86f2e4",
+            "on-primary": "#ffffff",
+            "on-primary-fixed-variant": "#004d62",
+            "status-stable-bg": "#D1FAE5",
+            "surface-container-lowest": "#ffffff",
+            "status-warning-bg": "#FEF3C7",
+            "on-tertiary": "#ffffff",
+            "on-secondary-fixed-variant": "#005049"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-sm": "0.5rem",
+            "space-xs": "0.25rem",
+            "space-2xl": "3rem",
+            "gutter": "1.5rem",
+            "margin-mobile": "1rem",
+            "margin": "2rem",
+            "space-xl": "2rem",
+            "space-md": "1rem",
+            "space-lg": "1.5rem",
+            "gutter-mobile": "0.75rem"
+          },
+          "fontFamily": {
+            "body-md": ["Inter"],
+            "label-md": ["Inter"],
+            "headline-lg": ["Plus Jakarta Sans"],
+            "title-md": ["Inter"],
+            "title-lg": ["Inter"],
+            "display-lg": ["Plus Jakarta Sans"],
+            "body-sm": ["Inter"],
+            "headline-lg-mobile": ["Plus Jakarta Sans"],
+            "body-lg": ["Inter"],
+            "code-clinical": ["Inter"],
+            "display-lg-mobile": ["Plus Jakarta Sans"],
+            "label-sm": ["Inter"],
+            "headline-sm": ["Plus Jakarta Sans"],
+            "headline-md": ["Plus Jakarta Sans"]
+          },
+          "fontSize": {
+            "body-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0", "fontWeight": "400" }],
+            "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600" }],
+            "headline-lg": ["28px", { "lineHeight": "36px", "letterSpacing": "-0.015em", "fontWeight": "600" }],
+            "title-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.005em", "fontWeight": "600" }],
+            "title-lg": ["16px", { "lineHeight": "24px", "letterSpacing": "0", "fontWeight": "600" }],
+            "display-lg": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "body-sm": ["12px", { "lineHeight": "18px", "letterSpacing": "0.01em", "fontWeight": "400" }],
+            "headline-lg-mobile": ["22px", { "lineHeight": "30px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "body-lg": ["16px", { "lineHeight": "24px", "letterSpacing": "0", "fontWeight": "400" }],
+            "code-clinical": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500" }],
+            "display-lg-mobile": ["28px", { "lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+            "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "600" }],
+            "headline-sm": ["18px", { "lineHeight": "26px", "letterSpacing": "-0.05em", "fontWeight": "600" }],
+            "headline-md": ["22px", { "lineHeight": "30px", "letterSpacing": "-0.01em", "fontWeight": "600" }]
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-surface-canvas text-text-primary font-body-md antialiased min-h-screen flex flex-col">
+<!-- TOP APP BAR -->
+<header class="bg-surface-card border-b border-border-subtle fixed top-0 left-0 w-full z-50 h-16 transition-all duration-150">
+<div class="max-w-7xl mx-auto h-full px-gutter md:px-margin flex items-center justify-between">
+<!-- Brand & Regulatory Pin -->
+<div class="flex items-center gap-space-md">
+<a class="flex items-center gap-2 group" href="#">
+<span class="w-8 h-8 rounded-lg bg-primary-container flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined text-[20px]">metabolism</span>
+</span>
+<span class="text-headline-sm font-headline-sm text-primary tracking-tight font-extrabold">DrMetz Care</span>
+</a>
+<div class="hidden lg:flex items-center gap-1.5 px-2.5 py-1 bg-surface-subtle border border-border-subtle rounded-full">
+<span class="material-symbols-outlined text-[14px] text-status-stable" style="font-variation-settings: 'FILL' 1;">verified_user</span>
+<span class="text-label-sm font-label-sm text-text-secondary">Terdaftar Kemenkes RI &amp; SATUSEHAT</span>
+</div>
+</div>
+<!-- Navigation Links -->
+<nav class="hidden md:flex items-center gap-6">
+<a class="text-primary font-title-md border-b-2 border-primary pb-1" href="#program">Program</a>
+<a class="text-text-secondary font-body-md hover:text-primary transition-colors duration-150" href="#metode">Clinical Method</a>
+<a class="text-text-secondary font-body-md hover:text-primary transition-colors duration-150" href="#spesialis">Specialists</a>
+<a class="text-text-secondary font-body-md hover:text-primary transition-colors duration-150" href="#outcomes">Outcomes</a>
+<a class="text-text-secondary font-body-md hover:text-primary transition-colors duration-150" href="#biaya">Pricing</a>
+</nav>
+<!-- Trailing CTAs -->
+<div class="flex items-center gap-3">
+<a class="hidden sm:inline-flex items-center justify-center px-3.5 py-1.5 rounded-lg border border-border-subtle bg-surface-card hover:bg-surface-subtle text-text-primary text-title-md transition-colors duration-150" href="#login">
+          Clinic Portal
+        </a>
+<a class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-primary-container hover:bg-[#0c4a6e] text-on-primary text-title-md font-semibold transition-all duration-150 active:scale-95 shadow-sm" href="#skrining">
+<span>Apply for Mentorship</span>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</a>
+</div>
+</div>
+</header>
+<!-- MAIN CANVAS -->
+<main class="flex-grow pt-24 pb-space-2xl">
+<!-- SUBTLE REGULATORY TRIAGE BANNER (FR-INT-04 / Compliance) -->
+<section class="max-w-7xl mx-auto px-gutter md:px-margin mb-space-lg">
+<div class="bg-surface-card border border-border-subtle rounded-xl p-3.5 flex flex-col md:flex-row items-center justify-between gap-3 text-body-sm text-text-secondary shadow-sm">
+<div class="flex items-center gap-2.5">
+<span class="px-2 py-0.5 rounded text-label-sm font-label-sm bg-status-stable-bg text-status-stable font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">lock</span> ISO 27001
+          </span>
+<span>Protokol evaluasi medis diawasi Dokter Spesialis Terdaftar Konsil Kedokteran Indonesia (KKI).</span>
+</div>
+<div class="flex items-center gap-4 text-code-clinical">
+<span class="flex items-center gap-1 text-primary"><span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Sistem SATUSEHAT Siap</span>
+<span class="text-border-strong">•</span>
+<span class="text-text-muted">ID Layanan: DMC-SLM-2024</span>
+</div>
+</div>
+</section>
+<!-- HERO SECTION: Apple Minimalist Clinical Grid -->
+<section class="max-w-7xl mx-auto px-gutter md:px-margin pt-4 pb-space-xl">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-xl items-center">
+<!-- Left Column: Clinical Proposition -->
+<div class="lg:col-span-7 flex flex-col items-start gap-4">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#E0F2FE] border border-[#BAE6FD] text-primary">
+<span class="material-symbols-outlined text-[16px] text-primary-container" style="font-variation-settings: 'FILL' 1;">health_and_safety</span>
+<span class="text-label-md font-label-md tracking-wide uppercase text-primary-container">Program Klinis Spesialis • 12-Week Intensive Care</span>
+</div>
+<h1 class="text-display-lg font-display-lg text-text-primary tracking-tight leading-tight">
+            Medical Slimming &amp; <br class="hidden sm:inline"/>Metabolic Body Reset Terpadu.
+          </h1>
+<p class="text-body-lg text-text-secondary max-w-2xl">
+            Penurunan massa lemak dan optimalisasi metabolik berkelanjutan berbasis data klinis, dipandu langsung oleh Dokter Spesialis dan Ahli Gizi Klinis.
+          </p>
+<!-- Key Value Chips -->
+<div class="flex flex-wrap gap-2 pt-1 pb-2">
+<div class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-card border border-border-subtle text-text-primary text-body-sm font-medium shadow-sm">
+<span class="material-symbols-outlined text-status-stable text-[18px]">check_circle</span>
+<span>Bukan Diet Ekstrem</span>
+</div>
+<div class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-card border border-border-subtle text-text-primary text-body-sm font-medium shadow-sm">
+<span class="material-symbols-outlined text-primary-container text-[18px]">biotech</span>
+<span>Evaluasi Profil Lab &amp; Hormonal</span>
+</div>
+<div class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-card border border-border-subtle text-text-primary text-body-sm font-medium shadow-sm">
+<span class="material-symbols-outlined text-primary-container text-[18px]">monitor_heart</span>
+<span>Pemantauan Body Comp &amp; Glukosa Real-Time</span>
+</div>
+<div class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-card border border-border-subtle text-text-primary text-body-sm font-medium shadow-sm">
+<span class="material-symbols-outlined text-status-stable text-[18px]">verified</span>
+<span>Tanpa Obat Pelangsing Berbahaya</span>
+</div>
+</div>
+<!-- Dual CTA Buttons -->
+<div class="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto pt-2">
+<a class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-primary-container hover:bg-[#0c4a6e] text-on-primary text-title-lg font-semibold transition-all duration-150 shadow-sm" href="#skrining">
+<span>Mulai Konsultasi Awal &amp; Skrining</span>
+<span class="material-symbols-outlined text-[20px]">calendar_today</span>
+</a>
+<a class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 rounded-lg bg-surface-card hover:bg-surface-subtle border border-border-subtle text-text-primary text-title-lg font-medium transition-colors duration-150" href="#metode">
+<span>Lihat Protokol 12 Minggu</span>
+<span class="material-symbols-outlined text-[20px]">read_more</span>
+</a>
+</div>
+<!-- Physician Trust Micro-bar -->
+<div class="flex items-center gap-3 pt-2 text-label-sm font-label-sm text-text-secondary">
+<span class="flex -space-x-2 overflow-hidden">
+<span class="inline-block h-6 w-6 rounded-full ring-2 ring-white bg-slate-200 text-[10px] flex items-center justify-center font-bold text-slate-700">MD</span>
+<span class="inline-block h-6 w-6 rounded-full ring-2 ring-white bg-slate-300 text-[10px] flex items-center justify-center font-bold text-slate-700">RD</span>
+<span class="inline-block h-6 w-6 rounded-full ring-2 ring-white bg-teal-100 text-[10px] flex items-center justify-center font-bold text-teal-800">SP</span>
+</span>
+<span>Didampingi Konsultan Bersertifikat Kemenkes RI • Rekam Medis Terverifikasi</span>
+</div>
+</div>
+<!-- Right Column: Apple Health Style Live Patient Monitoring Preview -->
+<div class="lg:col-span-5 relative">
+<div class="bg-surface-card rounded-2xl border border-border-subtle p-space-lg shadow-sm hover:border-border-strong transition-all duration-200">
+<!-- Patient Top Bar -->
+<div class="flex items-center justify-between pb-space-md border-b border-border-subtle">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-subtle flex items-center justify-center text-primary font-bold text-title-md border border-border-subtle">
+                  RS
+                </div>
+<div>
+<h3 class="text-title-lg font-title-lg text-text-primary">Rina S., 34 th</h3>
+<p class="text-body-sm text-text-secondary">Fase Minggu ke-6 / 12 • Program Intensive Reset</p>
+</div>
+</div>
+<span class="px-2.5 py-1 rounded-full text-label-sm font-label-sm bg-status-stable-bg text-status-stable font-semibold border border-[#A7F3D0]">
+                Active Cohort
+              </span>
+</div>
+<!-- Apple Health Style Vitality Metric Grid -->
+<div class="grid grid-cols-2 gap-3 my-space-md">
+<!-- Fat Loss Card -->
+<div class="p-3 bg-surface-canvas rounded-xl border border-border-subtle flex flex-col justify-between">
+<div class="flex items-center justify-between text-text-secondary">
+<span class="text-label-sm font-label-sm">Body Fat Loss</span>
+<span class="material-symbols-outlined text-[16px] text-teal-600">trending_down</span>
+</div>
+<div class="my-1">
+<span class="text-display-lg-mobile font-display-lg-mobile font-bold text-text-primary">-5.8 kg</span>
+</div>
+<div class="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden">
+<div class="bg-primary-container h-full rounded-full" style="width: 72%"></div>
+</div>
+<span class="text-label-sm text-text-muted mt-1">Target 12-wk: -8.0 kg</span>
+</div>
+<!-- Visceral Fat Card -->
+<div class="p-3 bg-surface-canvas rounded-xl border border-border-subtle flex flex-col justify-between">
+<div class="flex items-center justify-between text-text-secondary">
+<span class="text-label-sm font-label-sm">Visceral Fat Level</span>
+<span class="material-symbols-outlined text-[16px] text-teal-600">monitor_weight</span>
+</div>
+<div class="my-1">
+<span class="text-title-lg font-title-lg font-bold text-status-stable">Lvl 9 → Lvl 6</span>
+</div>
+<span class="text-label-sm font-label-sm text-status-stable px-1.5 py-0.5 rounded bg-status-stable-bg inline-block self-start">
+                  Zona Optimal
+                </span>
+<span class="text-label-sm text-text-muted mt-1">InBody 770 Clinical Bio</span>
+</div>
+<!-- Waistline Card -->
+<div class="p-3 bg-surface-canvas rounded-xl border border-border-subtle flex flex-col justify-between">
+<div class="flex items-center justify-between text-text-secondary">
+<span class="text-label-sm font-label-sm">Lingkar Pinggang</span>
+<span class="material-symbols-outlined text-[16px] text-teal-600">straighten</span>
+</div>
+<div class="my-1">
+<span class="text-headline-sm font-headline-sm font-bold text-text-primary">-7.5 cm</span>
+</div>
+<span class="text-body-sm text-text-secondary">86 cm → 78.5 cm</span>
+</div>
+<!-- Muscle Mass Preservation -->
+<div class="p-3 bg-surface-canvas rounded-xl border border-border-subtle flex flex-col justify-between">
+<div class="flex items-center justify-between text-text-secondary">
+<span class="text-label-sm font-label-sm">Muscle Retention</span>
+<span class="material-symbols-outlined text-[16px] text-teal-600">fitness_center</span>
+</div>
+<div class="my-1">
+<span class="text-headline-sm font-headline-sm font-bold text-primary">98.4%</span>
+</div>
+<span class="text-label-sm font-label-sm text-status-stable">Massa Otot Terjaga</span>
+</div>
+</div>
+<!-- Adherence Bar -->
+<div class="p-3 bg-[#F0FDF4] border border-[#BBF7D0] rounded-xl mb-3 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px] text-status-stable">task_alt</span>
+<div>
+<div class="text-title-md font-title-md text-slate-800">Kepatuhan Nutrisi &amp; Protein</div>
+<div class="text-body-sm text-slate-600">Asupan protein lean 1.4g/kgBB tercapai</div>
+</div>
+</div>
+<span class="text-headline-sm font-headline-sm font-bold text-status-stable">94%</span>
+</div>
+<!-- Doctor Note Snapshot (Confidentiality demarcated) -->
+<div class="bg-confidential-internal-bg border border-confidential-internal-border rounded-xl p-3 flex items-start gap-2.5">
+<span class="material-symbols-outlined text-[18px] text-confidential-internal mt-0.5" style="font-variation-settings: 'FILL' 1;">clinical_notes</span>
+<div class="text-body-sm">
+<span class="font-semibold text-confidential-internal">Catatan Dokter Spesialis (Dr. Hendra, Sp.GK):</span>
+<p class="text-slate-700 italic mt-0.5">
+                  "Respons sensitivitas insulin membaik, deficit kalori teradaptasi tanpa rasa lapar berlebih. Lanjutkan protokol resep metabolik fase 2."
+                </p>
+</div>
+</div>
+<div class="mt-3 text-right">
+<span class="text-label-sm font-label-sm text-text-muted">Data sinkronisasi otomatis via smart scale • 08:30 WIB</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 4: 4-Pillar Clinical Slimming Methodology -->
+<section class="max-w-7xl mx-auto px-gutter md:px-margin py-space-xl" id="metode">
+<div class="max-w-3xl mb-space-lg">
+<span class="text-label-md font-label-md text-primary-container uppercase tracking-wider">Clinical Architecture</span>
+<h2 class="text-headline-lg font-headline-lg text-text-primary tracking-tight mt-1">
+          Metodologi Medis 4-Pilar: Presisi, Terukur, Permanen.
+        </h2>
+<p class="text-body-lg text-text-secondary mt-2">
+          Kami menolak pendekatan tebak-tebakan. Setiap gram reduksi massa lemak didesain berdasarkan sains endokrinologi, kinetika metabolik basal, dan komposisi segmental tubuh.
+        </p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-space-md">
+<!-- Pillar 1 -->
+<div class="bg-surface-card p-space-lg rounded-xl border border-border-subtle flex flex-col justify-between hover:border-border-strong transition-colors duration-150">
+<div>
+<div class="w-12 h-12 rounded-xl bg-surface-subtle flex items-center justify-center text-primary-container mb-4">
+<span class="material-symbols-outlined text-[26px]">analytics</span>
+</div>
+<span class="text-label-sm font-label-sm font-bold text-primary-container tracking-wider">PILAR 01</span>
+<h3 class="text-title-lg font-title-lg text-text-primary mt-1 mb-2">Evaluasi Komposisi Tubuh &amp; Lab Awal</h3>
+<p class="text-body-sm text-text-secondary leading-relaxed">
+              Analisis segmental InBody 770, HOMA-IR (resistensi insulin), profil lipid lengkap, serta skrining fungsi tiroid untuk memetakan akar disfungsi metabolisme.
+            </p>
+</div>
+<div class="mt-6 pt-3 border-t border-border-subtle flex items-center justify-between text-label-sm text-text-muted font-code-clinical">
+<span>InBody 770 Tech</span>
+<span class="material-symbols-outlined text-[16px]">check</span>
+</div>
+</div>
+<!-- Pillar 2 -->
+<div class="bg-surface-card p-space-lg rounded-xl border border-border-subtle flex flex-col justify-between hover:border-border-strong transition-colors duration-150">
+<div>
+<div class="w-12 h-12 rounded-xl bg-surface-subtle flex items-center justify-center text-primary-container mb-4">
+<span class="material-symbols-outlined text-[26px]">restaurant_menu</span>
+</div>
+<span class="text-label-sm font-label-sm font-bold text-primary-container tracking-wider">PILAR 02</span>
+<h3 class="text-title-lg font-title-lg text-text-primary mt-1 mb-2">Preskripsi Nutrisi &amp; Defisit Terukur</h3>
+<p class="text-body-sm text-text-secondary leading-relaxed">
+              Rencana makan presisi berbasis Lean Body Mass (LBM) tanpa rasa lapar ekstrem. Menjaga metabolisme basal (BMR) agar tidak anjlok dan mencegah efek yoyo.
+            </p>
+</div>
+<div class="mt-6 pt-3 border-t border-border-subtle flex items-center justify-between text-label-sm text-text-muted font-code-clinical">
+<span>Macro Precision</span>
+<span class="material-symbols-outlined text-[16px]">check</span>
+</div>
+</div>
+<!-- Pillar 3 -->
+<div class="bg-surface-card p-space-lg rounded-xl border border-border-subtle flex flex-col justify-between hover:border-border-strong transition-colors duration-150">
+<div>
+<div class="w-12 h-12 rounded-xl bg-surface-subtle flex items-center justify-center text-primary-container mb-4">
+<span class="material-symbols-outlined text-[26px]">devices_other</span>
+</div>
+<span class="text-label-sm font-label-sm font-bold text-primary-container tracking-wider">PILAR 03</span>
+<h3 class="text-title-lg font-title-lg text-text-primary mt-1 mb-2">Sinkronisasi Data Beauty Code &amp; IoT</h3>
+<p class="text-body-sm text-text-secondary leading-relaxed">
+              Timbangan cerdas bioimpedansi Bluetooth dan sinkronisasi log harian. Tim dokter memantau fluktuasi air, massa otot, dan lemak secara harian tanpa jeda.
+            </p>
+</div>
+<div class="mt-6 pt-3 border-t border-border-subtle flex items-center justify-between text-label-sm text-text-muted font-code-clinical">
+<span>Cloud Clinical Sync</span>
+<span class="material-symbols-outlined text-[16px]">check</span>
+</div>
+</div>
+<!-- Pillar 4 -->
+<div class="bg-surface-card p-space-lg rounded-xl border border-border-subtle flex flex-col justify-between hover:border-border-strong transition-colors duration-150">
+<div>
+<div class="w-12 h-12 rounded-xl bg-surface-subtle flex items-center justify-center text-primary-container mb-4">
+<span class="material-symbols-outlined text-[26px]">support_agent</span>
+</div>
+<span class="text-label-sm font-label-sm font-bold text-primary-container tracking-wider">PILAR 04</span>
+<h3 class="text-title-lg font-title-lg text-text-primary mt-1 mb-2">Tele-Supervisi Bi-Weekly &amp; Suplementasi</h3>
+<p class="text-body-sm text-text-secondary leading-relaxed">
+              Konsultasi mendalam setiap 2 minggu dengan Dokter Spesialis &amp; Ahli Gizi. Penyesuaian resep adaptif, mikronutrien pembakar lemak, dan dukungan motivasi klinis.
+            </p>
+</div>
+<div class="mt-6 pt-3 border-t border-border-subtle flex items-center justify-between text-label-sm text-text-muted font-code-clinical">
+<span>Direct Doctor Access</span>
+<span class="material-symbols-outlined text-[16px]">check</span>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 5: Program Packages & Transparent Pricing -->
+<section class="max-w-7xl mx-auto px-gutter md:px-margin py-space-xl" id="biaya">
+<div class="text-center max-w-2xl mx-auto mb-space-lg">
+<span class="text-label-md font-label-md text-primary-container uppercase tracking-wider">Investment in Health</span>
+<h2 class="text-headline-lg font-headline-lg text-text-primary tracking-tight mt-1">Paket Intervensi Klinis Terstruktur</h2>
+<p class="text-body-md text-text-secondary mt-1">
+          Tanpa biaya tersembunyi. Termasuk monitoring klinis berkala dan integrasi catatan rekam medis nasional.
+        </p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-space-lg max-w-5xl mx-auto items-stretch">
+<!-- Package A -->
+<div class="bg-surface-card rounded-2xl border border-border-subtle p-space-lg flex flex-col justify-between hover:border-border-strong transition-all duration-150">
+<div>
+<div class="flex justify-between items-start">
+<div>
+<span class="text-label-sm font-label-sm text-text-secondary font-semibold uppercase">Starter Evaluation</span>
+<h3 class="text-headline-md font-headline-md text-text-primary mt-1">Metabolic Kickstarter</h3>
+<p class="text-body-sm text-text-secondary mt-1">Durasi 4 Minggu • Evaluasi Metabolisme Awal</p>
+</div>
+<span class="px-2.5 py-1 rounded-full text-label-sm font-label-sm bg-surface-subtle text-text-secondary border border-border-subtle">
+                4 Weeks
+              </span>
+</div>
+<div class="my-6">
+<span class="text-body-sm text-text-secondary">Total Biaya Program</span>
+<div class="flex items-baseline gap-1 mt-1">
+<span class="text-display-lg font-display-lg text-text-primary">Rp 1.250.000</span>
+<span class="text-body-sm text-text-muted">/ program</span>
+</div>
+</div>
+<div class="space-y-3 pt-4 border-t border-border-subtle">
+<div class="flex items-start gap-2.5 text-body-sm text-text-secondary">
+<span class="material-symbols-outlined text-status-stable text-[18px] mt-0.5">check_circle</span>
+<span>2x Telekonsultasi Terjadwal dengan Dokter Spesialis</span>
+</div>
+<div class="flex items-start gap-2.5 text-body-sm text-text-secondary">
+<span class="material-symbols-outlined text-status-stable text-[18px] mt-0.5">check_circle</span>
+<span>Personalized Macro Guide &amp; Meal Planning Awal</span>
+</div>
+<div class="flex items-start gap-2.5 text-body-sm text-text-secondary">
+<span class="material-symbols-outlined text-status-stable text-[18px] mt-0.5">check_circle</span>
+<span>Analisis Komposisi Tubuh Mandiri &amp; Edukasi Defisit Kalori</span>
+</div>
+<div class="flex items-start gap-2.5 text-body-sm text-text-secondary">
+<span class="material-symbols-outlined text-status-stable text-[18px] mt-0.5">check_circle</span>
+<span>Akses Portal Pasien DrMetz Care &amp; Chat Ahli Gizi Mingguan</span>
+</div>
+</div>
+</div>
+<div class="mt-8">
+<a class="w-full inline-flex items-center justify-center px-5 py-3 rounded-lg border border-border-subtle bg-surface-card hover:bg-surface-subtle text-text-primary text-title-md font-semibold transition-colors duration-150" href="#skrining">
+              Pilih Paket Kickstarter
+            </a>
+</div>
+</div>
+<!-- Package B (Highlighted / Most Popular) -->
+<div class="bg-surface-card rounded-2xl border-2 border-primary-container p-space-lg flex flex-col justify-between relative shadow-sm">
+<div class="absolute -top-3.5 right-6 bg-primary-container text-on-primary px-3 py-1 rounded-full text-label-sm font-label-sm font-semibold tracking-wide">
+            RECOMMENDED BY CLINICIANS
+          </div>
+<div>
+<div class="flex justify-between items-start">
+<div>
+<span class="text-label-sm font-label-sm text-primary-container font-semibold uppercase">Complete Transformation</span>
+<h3 class="text-headline-md font-headline-md text-text-primary mt-1">Intensive Metabolic Reset</h3>
+<p class="text-body-sm text-text-secondary mt-1">Durasi 12 Minggu Penuh • Pendampingan Total</p>
+</div>
+<span class="px-2.5 py-1 rounded-full text-label-sm font-label-sm bg-primary text-white border border-primary">
+                12 Weeks
+              </span>
+</div>
+<div class="my-6">
+<span class="text-body-sm text-text-secondary">Total Biaya Program Terpadu</span>
+<div class="flex items-baseline gap-1 mt-1">
+<span class="text-display-lg font-display-lg text-text-primary">Rp 3.200.000</span>
+<span class="text-body-sm text-text-muted">/ 12 minggu</span>
+</div>
+<span class="text-label-sm text-status-stable font-semibold">Tersedia opsi cicilan 0% 3 bulan</span>
+</div>
+<div class="space-y-3 pt-4 border-t border-border-subtle">
+<div class="flex items-start gap-2.5 text-body-sm text-text-primary font-medium">
+<span class="material-symbols-outlined text-primary-container text-[18px] mt-0.5" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span>6x Telekonsultasi Bi-Weekly Bersama Dokter Spesialis</span>
+</div>
+<div class="flex items-start gap-2.5 text-body-sm text-text-primary font-medium">
+<span class="material-symbols-outlined text-primary-container text-[18px] mt-0.5" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span>6x Sesi Konsultasi &amp; Restrukturisasi Pola Makan Ahli Gizi Klinis</span>
+</div>
+<div class="flex items-start gap-2.5 text-body-sm text-text-secondary">
+<span class="material-symbols-outlined text-primary-container text-[18px] mt-0.5" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span>Integrasi Smart Device &amp; Bioimpedansi Real-time Dashboard</span>
+</div>
+<div class="flex items-start gap-2.5 text-body-sm text-text-secondary">
+<span class="material-symbols-outlined text-primary-container text-[18px] mt-0.5" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span>Resep Suplemen &amp; Pengoptimal Sensitivitas Hormon Berizin BPOM</span>
+</div>
+<div class="flex items-start gap-2.5 text-body-sm text-text-secondary">
+<span class="material-symbols-outlined text-primary-container text-[18px] mt-0.5" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span>Continuous WhatsApp Care Team Hotline &amp; Sinkronisasi SATUSEHAT</span>
+</div>
+</div>
+</div>
+<div class="mt-8">
+<a class="w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-lg bg-primary-container hover:bg-[#0c4a6e] text-on-primary text-title-md font-semibold transition-all duration-150 shadow-sm" href="#skrining">
+<span>Mulai Skrining 12-Minggu Sekarang</span>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</a>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 6: Qualified Clinical Team -->
+<section class="max-w-7xl mx-auto px-gutter md:px-margin py-space-xl" id="spesialis">
+<div class="max-w-2xl mb-space-lg">
+<span class="text-label-md font-label-md text-primary-container uppercase tracking-wider">Clinical Governance</span>
+<h2 class="text-headline-lg font-headline-lg text-text-primary tracking-tight mt-1">
+          Dipimpin Praktisi Medis Berlisensi Resmi
+        </h2>
+<p class="text-body-md text-text-secondary mt-1">
+          Setiap rekomendasi nutrisi dan evaluasi laboratorium diawasi langsung oleh dokter pemegang Surat Izin Praktik (SIP) aktif.
+        </p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-space-lg">
+<!-- Specialist 1 -->
+<div class="bg-surface-card rounded-xl border border-border-subtle p-space-md flex flex-col justify-between hover:border-border-strong transition-all duration-150">
+<div>
+<div class="flex items-center gap-3 mb-4">
+<div class="w-14 h-14 rounded-full bg-slate-100 flex items-center justify-center text-primary font-bold border border-border-subtle text-title-lg">
+                DM
+              </div>
+<div>
+<span class="px-2 py-0.5 rounded text-label-sm font-label-sm bg-surface-subtle text-primary font-semibold">Lead Aesthetics</span>
+<h3 class="text-title-lg font-title-lg text-text-primary mt-1">Dr. Metz, Sp.D.V.E</h3>
+<p class="text-body-sm text-text-secondary">Clinical Aesthetics &amp; Body Lead</p>
+</div>
+</div>
+<p class="text-body-sm text-text-secondary leading-relaxed mb-4">
+              Berpengalaman lebih dari 12 tahun dalam manajemen komposisi jaringan lunak, penanganan selulit, elastisitas kulit post-fat loss, dan keamanan metabolik klinis.
+            </p>
+</div>
+<div class="pt-3 border-t border-border-subtle flex items-center justify-between text-code-clinical text-text-muted">
+<span>SIP: 446.1/1092/SIP-SP/Dinkes</span>
+<span class="text-status-stable flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">verified</span> Terverifikasi</span>
+</div>
+</div>
+<!-- Specialist 2 -->
+<div class="bg-surface-card rounded-xl border border-border-subtle p-space-md flex flex-col justify-between hover:border-border-strong transition-all duration-150">
+<div>
+<div class="flex items-center gap-3 mb-4">
+<div class="w-14 h-14 rounded-full bg-slate-100 flex items-center justify-center text-primary font-bold border border-border-subtle text-title-lg">
+                HW
+              </div>
+<div>
+<span class="px-2 py-0.5 rounded text-label-sm font-label-sm bg-surface-subtle text-primary font-semibold">Spesialis Gizi</span>
+<h3 class="text-title-lg font-title-lg text-text-primary mt-1">Dr. Hendra Wijaya, Sp.GK</h3>
+<p class="text-body-sm text-text-secondary">Spesialis Gizi Klinik</p>
+</div>
+</div>
+<p class="text-body-sm text-text-secondary leading-relaxed mb-4">
+              Fokus pada regulasi resistensi insulin, sindrom metabolik, dislipidemia, dan formulasi defisit kalori presisi yang mempertahankan 100% massa otot fungsional.
+            </p>
+</div>
+<div class="pt-3 border-t border-border-subtle flex items-center justify-between text-code-clinical text-text-muted">
+<span>SIP: 446.2/3410/SIP-GK/IDI</span>
+<span class="text-status-stable flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">verified</span> Terverifikasi</span>
+</div>
+</div>
+<!-- Specialist 3 -->
+<div class="bg-surface-card rounded-xl border border-border-subtle p-space-md flex flex-col justify-between hover:border-border-strong transition-all duration-150">
+<div>
+<div class="flex items-center gap-3 mb-4">
+<div class="w-14 h-14 rounded-full bg-slate-100 flex items-center justify-center text-primary font-bold border border-border-subtle text-title-lg">
+                SA
+              </div>
+<div>
+<span class="px-2 py-0.5 rounded text-label-sm font-label-sm bg-surface-subtle text-primary font-semibold">Registered Dietitian</span>
+<h3 class="text-title-lg font-title-lg text-text-primary mt-1">Sarah Amelia, S.Gz</h3>
+<p class="text-body-sm text-text-secondary">Clinical Nutritionist</p>
+</div>
+</div>
+<p class="text-body-sm text-text-secondary leading-relaxed mb-4">
+              Ahli restrukturisasi perilaku makan (behavioral nutrition), kurasi pilihan bahan pangan lokal Indonesia, dan pendampingan micro-habits harian tanpa rasa tertekan.
+            </p>
+</div>
+<div class="pt-3 border-t border-border-subtle flex items-center justify-between text-code-clinical text-text-muted">
+<span>SIPA: 19930812/STRGZ-2021</span>
+<span class="text-status-stable flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">verified</span> Terverifikasi</span>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 7: Safety & Medical Gate (Accordion & Emergency Protocol) -->
+<section class="max-w-7xl mx-auto px-gutter md:px-margin py-space-xl">
+<div class="bg-surface-card border border-border-subtle rounded-2xl p-space-lg">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-space-lg border-b border-border-subtle">
+<div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-container text-[22px]">shield</span>
+<h2 class="text-headline-md font-headline-md text-text-primary">Medical Gate &amp; Skrining Kontraindikasi</h2>
+</div>
+<p class="text-body-md text-text-secondary mt-1">
+              Keamanan biologis Anda adalah prioritas utama. Program ini hanya dijalankan setelah Anda lolos asesmen klinis.
+            </p>
+</div>
+<div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-surface-subtle border border-border-subtle text-body-sm text-text-secondary self-start md:self-auto">
+<span class="material-symbols-outlined text-[16px] text-primary">gavel</span>
+<span>Permenkes No. 24 Tahun 2022</span>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-space-lg pt-space-lg">
+<!-- Left: Contraindication List -->
+<div class="space-y-3">
+<h4 class="text-title-md font-title-md text-text-primary">Kriteria Eksklusi Medis Awal:</h4>
+<div class="p-3 bg-surface-canvas rounded-xl border border-border-subtle flex items-start gap-3">
+<span class="material-symbols-outlined text-status-warning text-[20px] mt-0.5">warning</span>
+<div class="text-body-sm text-text-secondary">
+<span class="font-semibold text-text-primary">Kehamilan &amp; Menyusui Eksklusif:</span>
+                Defisit kalori sistemik tidak diperkenankan demi menjaga nutrisi janin dan produksi ASI.
+              </div>
+</div>
+<div class="p-3 bg-surface-canvas rounded-xl border border-border-subtle flex items-start gap-3">
+<span class="material-symbols-outlined text-status-warning text-[20px] mt-0.5">warning</span>
+<div class="text-body-sm text-text-secondary">
+<span class="font-semibold text-text-primary">Riwayat Gangguan Makan (Anorexia / Bulimia Aktif):</span>
+                Memerlukan pendampingan multidisiplin psikiatri sebelum intervensi berat badan.
+              </div>
+</div>
+<div class="p-3 bg-surface-canvas rounded-xl border border-border-subtle flex items-start gap-3">
+<span class="material-symbols-outlined text-status-warning text-[20px] mt-0.5">warning</span>
+<div class="text-body-sm text-text-secondary">
+<span class="font-semibold text-text-primary">Gagal Ginjal Kronik atau Gangguan Hati Dekompensasi:</span>
+                Restriksi protein dan metabolisme cairan khusus memerlukan penanganan rawat inap.
+              </div>
+</div>
+</div>
+<!-- Right: Digital Triage & SATUSEHAT Integration Guarantee -->
+<div class="bg-surface-canvas p-space-md rounded-xl border border-border-subtle flex flex-col justify-between">
+<div>
+<div class="flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-primary text-[20px]">sync_saved_locally</span>
+<h4 class="text-title-md font-title-md text-text-primary">Kerahasiaan &amp; RME Terintegrasi</h4>
+</div>
+<p class="text-body-sm text-text-secondary leading-relaxed">
+                Seluruh rekam medis elektronik (RME) terenkripsi end-to-end 256-bit dan disinkronkan secara aman ke ekosistem SATUSEHAT Kemenkes RI sesuai mandat Permenkes 24/2022. Catatan observasi internal dokter terlindungi secara ketat.
+              </p>
+<!-- Protocol Box -->
+<div class="mt-4 p-3 bg-status-emergency-bg border border-[#FECDD3] rounded-lg">
+<div class="flex items-center gap-2 text-status-emergency text-label-md font-semibold mb-1">
+<span class="material-symbols-outlined text-[16px]">crisis_alert</span>
+<span>Protokol Triage Darurat (FR-INT-04)</span>
+</div>
+<p class="text-body-sm text-slate-800">
+                  Jika selama program Anda mengalami gejala nyeri dada akut, sesak napas berat, atau hipoglikemia bergejala (&lt;55 mg/dL), segera hubungi IGD terdekat atau Emergency Dispatch 119.
+                </p>
+</div>
+</div>
+<div class="mt-4 flex items-center justify-between text-label-sm text-text-muted">
+<span>SATUSEHAT FHIR Specification</span>
+<span class="text-status-stable font-semibold">Tersertifikasi Penuh</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 8: Interactive Final CTA Screening Gate -->
+<section class="max-w-7xl mx-auto px-gutter md:px-margin pt-space-md" id="skrining">
+<div class="bg-primary text-white rounded-2xl p-space-xl flex flex-col lg:flex-row items-center justify-between gap-space-lg shadow-sm">
+<div class="max-w-2xl">
+<span class="px-3 py-1 rounded-full text-label-sm font-label-sm bg-white/10 text-primary-fixed font-semibold tracking-wider uppercase inline-block mb-3">
+            Langkah Pertama
+          </span>
+<h2 class="text-headline-lg font-headline-lg font-bold tracking-tight text-white">
+            Siap Memulai Body Reset Bebas Efek Yoyo?
+          </h2>
+<p class="text-body-lg text-primary-fixed mt-2">
+            Isi formulir asesmen metabolik awal dalam waktu 2 menit. Dokter spesialis kami akan mereview profil biologis Anda sebelum memulai program.
+          </p>
+</div>
+<div class="flex flex-col sm:flex-row items-center gap-3 w-full lg:w-auto">
+<a class="w-full sm:w-auto px-8 py-3.5 rounded-lg bg-white text-primary hover:bg-slate-100 text-title-lg font-bold transition-all duration-150 text-center shadow-md active:scale-95" href="#">
+            Daftar Skrining Metabolik
+          </a>
+<a class="w-full sm:w-auto px-6 py-3.5 rounded-lg bg-transparent hover:bg-white/10 border border-white/30 text-white text-title-lg font-medium transition-colors duration-150 text-center" href="#biaya">
+            Konsultasi Tanya Jawab
+          </a>
+</div>
+</div>
+</section>
+</main>
+<!-- FOOTER -->
+<footer class="w-full py-space-xl px-gutter md:px-margin max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-space-lg border-t border-border-subtle bg-surface-subtle">
+<!-- Legal & Compliance Text -->
+<div class="flex flex-col gap-2 max-w-2xl text-left">
+<div class="flex items-center gap-2">
+<span class="text-headline-sm font-headline-sm text-primary tracking-tight font-extrabold">DrMetz Care</span>
+<span class="text-text-muted">|</span>
+<span class="text-label-sm font-label-sm text-text-secondary font-semibold">Clinical Systems</span>
+</div>
+<p class="text-body-sm font-body-sm text-text-secondary">
+        © 2024 DrMetz Care Clinical Systems. Compliant with Permenkes 24/2022 &amp; SATUSEHAT Integration. All medical consultations are strictly confidential and encrypted under 256-bit SSL protocols.
+      </p>
+</div>
+<!-- Mandatory Links Cluster -->
+<div class="flex flex-wrap items-center gap-x-6 gap-y-2">
+<a class="text-text-secondary font-label-sm hover:text-primary underline transition-colors duration-150 focus:ring-2 focus:ring-primary focus:outline-none" href="#">Clinic Partner Portal</a>
+<a class="text-text-secondary font-label-sm hover:text-primary underline transition-colors duration-150 focus:ring-2 focus:ring-primary focus:outline-none" href="#">Clinical Governance</a>
+<a class="text-text-secondary font-label-sm hover:text-primary underline transition-colors duration-150 focus:ring-2 focus:ring-primary focus:outline-none" href="#">Privacy Policy &amp; SATUSEHAT Terms</a>
+<a class="text-text-secondary font-label-sm hover:text-primary underline transition-colors duration-150 focus:ring-2 focus:ring-primary focus:outline-none" href="#">Emergency Triage Protocol</a>
+<a class="text-text-secondary font-label-sm hover:text-primary underline transition-colors duration-150 focus:ring-2 focus:ring-primary focus:outline-none" href="#">Practitioner Verification</a>
+</div>
+</footer>
+</body></html>

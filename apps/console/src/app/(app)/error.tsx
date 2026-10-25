@@ -26,7 +26,7 @@ export default function ConsoleError({ error, retry }: { error: Error & { digest
   }, [error, stale]);
 
   return (
-    <div className="rounded-lg border border-line bg-white p-6">
+    <div className="rounded-lg border border-line bg-white p-4 md:p-6">
       <h1 className="text-[22px] font-semibold text-navy">{stale ? "Konsol sudah diperbarui" : "Ada yang belum berjalan semestinya"}</h1>
       <p className="mt-2 text-base text-body">
         {reloading
@@ -37,11 +37,11 @@ export default function ConsoleError({ error, retry }: { error: Error & { digest
       </p>
       {!reloading && (
         <div className="mt-5 flex flex-wrap gap-3">
-          <button type="button" onClick={() => window.location.reload()} className="rounded-pill bg-navy px-6 py-3 text-base font-semibold text-white">
+          <button type="button" onClick={() => window.location.reload()} className="rounded-md bg-action px-6 py-3 text-base font-semibold text-white">
             Muat ulang halaman
           </button>
           {!stale && (
-            <button type="button" onClick={() => retry()} className="rounded-pill border border-navy px-5 py-2 text-base font-semibold text-navy">
+            <button type="button" onClick={() => retry()} className="rounded-md border border-line bg-surface px-5 py-2 text-base font-semibold text-navy">
               Coba lagi
             </button>
           )}

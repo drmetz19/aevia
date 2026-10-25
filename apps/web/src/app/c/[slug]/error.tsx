@@ -32,7 +32,7 @@ export default function PatientError({ error, retry }: { error: Error & { digest
   return (
     <div className="page-atmos flex min-h-screen items-center">
       <main className="mx-auto max-w-xl px-4 py-24 text-center">
-        <h1 className="font-serif text-[30px] leading-[1.15] text-navy sm:text-4xl">
+        <h1 className="font-bold text-[30px] leading-[1.15] text-navy sm:text-4xl">
           {stale ? "Halaman sudah diperbarui" : "Ada yang belum berjalan semestinya"}
         </h1>
         <p className="mt-4 text-body">
@@ -47,7 +47,7 @@ export default function PatientError({ error, retry }: { error: Error & { digest
             <button
               type="button"
               onClick={() => window.location.reload()}
-              className="inline-flex w-full items-center justify-center rounded-pill bg-navy px-6 py-3.5 text-base font-semibold text-white shadow-soft transition active:scale-[0.98] sm:w-auto"
+              className="inline-flex w-full items-center justify-center rounded-md bg-action px-6 py-3.5 text-base font-semibold text-white transition active:scale-[0.98] sm:w-auto"
             >
               Muat ulang halaman
             </button>
@@ -55,7 +55,7 @@ export default function PatientError({ error, retry }: { error: Error & { digest
               <button
                 type="button"
                 onClick={() => retry()}
-                className="inline-flex w-full items-center justify-center rounded-pill border border-navy px-6 py-3.5 text-base font-semibold text-navy transition active:scale-[0.98] sm:w-auto"
+                className="inline-flex w-full items-center justify-center rounded-md border border-line bg-surface px-6 py-3.5 text-base font-semibold text-navy transition active:scale-[0.98] sm:w-auto"
               >
                 Coba lagi
               </button>

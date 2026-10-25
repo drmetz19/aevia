@@ -59,7 +59,7 @@ async function mkKey(admin: string, scopes: string[]) {
 }
 async function requestAndAccept(pat: { token: string; id: string }, programIdx = 0) {
   const progs = (await app.inject("/v1/clinics/drmetz/programs")).json().programs;
-  const rq = (await call("POST", "/v1/consultation-requests", pat.token, { program_id: progs[programIdx].id, prep: { tujuan: "Tidur lebih baik", keluhan: "", pertanyaan: [], konteks_assessment: "" } })).json();
+  const rq = (await call("POST", "/v1/consultation-requests", pat.token, { program_id: progs[programIdx].id, voucher_code: "COBA-AEVIA", prep: { tujuan: "Tidur lebih baik", keluhan: "", pertanyaan: [], konteks_assessment: "" } })).json();
   const acc = await call("POST", `/v1/staff/consultation-requests/${rq.id}/accept`, proA, { scheduled_at: "2026-10-10T03:00:00.000Z", meeting_url: "https://meet.contoh.id/abc" });
   expect(acc.statusCode).toBe(200);
   return { requestId: rq.id as string, consultationId: acc.json().consultation.id as string, programName: progs[programIdx].name as string };
@@ -169,7 +169,7 @@ describe("KlinikSistem outbound", () => {
     mock.bookings.length = 0;
     const p2 = await patient("drmetz", "ks-2@contoh.test");
     const progs = (await app.inject("/v1/clinics/drmetz/programs")).json().programs;
-    await call("POST", "/v1/consultation-requests", p2.token, { program_id: progs[1].id, prep: { tujuan: "x", keluhan: "", pertanyaan: [], konteks_assessment: "" } });
+    await call("POST", "/v1/consultation-requests", p2.token, { program_id: progs[1].id, voucher_code: "COBA-AEVIA", prep: { tujuan: "x", keluhan: "", pertanyaan: [], konteks_assessment: "" } });
     await run();
     expect(mock.bookings).toHaveLength(0);
     await call("PUT", "/v1/staff/connectors/kliniksistem", adminA, { base_url: KS, enabled: true, push_requested: true });

@@ -13,6 +13,8 @@ export async function fetchClinic(slug: string): Promise<PublicClinic | null> {
 export function brandStyle(c: PublicClinic): Record<string, string> {
   if (c.brand_mode !== "whitelabel") return {};
   const out: Record<string, string> = { ...(themeVars(c.colors) ?? {}) };
+  // Tombol primer cobrand = cyan Aevia Konsult; whitelabel memakai warna primer klinik.
+  if (out["--brand-primary"]) out["--brand-primary-action"] = out["--brand-primary"];
   const stack = fontStack(c.font);
   if (stack) {
     out["--font-sans"] = stack;

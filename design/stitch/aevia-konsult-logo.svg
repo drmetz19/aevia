@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 120" width="480" height="120" fill="none">
+  <defs>
+    <linearGradient id="aeviaGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0e7490" />
+      <stop offset="50%" stop-color="#06b6d4" />
+      <stop offset="100%" stop-color="#10b981" />
+    </linearGradient>
+    <linearGradient id="subtleAevia" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#0891b2" stop-opacity="0.15" />
+      <stop offset="100%" stop-color="#10b981" stop-opacity="0.3" />
+    </linearGradient>
+  </defs>
+  <!-- Brand Mark: Harmonic synthesis of 'A' arch, infinite cellular loop, and gentle medical cross / leaf -->
+  <g transform="translate(16, 12)">
+    <circle cx="48" cy="48" r="44" fill="url(#subtleAevia)" />
+    <!-- Outer Elegant Arc -->
+    <path d="M48 16 C30 16 18 30 18 48 C18 66 30 80 48 80 C66 80 78 66 78 48" stroke="url(#aeviaGrad)" stroke-width="4.5" stroke-linecap="round" fill="none"/>
+    <!-- Ascending Inner Node: Vitality & Consultation Bridge -->
+    <path d="M48 26 C36 26 28 36 28 48 C28 60 38 70 48 70 C58 70 68 60 68 48 C68 36 58 26 48 26 Z" fill="none" stroke="#0e7490" stroke-width="3" stroke-dasharray="0.5 8" stroke-linecap="round"/>
+    <!-- Core Diamond / Leaf Pulse -->
+    <path d="M48 34 L56 48 L48 62 L40 48 Z" fill="url(#aeviaGrad)"/>
+    <circle cx="48" cy="48" r="3" fill="#ffffff" />
+    <!-- Clinical Cross Accent Dots -->
+    <circle cx="48" cy="18" r="2.5" fill="#10b981" />
+    <circle cx="78" cy="48" r="2.5" fill="#06b6d4" />
+    <circle cx="48" cy="78" r="2.5" fill="#0e7490" />
+    <circle cx="18" cy="48" r="2.5" fill="#0891b2" />
+  </g>
+  <!-- Typography -->
+  <g transform="translate(132, 32)">
+    <text x="0" y="38" font-family="'Plus Jakarta Sans', system-ui, -apple-system, sans-serif" font-size="38" font-weight="700" letter-spacing="-0.03em" fill="#0f172a">AEVIA</text>
+    <text x="146" y="38" font-family="'Plus Jakarta Sans', system-ui, -apple-system, sans-serif" font-size="38" font-weight="300" letter-spacing="0.04em" fill="#0e7490">KONSULT</text>
+    <text x="2" y="58" font-family="'Plus Jakarta Sans', system-ui, -apple-system, sans-serif" font-size="10.5" font-weight="600" letter-spacing="0.22em" fill="#64748b" text-transform="uppercase">Clinical Sanctuary &amp; Telehealth Matrix</text>
+  </g>
+</svg>

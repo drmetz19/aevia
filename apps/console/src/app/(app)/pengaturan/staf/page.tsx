@@ -1,6 +1,7 @@
 import { teamListSchema } from "@aevia/core";
 import { requireStaff, staffFetch } from "@/lib/api";
-import { PageHead, ActionForm, inputCls, labelCls, primaryCls, ghostCls, Submit } from "@/components/Ui";
+import { PageHead, ActionForm, Submit } from "@/components/Ui";
+import { inputCls, labelCls, primaryCls, ghostCls } from "@/lib/ui-classes";
 import { SettingsTabs } from "@/components/SettingsTabs";
 import { inviteStaff, setStaffActive } from "../actions";
 
@@ -15,7 +16,7 @@ export default async function Staf() {
       <PageHead eyebrow="Pengaturan" title="Staf klinik" lead="Undang profesional atau admin baru, dan atur akses mereka. Staf yang dinonaktifkan langsung tidak dapat masuk." />
       <div className="mt-6" />
       <SettingsTabs current="/pengaturan/staf" />
-      <div className="overflow-x-auto rounded-lg border border-line bg-white shadow-soft">
+      <div className="overflow-x-auto rounded-lg border border-line bg-white">
         <table className="table-stack w-full min-w-[560px] text-left text-base">
           <caption className="sr-only">Daftar staf klinik</caption>
           <thead className="border-b border-line text-[13px] font-medium text-body">
@@ -46,7 +47,7 @@ export default async function Staf() {
           </tbody>
         </table>
       </div>
-      <section aria-labelledby="undang" className="mt-8 rounded-lg border border-line bg-white p-6 shadow-soft">
+      <section aria-labelledby="undang" className="mt-8 rounded-lg border border-line bg-white p-4 md:p-6">
         <h2 id="undang" className="text-xl font-semibold text-navy">Undang staf</h2>
         <ActionForm action={inviteStaff} className="mt-4 space-y-3">
                       <>

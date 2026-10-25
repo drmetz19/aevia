@@ -4,7 +4,7 @@ import { useActionState } from "react";
 import { requestStaffCode, verifyStaffCode, type FormState } from "../../actions";
 
 const input = "w-full rounded-md border border-line bg-ivory px-4 py-3 text-base text-navy";
-const primary = "w-full rounded-pill bg-navy px-6 py-3 text-base font-semibold text-white";
+const primary = "w-full rounded-md bg-action px-6 py-3 text-base font-semibold text-white";
 
 export function StaffLoginForm({ ended }: { ended: boolean }) {
   const [req, reqAction, reqPending] = useActionState<FormState, FormData>(requestStaffCode, {});

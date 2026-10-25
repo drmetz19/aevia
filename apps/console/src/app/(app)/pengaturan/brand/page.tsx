@@ -1,6 +1,7 @@
 import { brandSettingsSchema, llmUsageSchema } from "@aevia/core";
 import { publicFileUrl, requireStaff, staffFetch } from "@/lib/api";
-import { PageHead, ActionForm, inputCls, labelCls, primaryCls, ghostCls, Submit } from "@/components/Ui";
+import { PageHead, ActionForm, Submit } from "@/components/Ui";
+import { inputCls, labelCls, primaryCls, ghostCls } from "@/lib/ui-classes";
 import { SettingsTabs } from "@/components/SettingsTabs";
 import { BrandForm } from "./BrandForm";
 import { proposeAssistant, removeLogo, setLlm, uploadLogo } from "../actions";
@@ -21,7 +22,7 @@ export default async function Brand() {
       <div className="mt-6" />
       <SettingsTabs current="/pengaturan/brand" />
 
-      <section aria-labelledby="logo" className="rounded-lg border border-line bg-white p-6 shadow-soft">
+      <section aria-labelledby="logo" className="rounded-lg border border-line bg-white p-4 md:p-6">
         <h2 id="logo" className="text-xl font-semibold text-navy">Logo</h2>
         {b.logo_url && (
           // eslint-disable-next-line @next/next/no-img-element
@@ -41,12 +42,12 @@ export default async function Brand() {
         )}
       </section>
 
-      <section aria-labelledby="merek" className="mt-6 rounded-lg border border-line bg-white p-6 shadow-soft">
+      <section aria-labelledby="merek" className="mt-6 rounded-lg border border-line bg-white p-4 md:p-6">
         <h2 id="merek" className="text-xl font-semibold text-navy">Warna, font, dan domain</h2>
         <div className="mt-4"><BrandForm b={b} /></div>
       </section>
 
-      <section aria-labelledby="asisten" className="mt-6 rounded-lg border border-line bg-white p-6 shadow-soft">
+      <section aria-labelledby="asisten" className="mt-6 rounded-lg border border-line bg-white p-4 md:p-6">
         <h2 id="asisten" className="text-xl font-semibold text-navy">Nama & avatar asisten</h2>
         <p className="mt-2 text-base text-body">
           Saat ini pasien melihat nama <strong>{a.name}</strong>. Status usulan: {statusText[a.status]}
@@ -64,7 +65,7 @@ export default async function Brand() {
         </ActionForm>
       </section>
 
-      <section aria-labelledby="llm" className="mt-6 rounded-lg border border-line bg-white p-6 shadow-soft">
+      <section aria-labelledby="llm" className="mt-6 rounded-lg border border-line bg-white p-4 md:p-6">
         <h2 id="llm" className="text-xl font-semibold text-navy">Percakapan asisten dengan AI generatif</h2>
         <p className="mt-2 text-base text-body">
           {b.llm_available
@@ -74,9 +75,9 @@ export default async function Brand() {
         <p className="mt-2 text-base text-body">Teks asisten dari AI hanya merapikan bahasa (konteks persiapan dan penjelasan rencana), selalu melewati pagar pengaman, dan kembali ke teks standar bila ada kendala. Isi rencana, resep, dan catatan klinis tidak pernah ditulis oleh AI.</p>
         {usage && (
           <dl className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-3" aria-label="Pemakaian 30 hari terakhir">
-            <div><dt className="text-[13px] font-medium text-body">Panggilan (30 hari)</dt><dd className="font-serif text-3xl text-navy">{usage.calls_30d}</dd></div>
-            <div><dt className="text-[13px] font-medium text-body">Kembali ke teks standar</dt><dd className="font-serif text-3xl text-navy">{usage.fallbacks_30d}</dd></div>
-            <div><dt className="text-[13px] font-medium text-body">Token masuk / keluar</dt><dd className="font-serif text-3xl text-navy">{usage.input_tokens_30d} / {usage.output_tokens_30d}</dd></div>
+            <div><dt className="text-[13px] font-medium text-body">Panggilan (30 hari)</dt><dd className="font-bold text-3xl text-navy">{usage.calls_30d}</dd></div>
+            <div><dt className="text-[13px] font-medium text-body">Kembali ke teks standar</dt><dd className="font-bold text-3xl text-navy">{usage.fallbacks_30d}</dd></div>
+            <div><dt className="text-[13px] font-medium text-body">Token masuk / keluar</dt><dd className="font-bold text-3xl text-navy">{usage.input_tokens_30d} / {usage.output_tokens_30d}</dd></div>
           </dl>
         )}
         <ActionForm action={setLlm} className="mt-4">

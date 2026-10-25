@@ -1,10 +1,15 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { AlertTriangle, EyeOff } from "lucide-react";
+import { AlertTriangle, EyeOff, Ticket } from "lucide-react";
 import { queueSchema } from "@aevia/core";
 import { fmtDate, requireStaff, staffFetch } from "@/lib/api";
 
 const statusLabel = { submitted: "Menunggu ditinjau", accepted: "Diterima", declined: "Ditolak" } as const;
+const statusPill = {
+  submitted: "border-current/25 bg-[var(--status-warning-bg)] text-[var(--status-warning)]",
+  accepted: "border-current/25 bg-[var(--status-success-bg)] text-[var(--status-success)]",
+  declined: "border-line bg-sand text-body",
+} as const;
 
 export default async function Antrean() {
   const me = await requireStaff();
@@ -13,13 +18,13 @@ export default async function Antrean() {
   const { items } = res.ok ? queueSchema.parse(await res.json()) : { items: [] };
   return (
     <main className="mx-auto max-w-5xl px-4 py-10 md:px-8">
-      <p className="text-[13px] font-semibold uppercase tracking-[0.12em] text-copper-ink">Antrean</p>
-      <h1 className="mt-1 font-serif text-4xl text-navy">Permintaan konsultasi</h1>
+      <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-copper-ink">Antrean</p>
+      <h1 className="mt-1 font-bold text-4xl text-navy">Permintaan konsultasi</h1>
       <p className="mt-2 text-base text-body">Permintaan terbaru dari pasien klinik Anda. Yang menunggu ditinjau tampil lebih dulu.</p>
       {items.length === 0 ? (
-        <p className="mt-8 rounded-lg border border-line bg-white p-6 text-base text-body">Belum ada permintaan konsultasi.</p>
+        <p className="mt-8 rounded-lg border border-line bg-white p-4 md:p-6 text-base text-body">Belum ada permintaan konsultasi.</p>
       ) : (
-        <div className="mt-8 overflow-x-auto rounded-lg border border-line bg-white shadow-soft">
+        <div className="mt-8 overflow-x-auto rounded-lg border border-line bg-white">
           <table className="table-stack w-full min-w-[640px] text-left text-base">
             <caption className="sr-only">Daftar permintaan konsultasi</caption>
             <thead className="border-b border-line text-[13px] font-medium text-body">
@@ -48,10 +53,15 @@ export default async function Antrean() {
                       </span>
                     )}
                   </td>
-                  <td data-label="Program" className="px-4 py-3 text-navy">{i.program_name}</td>
+                  <td data-label="Program" className="px-4 py-3 text-navy">
+                    {i.program_name}
+                    {i.voucher_code && (
+                      <span className="block"><span className="mt-1 inline-flex items-center gap-1 rounded-md border border-line bg-sand px-2 py-0.5 font-mono text-[13px] font-semibold text-navy" title="Kode voucher yang dipakai"><Ticket aria-hidden="true" size={13} strokeWidth={1.75} />{i.voucher_code}</span></span>
+                    )}
+                  </td>
                   <td data-label="Diajukan" className="px-4 py-3 text-body">{fmtDate(i.created_at)}</td>
-                  <td data-label="Status" className="px-4 py-3 font-semibold text-navy">
-                    {statusLabel[i.status]}
+                  <td data-label="Status" className="px-4 py-3">
+                    <span className={`inline-flex whitespace-nowrap rounded-pill border px-2 py-0.5 text-[11px] font-semibold ${statusPill[i.status]}`}>{statusLabel[i.status]}</span>
                     {i.scheduled_at && <span className="block text-[13px] font-medium text-body">{fmtDate(i.scheduled_at)}</span>}
                   </td>
                 </tr>

@@ -3,6 +3,7 @@ import Link from "next/link";
 const tabs = [
   { href: "/pengaturan/brand", label: "Merek & asisten" },
   { href: "/pengaturan/program", label: "Program" },
+  { href: "/pengaturan/voucher", label: "Voucher" },
   { href: "/pengaturan/staf", label: "Staf" },
   { href: "/pengaturan/integrasi", label: "Integrasi" },
 ];
@@ -15,7 +16,7 @@ export function SettingsTabs({ current }: { current: string }) {
           key={t.href}
           href={t.href}
           aria-current={t.href === current ? "page" : undefined}
-          className={`rounded-pill px-4 py-2 text-base font-semibold ${t.href === current ? "bg-navy text-white" : "border border-line bg-white text-navy"}`}
+          className={`rounded-md px-4 py-2 text-base font-semibold ${t.href === current ? "bg-action text-white" : "border border-line bg-white text-navy"}`}
         >
           {t.label}
         </Link>

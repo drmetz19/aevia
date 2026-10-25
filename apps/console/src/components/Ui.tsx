@@ -2,12 +2,12 @@
 
 import { useActionState, type ReactNode } from "react";
 import { useFormStatus } from "react-dom";
+import { inputCls, labelCls, primaryCls, dangerCls, ghostCls } from "@/lib/ui-classes";
 import type { SettingsState } from "@/app/(app)/pengaturan/actions";
 
-export const inputCls = "w-full rounded-md border border-line bg-white px-4 py-3 text-base text-navy";
-export const labelCls = "block text-[13px] font-semibold text-navy";
-export const primaryCls = "rounded-pill bg-navy px-6 py-3 text-base font-semibold text-white disabled:opacity-60";
-export const ghostCls = "rounded-pill border border-navy px-5 py-2 text-base font-semibold text-navy disabled:opacity-60";
+
+/** Konstanta kelas ada di `@/lib/ui-classes` (modul server-safe); diekspor ulang demi kompatibilitas. */
+export { inputCls, labelCls, primaryCls, dangerCls, ghostCls };
 
 export function Notice({ s }: { s: SettingsState }) {
   return (
@@ -45,17 +45,21 @@ export function ActionForm({
   children,
   className = "space-y-4",
   encType,
+  noticeFirst = false,
 }: {
   action: (p: SettingsState, fd: FormData) => Promise<SettingsState>;
   children: ReactNode;
   className?: string;
   encType?: string;
+  /** Notice tampil di atas isi (mis. form yang membungkus tabel). */
+  noticeFirst?: boolean;
 }) {
   const [s, run] = useActionState<SettingsState, FormData>(action, {});
   return (
     <form action={run} className={className} encType={encType}>
+      {noticeFirst && <Notice s={s} />}
       {children}
-      <Notice s={s} />
+      {!noticeFirst && <Notice s={s} />}
     </form>
   );
 }
@@ -63,17 +67,17 @@ export function ActionForm({
 export function PageHead({ eyebrow, title, lead }: { eyebrow: string; title: string; lead: string }) {
   return (
     <>
-      <p className="text-[13px] font-semibold uppercase tracking-[0.12em] text-copper-ink">{eyebrow}</p>
-      <h1 className="mt-1 font-serif text-4xl text-navy">{title}</h1>
+      <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-copper-ink">{eyebrow}</p>
+      <h1 className="mt-1 text-[28px] font-bold leading-9 text-navy md:text-4xl md:leading-[44px]">{title}</h1>
       <p className="mt-2 max-w-2xl text-base text-body">{lead}</p>
     </>
   );
 }
 
-export function Submit({ className, disabled, name, value, children }: { className: string; disabled?: boolean; name?: string; value?: string; children: ReactNode }) {
+export function Submit({ className, disabled, name, value, children, confirm }: { className: string; disabled?: boolean; name?: string; value?: string; children: ReactNode; confirm?: string }) {
   const { pending } = useFormStatus();
   return (
-    <button type="submit" name={name} value={value} disabled={pending || disabled} className={className}>
+    <button type="submit" name={name} value={value} disabled={pending || disabled} className={className} onClick={confirm ? (e) => { if (!window.confirm(confirm)) e.preventDefault(); } : undefined}>
       {children}
     </button>
   );

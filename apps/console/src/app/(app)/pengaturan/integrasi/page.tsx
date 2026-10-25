@@ -1,7 +1,8 @@
 import { SCOPES, SCOPE_LABELS, connectorOverviewSchema, deliveryViewSchema, integrationOverviewSchema } from "@aevia/core";
 import { z } from "zod";
 import { fmtDate, requireStaff, staffFetch } from "@/lib/api";
-import { PageHead, ActionForm, Submit, inputCls, labelCls, primaryCls, ghostCls } from "@/components/Ui";
+import { PageHead, ActionForm, Submit } from "@/components/Ui";
+import { inputCls, labelCls, primaryCls, ghostCls } from "@/lib/ui-classes";
 import { SettingsTabs } from "@/components/SettingsTabs";
 import { saveBeautycode, saveKliniksistem, syncBeautycode, testKliniksistem, createApiKey, createOauthClient, createWebhook, deleteWebhook, revokeApiKey, revokeOauthClient, testWebhook, toggleWebhook } from "../actions";
 
@@ -43,7 +44,7 @@ export default async function Integrasi() {
       <div className="mt-6" />
       <SettingsTabs current="/pengaturan/integrasi" />
 
-      <section aria-labelledby="keys" className="rounded-lg border border-line bg-white p-6 shadow-soft">
+      <section aria-labelledby="keys" className="rounded-lg border border-line bg-white p-4 md:p-6">
         <h2 id="keys" className="text-xl font-semibold text-navy">Kunci API</h2>
         {o.api_keys.length === 0 ? (
           <p className="mt-2 text-base text-body">Belum ada kunci API.</p>
@@ -79,7 +80,7 @@ export default async function Integrasi() {
         </ActionForm>
       </section>
 
-      <section aria-labelledby="oauth" className="mt-6 rounded-lg border border-line bg-white p-6 shadow-soft">
+      <section aria-labelledby="oauth" className="mt-6 rounded-lg border border-line bg-white p-4 md:p-6">
         <h2 id="oauth" className="text-xl font-semibold text-navy">Klien OAuth (client-credentials)</h2>
         <p className="mt-2 text-base text-body">Tukar client ID dan secret dengan token berumur 15 menit di <code>/v1/oauth/token</code>.</p>
         {o.oauth_clients.length === 0 ? (
@@ -110,7 +111,7 @@ export default async function Integrasi() {
         </ActionForm>
       </section>
 
-      <section aria-labelledby="hooks" className="mt-6 rounded-lg border border-line bg-white p-6 shadow-soft">
+      <section aria-labelledby="hooks" className="mt-6 rounded-lg border border-line bg-white p-4 md:p-6">
         <h2 id="hooks" className="text-xl font-semibold text-navy">Webhook</h2>
         <p className="mt-2 text-base text-body">Kami mengirim kejadian ke alamat https Anda, ditandatangani dengan <code>X-Aevia-Signature</code>. Gagal terkirim akan dicoba ulang hingga 3 kali.</p>
         {o.webhooks.map((w) => (
@@ -177,7 +178,7 @@ export default async function Integrasi() {
         </ActionForm>
       </section>
 
-      <section aria-labelledby="konektor" className="mt-6 rounded-lg border border-line bg-white p-6 shadow-soft">
+      <section aria-labelledby="konektor" className="mt-6 rounded-lg border border-line bg-white p-4 md:p-6">
         <h2 id="konektor" className="text-xl font-semibold text-navy">Konektor</h2>
         <p className="mt-2 text-base text-body">Hubungkan KlinikSistem (jadwal dan kunjungan) dan Beauty Code (catatan harian pasien). Kontrak lengkap ada di docs/integrasi.</p>
 

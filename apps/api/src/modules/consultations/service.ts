@@ -1,6 +1,6 @@
 import { and, desc, eq } from "drizzle-orm";
-import { beautyContextLine, draftPrep, prepSchema, resultSchema, type ConsultationRequestView, type Prep, type StoredAnswer } from "@aevia/core";
-import { assessmentAnswers, assessments, consultationRequests, consultations, events, programs, type Db, type Tx } from "@aevia/db";
+import { VOUCHER_ERRORS, beautyContextLine, draftPrep, prepSchema, resultSchema, type ConsultationRequestView, type Prep, type StoredAnswer } from "@aevia/core";
+import { assessmentAnswers, assessments, consultationRequests, consultations, events, programs, voucherRedemptions, vouchers, writeAudit, type Db, type Tx } from "@aevia/db";
 import { AuthError } from "../auth/otp";
 import { beautySnapshotFor } from "../connectors/context";
 
@@ -41,8 +41,21 @@ export function toView(
   };
 }
 
-/** `audit` (opsional) dijalankan di transaksi yang sama, mis. untuk permintaan lewat API integrasi. */
-export async function createRequest(c: Ctx, programId: string, prep: Prep, audit?: (tx: Tx, row: typeof consultationRequests.$inferSelect) => Promise<void>) {
+const voucherError = (code: keyof typeof VOUCHER_ERRORS) => new AuthError(VOUCHER_ERRORS[code][0], code, VOUCHER_ERRORS[code][1]);
+
+/**
+ * `audit` (opsional) dijalankan di transaksi yang sama, mis. untuk permintaan lewat API integrasi.
+ * Voucher: bila program ber-akses voucher kode wajib (kecuali `enforceVoucher: false`, mis. permintaan dari sistem klinik);
+ * kode yang diisi ditukar atomik di transaksi yang sama — galat apa pun membatalkan pembuatan permintaan.
+ */
+export async function createRequest(
+  c: Ctx,
+  programId: string,
+  prep: Prep,
+  audit?: (tx: Tx, row: typeof consultationRequests.$inferSelect) => Promise<void>,
+  voucher: { code?: string; enforce?: boolean } = {},
+) {
+  const code = voucher.code?.trim().toUpperCase() || null;
   return c.db.withTenant(c.clinicId, async (tx) => {
     const [p] = await tx.select().from(programs).where(and(eq(programs.id, programId), eq(programs.active, true)));
     if (!p) throw new AuthError(404, "program_not_found", "Program yang Anda pilih belum ditemukan di klinik ini.");
@@ -58,6 +71,19 @@ export async function createRequest(c: Ctx, programId: string, prep: Prep, audit
       );
     if (dupe) {
       throw new AuthError(409, "request_exists", "Permintaan untuk program ini sudah kami terima dan sedang ditinjau tim klinik.");
+    }
+    if (!code && p.access === "voucher" && voucher.enforce !== false) throw voucherError("voucher_required");
+    const [v] = code ? await tx.select().from(vouchers).where(eq(vouchers.code, code)).for("update") : [];
+    if (code) {
+      if (!v || !v.active) throw voucherError("voucher_invalid");
+      if (v.expiresAt && v.expiresAt.getTime() <= c.now.getTime()) throw voucherError("voucher_expired");
+      if (v.programId && v.programId !== programId) throw voucherError("voucher_not_for_program");
+      const [used] = await tx
+        .select({ id: voucherRedemptions.id })
+        .from(voucherRedemptions)
+        .where(and(eq(voucherRedemptions.voucherId, v.id), eq(voucherRedemptions.patientId, c.patientId)));
+      if (used) throw voucherError("voucher_already_used");
+      if (v.maxUses !== null && v.usedCount >= v.maxUses) throw voucherError("voucher_exhausted");
     }
     const [a] = await tx
       .select({ id: assessments.id })
@@ -75,6 +101,21 @@ export async function createRequest(c: Ctx, programId: string, prep: Prep, audit
       payload: { request_id: row!.id, patient_id: c.patientId, program_id: programId },
       createdAt: c.now,
     });
+    if (v) {
+      await tx.update(vouchers).set({ usedCount: v.usedCount + 1 }).where(eq(vouchers.id, v.id));
+      await tx.insert(voucherRedemptions).values({ clinicId: c.clinicId, voucherId: v.id, patientId: c.patientId, requestId: row!.id, at: c.now });
+      await writeAudit(tx, {
+        clinicId: c.clinicId,
+        actorType: "patient",
+        actorId: c.patientId,
+        entity: "voucher",
+        entityId: v.id,
+        action: "voucher.redeem",
+        before: { used_count: v.usedCount },
+        after: { used_count: v.usedCount + 1, request_id: row!.id, program_id: programId },
+        at: c.now,
+      });
+    }
     if (audit) await audit(tx, row!);
     return toView(row!, p.name, null);
   });

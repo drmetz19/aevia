@@ -11,7 +11,8 @@
     "./tailwind.css": "./tailwind.css",
     "./tailwind-preset": "./tailwind-preset.ts",
     "./fonts.css": "./fonts.css",
-    "./progress": "./src/progress.tsx"
+    "./progress": "./src/progress.tsx",
+    "./logo": "./src/logo.tsx"
   },
   "scripts": {
     "typecheck": "tsc -p .",

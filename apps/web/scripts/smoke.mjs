@@ -83,7 +83,8 @@ try {
 
   const dm = await (await fetch(`${WEB}/c/drmetz`)).text();
   check(dm.includes("DrMetz"), "/c/drmetz memuat nama DrMetz");
-  check(dm.includes("powered by AEVIA"), "/c/drmetz memuat 'powered by AEVIA'");
+  check(dm.includes("powered by Aevia Konsult") && dm.includes("data-aevia-mark"), "/c/drmetz memuat 'powered by Aevia Konsult' + mark logo SVG");
+  check(!dm.includes("DM Serif"), "/c/drmetz tanpa font DM Serif");
   check(dm.replace(/<!-- -->/g, "").includes("Sovia adalah AI"), "/c/drmetz memuat 'Sovia adalah AI'");
   check(dm.includes("Mulai assessment") && dm.includes("/c/drmetz/assessment"), "CTA Mulai assessment → /assessment");
   for (const s of ["Assessment", "Konsultasi", "Rencana personal", "Follow-up &amp; progres"])
@@ -148,7 +149,7 @@ try {
   const mid = (await (await fetch(`${WEB}/c/drmetz/assessment`, { headers: cookie })).text()).replace(/<!-- -->/g, "");
   check(mid.includes('role="progressbar"') && mid.includes("Pertanyaan 1 dari 20"), "chat: progress bar + satu pertanyaan per langkah");
   check(mid.includes('type="radio"') && mid.includes("Lanjut"), "pertanyaan pilihan berupa form radio (no-JS)");
-  check(!/aevia/i.test(text(mid).replace(/Sovia · AI Guide by AEVIA|powered by AEVIA/g, "")), "tidak ada AEVIA selain header/badge cobrand");
+  check(!/aevia/i.test(text(mid).replace(/Sovia · AI Guide by AEVIA|powered by Aevia Konsult/g, "")), "tidak ada AEVIA selain header/badge cobrand");
 
   const emerg = await post(`${API}/v1/assessments/${st1.id}/answers`, { question_id: "tujuan-t", text: "kadang nyeri dada" }, token);
   const eb = await emerg.json();
@@ -187,6 +188,7 @@ try {
   // --- Phase 4: program, prep, antrean ---
   const prog = (await (await fetch(`${WEB}/c/drmetz/program`, { headers: cookie })).text()).replace(/<!-- -->/g, "");
   check(prog.includes("Konsultasi Healthy Aging") && prog.includes("Program Pendampingan Kulit 8 Minggu") && prog.includes("Rp"), "katalog: 3 program drmetz + harga dari DB");
+  check(prog.includes("Segera hadir") && prog.includes("Perlu kode voucher") && !prog.includes("1.850.000") && prog.includes("450.000"), "katalog: 'Segera hadir' + penanda voucher (harga tersembunyi); program amount tetap Rupiah");
   check(!/permanen|body reset|garansi|instan/i.test(text(prog)), "katalog tanpa klaim terlarang");
   const progs = (await (await fetch(`${API}/v1/clinics/drmetz/programs`)).json()).programs;
   const kons = (await (await fetch(`${WEB}/c/drmetz/konsultasi?program=${progs[0].id}`, { headers: cookie })).text()).replace(/<!-- -->/g, "");
@@ -203,6 +205,23 @@ try {
   const sCookie = { cookie: `ssid=${sTok}` };
   const antrean = await (await fetch(`${CON}/antrean`, { headers: sCookie })).text();
   check(antrean.includes(email) && antrean.includes("Menunggu ditinjau"), "console /antrean memuat permintaan");
+  // --- Voucher: program ber-akses voucher (Pendampingan Kulit) ---
+  const vEmail = `voucher${Date.now()}@contoh.test`;
+  await post(`${API}/v1/clinics/drmetz/auth/otp`, { email: vEmail });
+  const vTok = (await (await post(`${API}/v1/clinics/drmetz/auth/verify`, { email: vEmail, code: await otpCode(vEmail) })).json()).token;
+  const vProg = progs.find((p) => p.access === "voucher");
+  const vPrep = { tujuan: "Kulit lebih sehat", keluhan: "", pertanyaan: [], konteks_assessment: "" };
+  const konsV = (await (await fetch(`${WEB}/c/drmetz/konsultasi?program=${vProg.id}`, { headers: { cookie: `sid_drmetz=${vTok}` } })).text()).replace(/<!-- -->/g, "");
+  check(konsV.includes("Langkah permintaan konsultasi") && /<input[^>]*id="voucher_code"[^>]*required/.test(konsV) && konsV.includes("Segera hadir") && konsV.includes("Ringkasan program"), "intake: stepper, kode voucher wajib, ringkasan program 'Segera hadir'");
+  const vNo = await post(`${API}/v1/consultation-requests`, { program_id: vProg.id, prep: vPrep }, vTok);
+  const vNoBody = await vNo.json();
+  check(vNo.status === 400 && vNoBody.error === "voucher_required" && /kode voucher/.test(vNoBody.message), "voucher: program voucher tanpa kode → voucher_required");
+  const vBad = await post(`${API}/v1/consultation-requests`, { program_id: vProg.id, prep: vPrep, voucher_code: "SALAH-123" }, vTok);
+  check(vBad.status === 400 && (await vBad.json()).error === "voucher_invalid", "voucher: kode salah → voucher_invalid");
+  const vOk = await post(`${API}/v1/consultation-requests`, { program_id: vProg.id, prep: vPrep, voucher_code: " coba-aevia " }, vTok);
+  check(vOk.status === 201, "voucher: kode valid → permintaan terkirim");
+  const antreanV = await (await fetch(`${CON}/antrean`, { headers: sCookie })).text();
+  check(antreanV.includes("COBA-AEVIA"), "console /antrean menampilkan kode voucher");
   const qItems = (await (await fetch(`${API}/v1/staff/queue`, { headers: { authorization: `Bearer ${sTok}` } })).json()).items;
   const mine = qItems.find((i) => i.patient_email === email);
   const detail = await (await fetch(`${CON}/pasien/${mine.patient_id}`, { headers: sCookie })).text();
@@ -221,6 +240,7 @@ try {
   const sAuth = { authorization: `Bearer ${sTok}` };
   const soapPage = await (await fetch(`${CON}/konsultasi/${kid}`, { headers: sCookie })).text();
   check(soapPage.includes("Catatan SOAP") && soapPage.includes("Subjective") && soapPage.includes("Audit") && soapPage.includes("Resep"), "console /konsultasi/:id: tab + form SOAP");
+  check(soapPage.includes("Hanya tim klinis") && /aria-labelledby="h-subjective"/.test(soapPage) && /aria-labelledby="h-plan"/.test(soapPage) && soapPage.includes("Riwayat konsultasi"), "console workspace: blok S/O/A/P + 'Hanya tim klinis' + ringkasan kiri");
   const putSoap = await fetch(`${API}/v1/staff/consultations/${kid}/soap`, { method: "PUT", headers: { ...sAuth, "content-type": "application/json" }, body: JSON.stringify({ subjective: "Sulit tidur", objective: "Kulit kering", assessment: "Perlu tinjauan", plan: "Kontrol 2 minggu" }) });
   check(putSoap.status === 200, "API: simpan SOAP");
   const soapAfter = await (await fetch(`${CON}/konsultasi/${kid}`, { headers: sCookie })).text();
@@ -260,13 +280,42 @@ try {
   check((await fetch(`${WEB}/c/drmetz/rencana`, { headers: cookie }).then((r) => r.text())).includes("Rencana akan tersedia"), "draf rencana tidak terlihat pasien");
   const signRes = await fetch(`${API}/v1/staff/care-plans/${planDraft.id}/sign`, { method: "POST", headers: jh, body: JSON.stringify({ confirm: true }) });
   check(signRes.status === 200, "API: tandatangani rencana");
+  // Audit tata letak workspace: 1280 dua kolom, 390 satu kolom tanpa overflow horizontal (Playwright; dilewati bila tak tersedia).
+  try {
+    const { chromium } = await import("@playwright/test");
+    const browser = await chromium.launch();
+    try {
+      for (const [w, cols] of [[1280, 2], [390, 1]]) {
+        const ctx = await browser.newContext({ viewport: { width: w, height: 900 } });
+        await ctx.addCookies([{ name: "ssid", value: sTok, url: CON }]);
+        const pg = await ctx.newPage();
+        for (const path of [`/konsultasi/${kid}`, `/konsultasi/${kid}?tab=rencana`, `/pasien/${mine.patient_id}`]) {
+          await pg.goto(`${CON}${path}`);
+          const m = await pg.evaluate(() => {
+            const aside = document.querySelector("aside[aria-label='Ringkasan pasien']");
+            const sec = document.querySelector("section[aria-label='Catatan konsultasi']");
+            return { overflow: document.documentElement.scrollWidth > window.innerWidth, sideBySide: Boolean(aside && sec && Math.abs(aside.getBoundingClientRect().top - sec.getBoundingClientRect().top) < 40) };
+          });
+          check(!m.overflow, `${w}px ${path.split("?")[0].replace(/[0-9a-f-]{36}/, ":id")}: tanpa scroll horizontal`);
+          if (path === `/konsultasi/${kid}`) check(m.sideBySide === (cols === 2), `${w}px workspace: ${cols} kolom`);
+        }
+        await ctx.close();
+      }
+    } finally {
+      await browser.close();
+    }
+  } catch (e) {
+    console.log(`(audit tata letak dilewati: ${String(e).split("\n")[0]})`);
+  }
+  const signedTab = await (await fetch(`${CON}/konsultasi/${kid}?tab=rencana`, { headers: sCookie })).text();
+  check(signedTab.includes("Terlihat pasien") && /hanya tim klinis/i.test(signedTab), "console rencana: 'Terlihat pasien' pada versi ditandatangani, draf 'Hanya tim klinis'");
   const plan = (await (await fetch(`${WEB}/c/drmetz/rencana`, { headers: cookie })).text()).replace(/<!-- -->/g, "");
   check(plan.includes("Rencana Anda telah diperbarui oleh tim DrMetz."), "rencana: kalimat §34 (nama klinik)");
   check(["Fokus Anda saat ini", "Langkah berikutnya", "Yang perlu dipantau", "Kapan kita tinjau kembali", "Yang dibahas", "Prioritas Anda", "Rencana saat ini"].every((h) => plan.includes(h)), "rencana: heading §23 + §24");
   check(plan.includes("Reviewed by Professional") && plan.includes("Professional Plan"), "rencana: trust badges");
   check(plan.includes("Sovia adalah AI") && plan.includes("Sovia menjelaskan rencana Anda"), "rencana: bubble penjelasan Sovia");
   check(plan.includes("Resep dari dr. Metz") && plan.includes("Tretinoin"), "rencana: resep terbit read-only");
-  check(plan.includes("powered by AEVIA") || plan.includes("ditampilkan melalui AEVIA"), "cobrand: menyebut AEVIA sebagai platform");
+  check(plan.includes("powered by Aevia Konsult") || plan.includes("ditampilkan melalui AEVIA"), "cobrand: menyebut Aevia Konsult sebagai platform");
   check((await (await fetch(`${WEB}/c/drmetz/beranda`, { headers: cookie })).text()).includes("Lihat rencana"), "beranda: tombol Lihat rencana");
   const aud = (await (await fetch(`${CON}/konsultasi/${kid}?tab=audit`, { headers: sCookie })).text()).replace(/<!-- -->/g, "");
   check(aud.includes("Rencana ditandatangani") && aud.includes("Resep diterbitkan") && aud.includes("Subjective (S)"), "audit: label manusiawi (S/O/A/P, rencana, resep)");
@@ -310,6 +359,7 @@ try {
   // Password staf: halaman, link dari email (log dev), atur password, login
   const masukHtml = await (await fetch(`${CON}/masuk`)).text();
   check(masukHtml.includes('type="password"') && masukHtml.includes("Lupa atau belum punya password?"), "console /masuk: form password + link lupa password");
+  check(masukHtml.includes("data-aevia-mark") && masukHtml.includes('aria-label="Aevia Konsult"'), "console /masuk: logo Aevia Konsult");
   check((await (await fetch(`${CON}/masuk/kode`)).text()).includes("Kirim kode masuk"), "console /masuk/kode: OTP tetap tersedia");
   check((await fetch(`${CON}/lupa-password`)).status === 200, "console /lupa-password 200");
   check((await (await fetch(`${CON}/atur-password?token=x`)).text()).includes("belum lengkap atau sudah tidak berlaku"), "console /atur-password token rusak → pesan + minta link baru");
@@ -369,9 +419,19 @@ try {
   const dp3 = await (await fetch(`${WEB}/c/demo-partner`)).text();
   check(text(dp3).includes("Luna"), "setelah disetujui, nama Luna tampil di web");
 
+  const vc = await post(`${API}/v1/staff/vouchers`, { code: "uji2026", program_id: null, max_uses: 5, expires_at: null }, ca);
+  check(vc.status === 201 && (await vc.json()).code === "UJI2026", "voucher: admin buat 'uji2026' → disimpan UJI2026");
+  check((await post(`${API}/v1/staff/vouchers`, { code: "Uji2026" }, ca)).status === 409, "voucher: kode duplikat beda huruf → 409");
+  const vpg = (await (await fetch(`${CON}/pengaturan/voucher`, { headers: caC })).text()).replace(/<!-- -->/g, "");
+  check(!vpg.includes("Attempted to call") && /<input[^>]*id="v-code"[^>]*class="[^"]*border-line[^"]*"/.test(vpg.replace(/\n/g, " ")), "console /pengaturan/voucher: input kode ber-kelas (tanpa 'Attempted to call')");
+  check(vpg.includes("UJI2026") && vpg.includes("0/5") && vpg.includes("Aktif") && vpg.includes("Buat voucher"), "console /pengaturan/voucher: daftar voucher terpakai 0/5, status Aktif");
   for (const [path, needle] of [["/pengaturan/brand", "Pemeriksaan keterbacaan"], ["/pengaturan/program", "Tambah program"], ["/pengaturan/staf", "Undang staf"]]) {
     const pg = await fetch(`${CON}${path}`, { headers: caC });
-    check(pg.status === 200 && (await pg.text()).includes(needle), `console ${path} memuat "${needle}"`);
+    const body = await pg.text();
+    check(pg.status === 200 && body.includes(needle), `console ${path} memuat "${needle}"`);
+    if (path === "/pengaturan/program") check(!body.includes("Attempted to call") && /<input[^>]*id="price-new"[^>]*class="[^"]*border-line/.test(body), "console program: input harga ber-kelas (bukan client reference)");
+    if (path === "/pengaturan/program") check(body.includes("Tampilan harga") && body.includes("Perlu kode voucher"), "console program: pilihan tampilan harga & akses");
+    if (path === "/pengaturan/brand") check(body.includes("data-aevia-mark") && body.includes('aria-current="page"'), "console shell: logo Aevia Konsult + item aktif di sidebar");
   }
   const denied = await fetch(`${CON}/pengaturan/brand`, { headers: sCookie, redirect: "manual" });
   check(denied.status >= 300 && denied.status < 400, "console pengaturan: profesional dialihkan");
