@@ -81,9 +81,9 @@ Halaman konsultasi pasien menjadi intake 2 kolom ala Stitch (stepper Assessment 
 Landing klinik mengikuti `landing.png` (hero + CTA, 3 langkah, kartu program dari data, FAQ statis yang aman Verbal Identity, footer); masuk, consent, assessment, beranda, rencana, check-in, progres memakai kartu/badge/tombol/stepper Stitch; tanpa data mockup palsu.
 
 ### Acceptance criteria
-- [ ] `/c/drmetz` memuat hero, "3 langkah", kartu program dari DB (harga/"Segera hadir"), FAQ; lolos smoke lama (stepper, CTA assessment, "Sovia adalah AI", "bukan diagnosis")
-- [ ] Tidak ada nama dokter/angka contoh dari mockup di HTML
-- [ ] Lebar 390 tanpa elemen melebar keluar layar (audit Playwright)
+- [x] `/c/drmetz` memuat hero, "3 langkah", kartu program dari DB (harga/"Segera hadir"), FAQ; lolos smoke lama (stepper, CTA assessment, "Sovia adalah AI", "bukan diagnosis")
+- [x] Tidak ada nama dokter/angka contoh dari mockup di HTML
+- [x] Lebar 390 tanpa elemen melebar keluar layar (audit Playwright)
 
 ---
 
