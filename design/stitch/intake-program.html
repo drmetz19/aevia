@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+
+<html class="light" lang="id"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>DrMetz Care - Patient Onboarding &amp; Safety Screening</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "surface-container": "#e5eeff",
+            "status-warning": "#B45309",
+            "on-tertiary": "#ffffff",
+            "error": "#ba1a1a",
+            "on-secondary-fixed-variant": "#005049",
+            "status-stable": "#047857",
+            "secondary-container": "#86f2e4",
+            "primary-fixed-dim": "#81d1f0",
+            "surface-container-highest": "#d3e4fe",
+            "tertiary-fixed-dim": "#94ccff",
+            "inverse-surface": "#213145",
+            "surface-variant": "#d3e4fe",
+            "surface-dim": "#cbdbf5",
+            "tertiary-fixed": "#cde5ff",
+            "confidential-internal": "#4338CA",
+            "on-primary-container": "#d3f1ff",
+            "outline": "#6f787d",
+            "tertiary-container": "#1770a8",
+            "on-primary": "#ffffff",
+            "confidential-internal-bg": "#EEF2FF",
+            "on-tertiary-fixed": "#001d32",
+            "on-primary-fixed": "#001f29",
+            "status-warning-bg": "#FEF3C7",
+            "on-background": "#0b1c30",
+            "inverse-on-surface": "#eaf1ff",
+            "secondary-fixed-dim": "#6bd8cb",
+            "surface-subtle": "#F1F5F9",
+            "surface-canvas": "#F8FAFC",
+            "outline-variant": "#bec8cd",
+            "error-container": "#ffdad6",
+            "status-emergency-bg": "#FFE4E6",
+            "primary": "#005a71",
+            "on-secondary-container": "#006f66",
+            "primary-fixed": "#b9eaff",
+            "surface-tint": "#006781",
+            "tertiary": "#005787",
+            "on-error-container": "#93000a",
+            "primary-container": "#0e7490",
+            "on-secondary": "#ffffff",
+            "on-surface": "#0b1c30",
+            "confidential-internal-border": "#C7D2FE",
+            "status-stable-bg": "#D1FAE5",
+            "surface-container-low": "#eff4ff",
+            "border-subtle": "#E2E8F0",
+            "on-primary-fixed-variant": "#004d62",
+            "background": "#f8f9ff",
+            "secondary": "#006a61",
+            "surface-container-high": "#dce9ff",
+            "text-primary": "#0F172A",
+            "status-emergency": "#BE123C",
+            "text-muted": "#94A3B8",
+            "on-surface-variant": "#3f484c",
+            "surface": "#f8f9ff",
+            "on-tertiary-container": "#e0eeff",
+            "on-secondary-fixed": "#00201d",
+            "border-strong": "#CBD5E1",
+            "text-secondary": "#475569",
+            "on-tertiary-fixed-variant": "#004b74",
+            "surface-card": "#FFFFFF",
+            "surface-container-lowest": "#ffffff",
+            "on-error": "#ffffff",
+            "secondary-fixed": "#89f5e7",
+            "surface-bright": "#f8f9ff",
+            "inverse-primary": "#81d1f0"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-sm": "0.5rem",
+            "space-xs": "0.25rem",
+            "space-md": "1rem",
+            "space-lg": "1.5rem",
+            "margin-mobile": "1rem",
+            "gutter-mobile": "0.75rem",
+            "margin": "2rem",
+            "space-2xl": "3rem",
+            "gutter": "1.5rem",
+            "space-xl": "2rem"
+          },
+          "fontFamily": {
+            "label-sm": ["Inter"],
+            "title-lg": ["Inter"],
+            "display-lg": ["Plus Jakarta Sans"],
+            "display-lg-mobile": ["Plus Jakarta Sans"],
+            "headline-lg": ["Plus Jakarta Sans"],
+            "headline-sm": ["Plus Jakarta Sans"],
+            "body-lg": ["Inter"],
+            "body-md": ["Inter"],
+            "headline-lg-mobile": ["Plus Jakarta Sans"],
+            "title-md": ["Inter"],
+            "headline-md": ["Plus Jakarta Sans"],
+            "code-clinical": ["Inter"],
+            "body-sm": ["Inter"],
+            "label-md": ["Inter"]
+          },
+          "fontSize": {
+            "label-sm": ["11px", {"lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "600"}],
+            "title-lg": ["16px", {"lineHeight": "24px", "letterSpacing": "0", "fontWeight": "600"}],
+            "display-lg": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+            "display-lg-mobile": ["28px", {"lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+            "headline-lg": ["28px", {"lineHeight": "36px", "letterSpacing": "-0.015em", "fontWeight": "600"}],
+            "headline-sm": ["18px", {"lineHeight": "26px", "letterSpacing": "-0.005em", "fontWeight": "600"}],
+            "body-lg": ["16px", {"lineHeight": "24px", "letterSpacing": "0", "fontWeight": "400"}],
+            "body-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0", "fontWeight": "400"}],
+            "headline-lg-mobile": ["22px", {"lineHeight": "30px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+            "title-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.005em", "fontWeight": "600"}],
+            "headline-md": ["22px", {"lineHeight": "30px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+            "code-clinical": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+            "body-sm": ["12px", {"lineHeight": "18px", "letterSpacing": "0.01em", "fontWeight": "400"}],
+            "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600"}]
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-surface-canvas text-text-primary min-h-screen font-body-md antialiased selection:bg-primary-fixed selection:text-on-primary-fixed">
+<!-- TOP HEADER / CLINICAL BAR (Suppressed bottom nav as this is linear onboarding flow) -->
+<header class="bg-surface-card border-b border-border-subtle sticky top-0 z-30 shadow-none">
+<div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2">
+<div class="w-9 h-9 rounded-lg bg-primary-container text-on-primary flex items-center justify-center font-headline-sm font-bold shadow-sm">
+<span class="material-symbols-outlined" data-icon="health_and_safety">health_and_safety</span>
+</div>
+<div>
+<span class="font-headline-sm text-headline-sm font-bold text-primary tracking-tight">DrMetz Care</span>
+<div class="flex items-center gap-1.5 text-text-secondary">
+<span class="text-label-sm font-label-sm text-text-secondary">Partner Resmi:</span>
+<span class="text-label-sm font-label-sm font-semibold text-primary">Klinik Estetika &amp; Wellness DrMetz</span>
+</div>
+</div>
+</div>
+</div>
+<!-- STEP INDICATOR: 4 STEPS -->
+<nav aria-label="Onboarding Progress" class="hidden md:flex items-center gap-2">
+<!-- Step 1: Completed -->
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-status-stable-bg text-status-stable border border-status-stable/30 flex items-center justify-center text-label-sm font-label-sm">
+<span class="material-symbols-outlined text-[14px]" data-icon="check">check</span>
+</div>
+<span class="text-body-sm font-body-sm font-medium text-text-secondary">1. Identitas &amp; Profil</span>
+</div>
+<div class="w-6 h-px bg-border-subtle"></div>
+<!-- Step 2: Completed -->
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-status-stable-bg text-status-stable border border-status-stable/30 flex items-center justify-center text-label-sm font-label-sm">
+<span class="material-symbols-outlined text-[14px]" data-icon="check">check</span>
+</div>
+<span class="text-body-sm font-body-sm font-medium text-text-secondary">2. Informed Consent</span>
+</div>
+<div class="w-6 h-px bg-border-subtle"></div>
+<!-- Step 3: Active -->
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-primary-container text-on-primary flex items-center justify-center text-label-sm font-label-sm font-bold shadow-sm">
+            3
+          </div>
+<span class="text-title-md font-title-md text-primary font-semibold">3. Intake &amp; Beauty Code Sync</span>
+</div>
+<div class="w-6 h-px bg-border-subtle"></div>
+<!-- Step 4: Pending -->
+<div class="flex items-center gap-2 opacity-60">
+<div class="w-6 h-6 rounded-full bg-surface-subtle text-text-muted border border-border-strong flex items-center justify-center text-label-sm font-label-sm">
+            4
+          </div>
+<span class="text-body-sm font-body-sm text-text-muted">4. Jadwal Konsultasi</span>
+</div>
+</nav>
+<!-- URL & Security Status Pill -->
+<div class="flex items-center gap-2 text-right">
+<div class="hidden lg:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-status-stable-bg/70 border border-status-stable/20 text-status-stable text-label-sm font-label-sm">
+<span class="material-symbols-outlined text-[14px]" data-icon="encrypted">encrypted</span>
+<span>my.care.drmetz.id (SSL 256-bit)</span>
+</div>
+<button class="p-2 rounded-lg text-text-secondary hover:bg-surface-subtle transition-colors" title="Bantuan Tim Medis" type="button">
+<span class="material-symbols-outlined" data-icon="support_agent">support_agent</span>
+</button>
+</div>
+</div>
+</header>
+<!-- MAIN CANVAS -->
+<main class="max-w-7xl mx-auto px-6 py-8 space-y-6">
+<!-- TOP WELCOME & REGULATORY COMPLIANCE BANNER -->
+<section class="bg-surface-card border border-border-subtle rounded-xl p-6 relative overflow-hidden">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div class="space-y-1.5 max-w-3xl">
+<div class="flex items-center gap-2">
+<span class="px-2.5 py-0.5 rounded-full bg-primary-fixed text-on-primary-fixed-variant text-label-sm font-label-sm uppercase tracking-wide">Program Unggulan Terpandu</span>
+<span class="text-text-muted text-label-sm font-label-sm">• Kode Registrasi: DMZ-CARE-2024-089</span>
+</div>
+<h1 class="text-headline-lg font-headline-lg text-text-primary font-bold tracking-tight">
+            Program Pendampingan Intensif: 8-Week Acne &amp; Metabolic Barrier Restoration
+          </h1>
+<p class="text-body-md font-body-md text-text-secondary">
+            Formulir intake pra-konsultasi untuk sinkronisasi data klinis awal dokter penanggung jawab. Seluruh data rekam medis elektronik Anda dilindungi kerahasiaannya sesuai regulasi 
+            <strong class="font-semibold text-text-primary">Permenkes No. 24 / 2022 tentang Rekam Medis</strong>.
+          </p>
+</div>
+<div class="flex items-center gap-3 bg-surface-canvas border border-border-subtle px-4 py-3 rounded-lg shrink-0">
+<span class="material-symbols-outlined text-primary text-[28px]" data-icon="verified_user">verified_user</span>
+<div>
+<p class="text-title-md font-title-md text-text-primary">Medical Confidentiality</p>
+<p class="text-label-sm font-label-sm text-text-secondary">Akses Terbatas: Dokter &amp; Ahli Gizi Saja</p>
+</div>
+</div>
+</div>
+</section>
+<!-- ASYMMETRIC GRID: 60% Form & Intake / 40% Clinical Blueprint & Team -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+<!-- LEFT COLUMN: 60% (7 cols on 12-col grid) -->
+<section class="lg:col-span-7 space-y-6">
+<!-- SECTION A: BEAUTY CODE INTEGRATION GRANT -->
+<div class="bg-surface-card border border-border-subtle rounded-xl p-6 space-y-5">
+<div class="flex items-start justify-between gap-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-surface-container text-primary flex items-center justify-center">
+<span class="material-symbols-outlined" data-icon="sync_saved_locally">sync_saved_locally</span>
+</div>
+<div>
+<h2 class="text-headline-sm font-headline-sm text-text-primary">Integrasi Beauty Code Patient Portal</h2>
+<p class="text-body-sm font-body-sm text-text-secondary">Sinkronisasi hasil self-assessment dan log kebiasaan mingguan Anda</p>
+</div>
+</div>
+<span class="px-2 py-1 rounded bg-confidential-internal-bg text-confidential-internal border border-confidential-internal-border text-label-sm font-label-sm shrink-0">
+              Izin Granular &amp; Dapat Dicabut Kapan Saja
+            </span>
+</div>
+<!-- Permission Toggle Card -->
+<div class="p-4 rounded-lg bg-surface-canvas border border-border-subtle flex items-start gap-4">
+<div class="pt-0.5">
+<input checked="" class="w-5 h-5 rounded text-primary-container focus:ring-primary-container border-border-strong cursor-pointer" id="syncBeautyCode" type="checkbox"/>
+</div>
+<div class="space-y-1">
+<label class="text-title-md font-title-md text-text-primary font-semibold cursor-pointer" for="syncBeautyCode">
+                Hubungkan Ringkasan Assessment &amp; Habit Beauty Code
+              </label>
+<p class="text-body-sm font-body-sm text-text-secondary">
+                Mengizinkan Dr. Metz, Sp.D.V.E dan tim nutrisi untuk menarik parameter observasi 30 hari terakhir guna mempercepat diagnosis klinis:
+              </p>
+</div>
+</div>
+<!-- Synced Metrics Bento Mini-Grid -->
+<div class="grid grid-cols-3 gap-3">
+<div class="p-3 bg-surface-subtle/70 rounded-lg border border-border-subtle">
+<div class="flex items-center justify-between text-text-secondary mb-1">
+<span class="text-label-sm font-label-sm">Skin Barrier</span>
+<span class="material-symbols-outlined text-[16px] text-status-warning" data-icon="shield">shield</span>
+</div>
+<p class="text-headline-sm font-headline-sm font-bold text-text-primary">54/100</p>
+<span class="text-label-sm font-label-sm text-status-warning font-medium">Moderate Barrier Compromise</span>
+</div>
+<div class="p-3 bg-surface-subtle/70 rounded-lg border border-border-subtle">
+<div class="flex items-center justify-between text-text-secondary mb-1">
+<span class="text-label-sm font-label-sm">Sleep &amp; Hydration</span>
+<span class="material-symbols-outlined text-[16px] text-primary" data-icon="water_drop">water_drop</span>
+</div>
+<p class="text-headline-sm font-headline-sm font-bold text-text-primary">6.1h <span class="text-body-sm font-normal text-text-secondary">/ 1.8L</span></p>
+<span class="text-label-sm font-label-sm text-status-stable font-medium">Rata-rata 14 Hari</span>
+</div>
+<div class="p-3 bg-surface-subtle/70 rounded-lg border border-border-subtle">
+<div class="flex items-center justify-between text-text-secondary mb-1">
+<span class="text-label-sm font-label-sm">Diet Trigger Log</span>
+<span class="material-symbols-outlined text-[16px] text-error" data-icon="restaurant">restaurant</span>
+</div>
+<p class="text-headline-sm font-headline-sm font-bold text-text-primary">Dairy &amp; Sucrose</p>
+<span class="text-label-sm font-label-sm text-text-secondary">3x spike terdeteksi</span>
+</div>
+</div>
+</div>
+<!-- SECTION B: CURRENT SYMPTOMS & GOALS -->
+<div class="bg-surface-card border border-border-subtle rounded-xl p-6 space-y-5">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-surface-container text-primary flex items-center justify-center">
+<span class="material-symbols-outlined" data-icon="check_circle">check_circle</span>
+</div>
+<div>
+<h2 class="text-headline-sm font-headline-sm text-text-primary">Keluhan Utama &amp; Target Pemulihan</h2>
+<p class="text-body-sm font-body-sm text-text-secondary">Tandai gejala yang paling mengganggu dalam 4 minggu terakhir</p>
+</div>
+</div>
+<!-- Symptom Pills / Multi-select -->
+<div class="space-y-2">
+<label class="text-title-md font-title-md text-text-primary font-medium">Fokus Masalah Klinis (Pilih semua yang relevan):</label>
+<div class="grid grid-cols-2 gap-2.5">
+<label class="flex items-center gap-3 p-3 rounded-lg border border-primary-container bg-primary-fixed/20 cursor-pointer transition-colors">
+<input checked="" class="rounded text-primary-container focus:ring-primary-container" type="checkbox"/>
+<div>
+<p class="text-body-md font-body-md font-medium text-text-primary">Breakouts &amp; Pustula Berulang</p>
+<p class="text-label-sm font-label-sm text-text-secondary">Zona T, Rahang, &amp; Pipi Bawah</p>
+</div>
+</label>
+<label class="flex items-center gap-3 p-3 rounded-lg border border-primary-container bg-primary-fixed/20 cursor-pointer transition-colors">
+<input checked="" class="rounded text-primary-container focus:ring-primary-container" type="checkbox"/>
+<div>
+<p class="text-body-md font-body-md font-medium text-text-primary">Eritema / Kemerahan Perih</p>
+<p class="text-label-sm font-label-sm text-text-secondary">Sensasi menyengat pasca cuci muka</p>
+</div>
+</label>
+<label class="flex items-center gap-3 p-3 rounded-lg border border-border-subtle bg-surface-card hover:bg-surface-subtle cursor-pointer transition-colors">
+<input class="rounded text-primary-container focus:ring-primary-container" type="checkbox"/>
+<div>
+<p class="text-body-md font-body-md font-medium text-text-primary">Fluktuasi Hormonal Siklikal</p>
+<p class="text-label-sm font-label-sm text-text-secondary">Perburukan saat fase luteal / PMS</p>
+</div>
+</label>
+<label class="flex items-center gap-3 p-3 rounded-lg border border-border-subtle bg-surface-card hover:bg-surface-subtle cursor-pointer transition-colors">
+<input class="rounded text-primary-container focus:ring-primary-container" type="checkbox"/>
+<div>
+<p class="text-body-md font-body-md font-medium text-text-primary">Gangguan Cerna / Gut Bloating</p>
+<p class="text-label-sm font-label-sm text-text-secondary">Kembung &amp; asam lambung setelah makan</p>
+</div>
+</label>
+</div>
+</div>
+<!-- Target Outcome Slider -->
+<div class="space-y-3 pt-2">
+<div class="flex items-center justify-between">
+<label class="text-title-md font-title-md text-text-primary font-medium" for="recoveryGoal">
+                Ekspektasi Kecepatan &amp; Intensitas Intervensi:
+              </label>
+<span class="px-2.5 py-0.5 rounded bg-surface-subtle text-primary font-title-md font-semibold" id="sliderVal">
+                Moderat &amp; Perbaikan Barrier Bertahap (Rekomendasi)
+              </span>
+</div>
+<input class="w-full h-2 bg-surface-container rounded-lg appearance-none cursor-pointer accent-primary-container" id="recoveryGoal" max="3" min="1" type="range" value="2"/>
+<div class="flex justify-between text-label-sm font-label-sm text-text-secondary">
+<span>Konservatif Lembut</span>
+<span class="font-semibold text-primary">Kombinasi Terarah (Standar)</span>
+<span>Intensif Aktif Medis</span>
+</div>
+</div>
+</div>
+<!-- SECTION C: SAFETY SCREENING GATE (EMERGENCY & CONTRAINDICATION ALERT) -->
+<div class="bg-surface-card border border-border-subtle rounded-xl p-6 space-y-5">
+<!-- Emergency Banner Style (FR-INT-04 compliant) -->
+<div class="bg-status-emergency-bg border-l-4 border-status-emergency p-4 rounded-r-lg space-y-2">
+<div class="flex items-center gap-2 text-status-emergency">
+<span class="material-symbols-outlined" data-icon="notification_important">notification_important</span>
+<h3 class="text-title-md font-title-md font-bold uppercase tracking-wide">Pintu Skrining Keselamatan Klinis</h3>
+</div>
+<p class="text-body-sm font-body-sm text-status-emergency leading-relaxed">
+              Jika Anda mengalami sesak napas, pembengkakan pada bibir/wajah (reaksi anafilaksis), ruam melepuh luas yang nyeri parah, atau demam tinggi mendadak:
+              <strong class="font-bold underline block mt-1">Hentikan registrasi online dan segera kunjungi Instalasi Gawat Darurat (IGD) rumah sakit terdekat.</strong>
+</p>
+</div>
+<!-- Safety Gate Questions -->
+<div class="space-y-4 pt-1">
+<p class="text-title-md font-title-md text-text-primary font-semibold">
+              Konfirmasi Kontraindikasi &amp; Riwayat Farmakoterapi:
+            </p>
+<div class="space-y-3">
+<div class="flex items-start justify-between gap-4 p-3 bg-surface-canvas rounded-lg border border-border-subtle">
+<div>
+<p class="text-body-md font-body-md font-medium text-text-primary">1. Apakah saat ini sedang hamil, merencanakan kehamilan, atau menyusui?</p>
+<p class="text-label-sm font-label-sm text-text-secondary">Penting untuk regulasi turunan Vitamin A oral / topikal aktif.</p>
+</div>
+<div class="flex items-center gap-4 shrink-0">
+<label class="flex items-center gap-1.5 cursor-pointer text-body-sm">
+<input checked="" class="text-primary-container focus:ring-primary-container" name="preg" type="radio" value="no"/>
+<span>Tidak</span>
+</label>
+<label class="flex items-center gap-1.5 cursor-pointer text-body-sm">
+<input class="text-primary-container focus:ring-primary-container" name="preg" type="radio" value="yes"/>
+<span>Ya</span>
+</label>
+</div>
+</div>
+<div class="flex items-start justify-between gap-4 p-3 bg-surface-canvas rounded-lg border border-border-subtle">
+<div>
+<p class="text-body-md font-body-md font-medium text-text-primary">2. Riwayat penggunaan Isotretinoin oral atau steroid sistemik dalam 6 bulan terakhir?</p>
+<p class="text-label-sm font-label-sm text-text-secondary">Dermatolog kami perlu menyesuaikan dosis eksfoliasi dan barrier barrier agent.</p>
+</div>
+<div class="flex items-center gap-4 shrink-0">
+<label class="flex items-center gap-1.5 cursor-pointer text-body-sm">
+<input checked="" class="text-primary-container focus:ring-primary-container" name="meds" type="radio" value="no"/>
+<span>Tidak</span>
+</label>
+<label class="flex items-center gap-1.5 cursor-pointer text-body-sm">
+<input class="text-primary-container focus:ring-primary-container" name="meds" type="radio" value="yes"/>
+<span>Ya</span>
+</label>
+</div>
+</div>
+<div class="flex items-start justify-between gap-4 p-3 bg-surface-canvas rounded-lg border border-border-subtle">
+<div>
+<p class="text-body-md font-body-md font-medium text-text-primary">3. Apakah Anda memiliki alergi obat berat (misal: Penisilin, Sulfa, Salisilat)?</p>
+<p class="text-label-sm font-label-sm text-text-secondary">Wajib untuk pencegahan adverse drug reaction saat peresepan.</p>
+</div>
+<div class="flex items-center gap-4 shrink-0">
+<label class="flex items-center gap-1.5 cursor-pointer text-body-sm">
+<input checked="" class="text-primary-container focus:ring-primary-container" name="allergy" type="radio" value="no"/>
+<span>Tidak</span>
+</label>
+<label class="flex items-center gap-1.5 cursor-pointer text-body-sm">
+<input class="text-primary-container focus:ring-primary-container" name="allergy" type="radio" value="yes"/>
+<span>Ya</span>
+</label>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- BOTTOM ACTION BAR -->
+<div class="bg-surface-card border border-border-subtle rounded-xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+<div class="flex items-center gap-2 text-text-secondary">
+<span class="material-symbols-outlined text-[18px] text-primary" data-icon="lock">lock</span>
+<span class="text-label-sm font-label-sm">Draf otomatis tersimpan • Terenkripsi End-to-End</span>
+</div>
+<div class="flex items-center gap-3 w-full sm:w-auto">
+<button class="w-1/2 sm:w-auto px-4 py-2.5 rounded-lg border border-border-strong text-text-primary font-title-md hover:bg-surface-subtle transition-colors" type="button">
+              Simpan Draf
+            </button>
+<button class="w-1/2 sm:w-auto px-6 py-2.5 rounded-lg bg-primary-container text-on-primary font-title-md font-semibold hover:bg-primary transition-all flex items-center justify-center gap-2 shadow-sm active:scale-[0.98]" type="button">
+<span>Lanjutkan &amp; Jadwalkan Sesi Konsultasi Awal</span>
+<span class="material-symbols-outlined text-[18px]" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+</div>
+</section>
+<!-- RIGHT COLUMN: 40% (5 cols on 12-col grid) - SUMMARY & CARE TEAM SIDE PANEL -->
+<aside class="lg:col-span-5 space-y-6">
+<!-- ASSIGNED CARE TEAM PREVIEW -->
+<div class="bg-surface-card border border-border-subtle rounded-xl p-6 space-y-5">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" data-icon="stethoscope">stethoscope</span>
+<h2 class="text-headline-sm font-headline-sm text-text-primary font-semibold">Tim Klinis Khusus Anda</h2>
+</div>
+<span class="px-2 py-0.5 rounded bg-status-stable-bg text-status-stable text-label-sm font-label-sm font-semibold">
+              Terverifikasi SIP
+            </span>
+</div>
+<div class="space-y-4">
+<!-- Doctor Card -->
+<div class="flex items-center gap-4 p-3.5 rounded-lg bg-surface-canvas border border-border-subtle">
+<img class="w-14 h-14 rounded-full object-cover border-2 border-primary-fixed shrink-0" data-alt="Close up professional portrait of a senior Southeast Asian female dermatologist wearing a sterile white doctor coat and stethoscope in a well-lit modern minimalist clinic with soft turquoise and slate tones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBykAtLTU-T5MB_044tIGCM8qzK4XsOzs9UJ1NZEISAfsbwqqdhxW7i4cOkqZzmFZrcyDRDm1DnR4BsJPYEEfz_TIQGXG2-EFRRbmSKtxZ2Sj0N1PZaSlML9G5UIyyIXnyD7lKwh1uGyRQIaPyt8LEVMsuLhQpmMs6JyzPP7ZOul3QrLC7kr_n8WCHhqwb0YMb3m0qbJzkT4k69QB8HnF15-mWNomHLp4MBYW56oLgm35gx9LcN8BYRMw"/>
+<div class="space-y-0.5 min-w-0 flex-1">
+<div class="flex items-center justify-between">
+<h4 class="text-title-md font-title-md text-text-primary font-bold truncate">Dr. Metz, Sp.D.V.E</h4>
+<span class="text-label-sm font-label-sm text-text-muted">Lead Dermatologist</span>
+</div>
+<p class="text-label-sm font-label-sm text-primary font-medium">SIP: 446.1/098/SIP-D/DPMPTSP</p>
+<p class="text-body-sm font-body-sm text-text-secondary line-clamp-1">Spesialis Dermatologi, Venereologi &amp; Estetika Klinis</p>
+</div>
+</div>
+<!-- Nutritionist Card -->
+<div class="flex items-center gap-4 p-3.5 rounded-lg bg-surface-canvas border border-border-subtle">
+<img class="w-14 h-14 rounded-full object-cover border-2 border-secondary-fixed shrink-0" data-alt="Warm and confident young Southeast Asian clinical nutrition specialist wearing a crisp medical lab coat holding a digital medical tablet in a bright daylight medical clinic office." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDbh5DE0BMdr4ZLjREw76OcJEnMV5g4p_pNLup2vQ6KK4fqLPpRRZnIjujKzYD8gLJISgk2hUumN22L13M8V12yieiOCZN9zPrnxrDUe48GVvt9OEVBJzSMwAtsZYzAcOqMR4L_HEiJoF_0NFfzfAz5PDb5S20dqqJuxjX293UPELtheCdmsNVFAO9jSzsO6IEmVE4cN-TewuF1RPz9yuWs-3LOQXdJDd8ETsK5gkcp4imiyoEvEacT8g"/>
+<div class="space-y-0.5 min-w-0 flex-1">
+<div class="flex items-center justify-between">
+<h4 class="text-title-md font-title-md text-text-primary font-bold truncate">Sarah Amelia, S.Gz</h4>
+<span class="text-label-sm font-label-sm text-text-muted">Nutrition Coach</span>
+</div>
+<p class="text-label-sm font-label-sm text-secondary font-medium">STRGz: 180352220-410982</p>
+<p class="text-body-sm font-body-sm text-text-secondary line-clamp-1">Fokus Modulasi Diet Inflamasi &amp; Gut-Skin Axis</p>
+</div>
+</div>
+</div>
+<div class="p-3 bg-surface-subtle/80 rounded-lg text-body-sm font-body-sm text-text-secondary flex items-start gap-2.5">
+<span class="material-symbols-outlined text-primary text-[20px] shrink-0" data-icon="forum">forum</span>
+<p>Sesi telekonsultasi awal akan dilakukan langsung via live secure video call berdurasi 30 menit bersama dokter penanggung jawab.</p>
+</div>
+</div>
+<!-- PROGRAM BLUEPRINT OVERVIEW -->
+<div class="bg-surface-card border border-border-subtle rounded-xl p-6 space-y-5">
+<div class="flex items-center justify-between">
+<h3 class="text-headline-sm font-headline-sm text-text-primary font-semibold">Cakupan Blueprint 8 Minggu</h3>
+<span class="text-label-sm font-label-sm font-bold text-primary-container px-2 py-1 bg-surface-container rounded">
+              Durasi: 56 Hari
+            </span>
+</div>
+<!-- Included Services Checklist -->
+<ul class="space-y-3">
+<li class="flex items-start gap-3">
+<div class="w-5 h-5 rounded-full bg-status-stable-bg text-status-stable flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[14px]" data-icon="check">check</span>
+</div>
+<div>
+<p class="text-body-md font-body-md font-medium text-text-primary">4x Live Clinical Teleconsultation</p>
+<p class="text-body-sm font-body-sm text-text-secondary">Evaluasi bi-weekly bersama Dr. Metz &amp; evaluasi resep dinamis.</p>
+</div>
+</li>
+<li class="flex items-start gap-3">
+<div class="w-5 h-5 rounded-full bg-status-stable-bg text-status-stable flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[14px]" data-icon="check">check</span>
+</div>
+<div>
+<p class="text-body-md font-body-md font-medium text-text-primary">Weekly Standardized Photo Check-in</p>
+<p class="text-body-sm font-body-sm text-text-secondary">Pelacakan lesi peradangan dengan panduan pencahayaan klinis.</p>
+</div>
+</li>
+<li class="flex items-start gap-3">
+<div class="w-5 h-5 rounded-full bg-status-stable-bg text-status-stable flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[14px]" data-icon="check">check</span>
+</div>
+<div>
+<p class="text-body-md font-body-md font-medium text-text-primary">Personalized Care Plan &amp; Diet Protocol</p>
+<p class="text-body-sm font-body-sm text-text-secondary">Daftar eliminasi pemicu jerawat dan suplementasi barrier.</p>
+</div>
+</li>
+<li class="flex items-start gap-3">
+<div class="w-5 h-5 rounded-full bg-status-stable-bg text-status-stable flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[14px]" data-icon="check">check</span>
+</div>
+<div>
+<p class="text-body-md font-body-md font-medium text-text-primary">Daily Adherence &amp; Symptom Logging</p>
+<p class="text-body-sm font-body-sm text-text-secondary">Peringatan otomatis jika terjadi perburukan / flare mendadak.</p>
+</div>
+</li>
+</ul>
+<div class="border-t border-border-subtle pt-4 space-y-2">
+<h4 class="text-label-md font-label-md text-text-primary font-semibold uppercase tracking-wider">Kepatuhan Hukum &amp; Keamanan Data</h4>
+<div class="space-y-1.5 text-body-sm font-body-sm text-text-secondary">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-status-stable text-[16px]" data-icon="verified">verified</span>
+<span>Standar SATUSEHAT Kemenkes RI terakreditasi</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-status-stable text-[16px]" data-icon="verified">verified</span>
+<span>Data dienkripsi AES-256 saat istirahat dan transit</span>
+</div>
+</div>
+</div>
+</div>
+<!-- EMERGENCY CLINICAL ASSISTANCE FOOTNOTE -->
+<div class="p-4 rounded-xl border border-dashed border-border-strong bg-surface-subtle/50 text-center space-y-1">
+<p class="text-label-sm font-label-sm text-text-muted">Butuh panduan teknis pengisian formulir?</p>
+<p class="text-body-sm font-body-sm text-primary font-semibold">
+            Hubungi Care Concierge DrMetz: <span class="underline">care@drmetz.id</span> • WhatsApp Klinik (+62 811-209-900)
+          </p>
+</div>
+</aside>
+</div>
+</main>
+<script>
+    // Subtle interactivity for outcome slider
+    const slider = document.getElementById('recoveryGoal');
+    const label = document.getElementById('sliderVal');
+    if (slider && label) {
+      const descriptions = {
+        '1': 'Konservatif & Barrier Restoration Ringan',
+        '2': 'Moderat & Perbaikan Barrier Bertahap (Rekomendasi)',
+        '3': 'Intensif Aktif Medis & Targeted Actives'
+      };
+      slider.addEventListener('input', (e) => {
+        label.textContent = descriptions[e.target.value] || descriptions['2'];
+      });
+    }
+  </script>
+</body></html>

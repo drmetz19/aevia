@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+
+<html class="light" lang="id"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>DrMetz Care - Sinkronisasi &amp; Intake Klinis</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        fontFamily: {
+          sans: ['"Plus Jakarta Sans"', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+        },
+        colors: {
+          brand: {
+            50: '#f0f9ff',
+            100: '#e0f2fe',
+            500: '#0284c7',
+            600: '#005a71',
+            700: '#0369a1',
+            900: '#0c4a6e',
+          }
+        },
+        boxShadow: {
+          'subtle': '0 1px 3px rgba(0,0,0,0.03), 0 1px 2px rgba(0,0,0,0.02)',
+          'apple': '0 8px 30px rgba(0,0,0,0.04)',
+          'float': '0 12px 32px rgba(0,0,0,0.08)'
+        }
+      }
+    }
+  }
+</script>
+<style>
+  body {
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+  .material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+  }
+  .material-symbols-outlined.fill {
+    font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+  }
+</style>
+</head>
+<body class="bg-[#FBFBFD] text-[#1D1D1F] min-h-screen font-sans antialiased selection:bg-brand-100 selection:text-brand-900 pb-28">
+<!-- TOPBAR: Minimal Pure White & Glassmorphism -->
+<header class="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-[#E5E5EA]">
+<div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+<!-- Brand -->
+<div class="flex items-center gap-2.5">
+<div class="w-8 h-8 rounded-xl bg-[#005a71] text-white flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-[18px]">health_and_safety</span>
+</div>
+<span class="font-semibold text-[17px] tracking-tight text-[#1D1D1F]">DrMetz Care</span>
+</div>
+<!-- Apple-style Step Indicator Pills -->
+<nav aria-label="Alur Pendaftaran" class="hidden md:flex items-center gap-1 bg-[#F2F2F7] p-1 rounded-full text-[13px]">
+<div class="flex items-center gap-1.5 px-3 py-1 rounded-full text-[#8E8E93]">
+<span class="material-symbols-outlined text-[14px] text-emerald-600">check</span>
+<span>1. Profil</span>
+</div>
+<span class="text-[#C7C7CC]">•</span>
+<div class="flex items-center gap-1.5 px-3 py-1 rounded-full text-[#8E8E93]">
+<span class="material-symbols-outlined text-[14px] text-emerald-600">check</span>
+<span>2. Consent</span>
+</div>
+<span class="text-[#C7C7CC]">•</span>
+<div class="flex items-center gap-1 px-3.5 py-1 rounded-full bg-white text-[#005a71] font-semibold shadow-xs">
+<span class="w-1.5 h-1.5 rounded-full bg-[#005a71]"></span>
+<span>3. Intake &amp; Sync</span>
+</div>
+<span class="text-[#C7C7CC]">•</span>
+<div class="px-3 py-1 rounded-full text-[#8E8E93]">
+<span>4. Selesai</span>
+</div>
+</nav>
+<!-- Quiet Security Badge -->
+<div class="flex items-center gap-1.5 text-[12px] font-medium text-[#8E8E93] bg-[#F2F2F7] px-3 py-1 rounded-full">
+<span class="material-symbols-outlined text-[14px] text-[#005a71]">lock</span>
+<span>Enkripsi Medis</span>
+</div>
+</div>
+</header>
+<!-- MAIN CONTAINER -->
+<main class="max-w-6xl mx-auto px-6 pt-10">
+<!-- Calm Hero Typography -->
+<div class="max-w-2xl mb-8">
+<h1 class="text-[28px] md:text-[32px] font-semibold text-[#1D1D1F] tracking-tight leading-tight">
+      Sinkronisasi &amp; Intake Klinis
+    </h1>
+<p class="text-[15px] text-[#6E6E73] mt-1.5 font-normal">
+      Lengkapi profil medis singkat sebelum sesi konsultasi bersama Dr. Metz.
+    </p>
+</div>
+<!-- Content Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+<!-- LEFT COLUMN: Apple-styled Cards (7 cols) -->
+<div class="lg:col-span-7 space-y-6">
+<!-- CARD 1: Apple Health-style Beauty Code Sync -->
+<section class="bg-white rounded-2xl p-6 border border-[#E5E5EA] shadow-subtle hover:border-[#D1D1D6] transition-all">
+<div class="flex items-start justify-between gap-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-[#E0F2FE] text-[#005a71] flex items-center justify-center">
+<span class="material-symbols-outlined text-[22px]">sync_saved_locally</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<h2 class="text-[16px] font-semibold text-[#1D1D1F]">Hubungkan Data Beauty Code</h2>
+<span class="text-[11px] font-medium text-[#005a71] bg-[#E0F2FE] px-2 py-0.5 rounded-full">
+                  Opsional &amp; Terkendali
+                </span>
+</div>
+<p class="text-[13px] text-[#6E6E73] mt-0.5">Tarik metrik observasi 30 hari untuk mempercepat evaluasi dokter.</p>
+</div>
+</div>
+<!-- iOS Toggle Switch -->
+<label class="relative inline-flex items-center cursor-pointer shrink-0 mt-1">
+<input checked="" class="sr-only peer" id="syncSwitch" type="checkbox"/>
+<div class="w-11 h-6 bg-[#E5E5EA] peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#005a71]"></div>
+</label>
+</div>
+<!-- Metric Pills (Apple Health widget style) -->
+<div class="grid grid-cols-3 gap-2.5 mt-5">
+<div class="p-3 rounded-xl bg-[#FBFBFD] border border-[#F2F2F7]">
+<div class="flex items-center justify-between text-[#8E8E93] text-[11px] font-medium">
+<span>Barrier</span>
+<span class="material-symbols-outlined text-[14px] text-amber-500">shield</span>
+</div>
+<p class="text-[17px] font-semibold text-[#1D1D1F] mt-1">54<span class="text-[12px] font-normal text-[#8E8E93]">/100</span></p>
+<span class="text-[11px] text-amber-600 font-medium">Kompensasi</span>
+</div>
+<div class="p-3 rounded-xl bg-[#FBFBFD] border border-[#F2F2F7]">
+<div class="flex items-center justify-between text-[#8E8E93] text-[11px] font-medium">
+<span>Tidur &amp; Air</span>
+<span class="material-symbols-outlined text-[14px] text-[#005a71]">water_drop</span>
+</div>
+<p class="text-[17px] font-semibold text-[#1D1D1F] mt-1">6.1h <span class="text-[12px] font-normal text-[#8E8E93]">/ 1.8L</span></p>
+<span class="text-[11px] text-emerald-600 font-medium">Rerata 14 hr</span>
+</div>
+<div class="p-3 rounded-xl bg-[#FBFBFD] border border-[#F2F2F7]">
+<div class="flex items-center justify-between text-[#8E8E93] text-[11px] font-medium">
+<span>Diet Log</span>
+<span class="material-symbols-outlined text-[14px] text-rose-400">restaurant</span>
+</div>
+<p class="text-[17px] font-semibold text-[#1D1D1F] mt-1">Dairy/Gula</p>
+<span class="text-[11px] text-[#8E8E93]">3x spike</span>
+</div>
+</div>
+</section>
+<!-- CARD 2: Focus Areas (Clean Selectable Tiles) -->
+<section class="bg-white rounded-2xl p-6 border border-[#E5E5EA] shadow-subtle">
+<div class="mb-4">
+<h2 class="text-[16px] font-semibold text-[#1D1D1F]">Fokus Masalah Utama</h2>
+<p class="text-[13px] text-[#6E6E73] mt-0.5">Pilih kondisi klinis yang dirasakan paling dominan.</p>
+</div>
+<div class="grid grid-cols-2 gap-3">
+<!-- Tile 1 -->
+<label class="group relative flex flex-col justify-between p-4 rounded-xl border border-[#005a71] bg-[#F0F9FF]/50 cursor-pointer transition-all">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="flex items-center justify-between mb-2">
+<span class="w-8 h-8 rounded-lg bg-[#E0F2FE] text-[#005a71] flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">grain</span>
+</span>
+<span class="w-4 h-4 rounded-full bg-[#005a71] text-white flex items-center justify-center">
+<span class="material-symbols-outlined text-[12px]">check</span>
+</span>
+</div>
+<div>
+<p class="text-[14px] font-semibold text-[#1D1D1F]">Breakouts Aktif</p>
+<p class="text-[12px] text-[#6E6E73] mt-0.5">Pustula di rahang &amp; T-zone</p>
+</div>
+</label>
+<!-- Tile 2 -->
+<label class="group relative flex flex-col justify-between p-4 rounded-xl border border-[#005a71] bg-[#F0F9FF]/50 cursor-pointer transition-all">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="flex items-center justify-between mb-2">
+<span class="w-8 h-8 rounded-lg bg-[#E0F2FE] text-[#005a71] flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">flare</span>
+</span>
+<span class="w-4 h-4 rounded-full bg-[#005a71] text-white flex items-center justify-center">
+<span class="material-symbols-outlined text-[12px]">check</span>
+</span>
+</div>
+<div>
+<p class="text-[14px] font-semibold text-[#1D1D1F]">Kemerahan / Perih</p>
+<p class="text-[12px] text-[#6E6E73] mt-0.5">Sensasi perih saat cuci muka</p>
+</div>
+</label>
+<!-- Tile 3 -->
+<label class="group relative flex flex-col justify-between p-4 rounded-xl border border-[#E5E5EA] bg-white hover:border-[#D1D1D6] hover:bg-[#FBFBFD] cursor-pointer transition-all">
+<input class="sr-only peer" type="checkbox"/>
+<div class="flex items-center justify-between mb-2">
+<span class="w-8 h-8 rounded-lg bg-[#F2F2F7] text-[#6E6E73] flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">calendar_today</span>
+</span>
+<span class="w-4 h-4 rounded-full border border-[#D1D1D6]"></span>
+</div>
+<div>
+<p class="text-[14px] font-medium text-[#1D1D1F]">Hormonal / Siklus</p>
+<p class="text-[12px] text-[#8E8E93] mt-0.5">Flare menjelang PMS</p>
+</div>
+</label>
+<!-- Tile 4 -->
+<label class="group relative flex flex-col justify-between p-4 rounded-xl border border-[#E5E5EA] bg-white hover:border-[#D1D1D6] hover:bg-[#FBFBFD] cursor-pointer transition-all">
+<input class="sr-only peer" type="checkbox"/>
+<div class="flex items-center justify-between mb-2">
+<span class="w-8 h-8 rounded-lg bg-[#F2F2F7] text-[#6E6E73] flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">ecg_heart</span>
+</span>
+<span class="w-4 h-4 rounded-full border border-[#D1D1D6]"></span>
+</div>
+<div>
+<p class="text-[14px] font-medium text-[#1D1D1F]">Pencernaan / Gut</p>
+<p class="text-[12px] text-[#8E8E93] mt-0.5">Kembung &amp; sensitivitas makanan</p>
+</div>
+</label>
+</div>
+</section>
+<!-- CARD 3: Rapid 10-Second Safety Check -->
+<section class="bg-white rounded-2xl p-6 border border-[#E5E5EA] shadow-subtle">
+<div class="flex items-center justify-between mb-4">
+<div>
+<h2 class="text-[16px] font-semibold text-[#1D1D1F]">Pemeriksaan Keamanan Singkat</h2>
+<p class="text-[13px] text-[#6E6E73] mt-0.5">Penyesuaian peresepan dan protokol medis dokter.</p>
+</div>
+<span class="text-[11px] font-medium text-[#8E8E93] bg-[#F2F2F7] px-2.5 py-1 rounded-full">
+            ~10 Detik
+          </span>
+</div>
+<!-- 3 Segmented Rows (Apple Settings style) -->
+<div class="divide-y divide-[#F2F2F7]">
+<!-- Row 1 -->
+<div class="py-3 flex items-center justify-between gap-4">
+<span class="text-[14px] text-[#1D1D1F] font-normal">Kehamilan atau sedang menyusui?</span>
+<div class="inline-flex rounded-lg bg-[#F2F2F7] p-0.5 shrink-0">
+<label class="px-3 py-1 rounded-md text-[13px] font-medium cursor-pointer transition-all bg-white text-[#1D1D1F] shadow-xs">
+<input checked="" class="sr-only" name="check_preg" type="radio" value="no"/>
+                Tidak
+              </label>
+<label class="px-3 py-1 rounded-md text-[13px] font-medium cursor-pointer transition-all text-[#6E6E73] hover:text-[#1D1D1F]">
+<input class="sr-only" name="check_preg" type="radio" value="yes"/>
+                Ya
+              </label>
+</div>
+</div>
+<!-- Row 2 -->
+<div class="py-3 flex items-center justify-between gap-4">
+<span class="text-[14px] text-[#1D1D1F] font-normal">Retinoid oral / steroid dalam 6 bulan?</span>
+<div class="inline-flex rounded-lg bg-[#F2F2F7] p-0.5 shrink-0">
+<label class="px-3 py-1 rounded-md text-[13px] font-medium cursor-pointer transition-all bg-white text-[#1D1D1F] shadow-xs">
+<input checked="" class="sr-only" name="check_retinoid" type="radio" value="no"/>
+                Tidak
+              </label>
+<label class="px-3 py-1 rounded-md text-[13px] font-medium cursor-pointer transition-all text-[#6E6E73] hover:text-[#1D1D1F]">
+<input class="sr-only" name="check_retinoid" type="radio" value="yes"/>
+                Ya
+              </label>
+</div>
+</div>
+<!-- Row 3 -->
+<div class="py-3 flex items-center justify-between gap-4">
+<span class="text-[14px] text-[#1D1D1F] font-normal">Riwayat alergi obat berat?</span>
+<div class="inline-flex rounded-lg bg-[#F2F2F7] p-0.5 shrink-0">
+<label class="px-3 py-1 rounded-md text-[13px] font-medium cursor-pointer transition-all bg-white text-[#1D1D1F] shadow-xs">
+<input checked="" class="sr-only" name="check_allergy" type="radio" value="no"/>
+                Tidak
+              </label>
+<label class="px-3 py-1 rounded-md text-[13px] font-medium cursor-pointer transition-all text-[#6E6E73] hover:text-[#1D1D1F]">
+<input class="sr-only" name="check_allergy" type="radio" value="yes"/>
+                Ya
+              </label>
+</div>
+</div>
+</div>
+<!-- Subtle Emergency Note -->
+<div class="mt-4 pt-3 border-t border-[#F2F2F7] flex items-center gap-2 text-[12px] text-[#8E8E93]">
+<span class="w-2 h-2 rounded-full bg-rose-500 shrink-0"></span>
+<span>Bila mengalami sesak napas atau bengkak mendadak, segera hubungi IGD terdekat.</span>
+</div>
+</section>
+</div>
+<!-- RIGHT COLUMN: Compact Apple Widget Summary (5 cols) -->
+<aside class="lg:col-span-5 space-y-4 lg:sticky lg:top-24">
+<!-- Doctor Preview Widget -->
+<div class="bg-white rounded-2xl p-5 border border-[#E5E5EA] shadow-subtle">
+<div class="flex items-center gap-3.5">
+<img class="w-12 h-12 rounded-full object-cover ring-2 ring-[#E0F2FE]" data-alt="Portrait of senior female dermatologist" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBykAtLTU-T5MB_044tIGCM8qzK4XsOzs9UJ1NZEISAfsbwqqdhxW7i4cOkqZzmFZrcyDRDm1DnR4BsJPYEEfz_TIQGXG2-EFRRbmSKtxZ2Sj0N1PZaSlML9G5UIyyIXnyD7lKwh1uGyRQIaPyt8LEVMsuLhQpmMs6JyzPP7ZOul3QrLC7kr_n8WCHhqwb0YMb3m0qbJzkT4k69QB8HnF15-mWNomHLp4MBYW56oLgm35gx9LcN8BYRMw"/>
+<div class="min-w-0 flex-1">
+<div class="flex items-center gap-1.5">
+<h3 class="text-[15px] font-semibold text-[#1D1D1F] truncate">Dr. Metz, Sp.D.V.E</h3>
+<span class="material-symbols-outlined text-[16px] text-[#005a71] fill">verified</span>
+</div>
+<p class="text-[12px] text-[#6E6E73]">Dermatolog Penanggung Jawab</p>
+</div>
+</div>
+</div>
+<!-- Program Snapshot Widget -->
+<div class="bg-white rounded-2xl p-5 border border-[#E5E5EA] shadow-subtle">
+<div class="flex items-center justify-between pb-3 border-b border-[#F2F2F7]">
+<div>
+<h4 class="text-[14px] font-semibold text-[#1D1D1F]">Program 8-Minggu</h4>
+<p class="text-[12px] text-[#6E6E73]">Acne &amp; Barrier Restoration</p>
+</div>
+<span class="text-[12px] font-medium text-[#005a71] bg-[#F0F9FF] px-2.5 py-1 rounded-full">
+            56 Hari
+          </span>
+</div>
+<!-- Clean Compact Checklist -->
+<ul class="space-y-2.5 pt-3.5 text-[13px] text-[#1D1D1F]">
+<li class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-[16px] text-emerald-600">check_circle</span>
+<span>4x Telekonsultasi Langsung</span>
+</li>
+<li class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-[16px] text-emerald-600">check_circle</span>
+<span>Foto Check-in Mingguan</span>
+</li>
+<li class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-[16px] text-emerald-600">check_circle</span>
+<span>Personalized Care Plan</span>
+</li>
+</ul>
+</div>
+<!-- Compliance & Trust Tag -->
+<div class="px-4 py-3 rounded-xl bg-[#F2F2F7]/80 flex items-center justify-center gap-2 text-[12px] text-[#6E6E73]">
+<span class="material-symbols-outlined text-[15px] text-[#005a71]">verified_user</span>
+<span>Standar SATUSEHAT &amp; Permenkes RI</span>
+</div>
+</aside>
+</div>
+</main>
+<!-- BOTTOM ACTION BAR: Apple-style Docked Pill Bar -->
+<div class="fixed bottom-0 inset-x-0 bg-white/80 backdrop-blur-lg border-t border-[#E5E5EA] z-40 py-3.5">
+<div class="max-w-6xl mx-auto px-6 flex items-center justify-between">
+<div class="flex items-center gap-2 text-[13px] text-[#8E8E93]">
+<span class="material-symbols-outlined text-[16px]">cloud_done</span>
+<span class="hidden sm:inline">Draf otomatis tersimpan</span>
+</div>
+<div class="flex items-center gap-3">
+<button class="px-4 py-2 rounded-full text-[14px] font-medium text-[#6E6E73] hover:text-[#1D1D1F] hover:bg-[#F2F2F7] transition-all" type="button">
+        Batal / Draf
+      </button>
+<button class="px-6 py-2.5 rounded-full bg-[#005a71] text-white text-[14px] font-semibold hover:bg-[#004a5d] active:scale-[0.98] transition-all shadow-apple flex items-center gap-2" type="button">
+<span>Lanjut ke Konsultasi</span>
+<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+<script>
+  // Simple segmented control interactivity
+  document.querySelectorAll('input[type="radio"]').forEach((radio) => {
+    radio.addEventListener('change', (e) => {
+      const parent = e.target.closest('.inline-flex');
+      if (parent) {
+        parent.querySelectorAll('label').forEach(l => {
+          l.classList.remove('bg-white', 'text-[#1D1D1F]', 'shadow-xs');
+          l.classList.add('text-[#6E6E73]');
+        });
+        e.target.parentElement.classList.add('bg-white', 'text-[#1D1D1F]', 'shadow-xs');
+        e.target.parentElement.classList.remove('text-[#6E6E73]');
+      }
+    });
+  });
+</script>
+</body></html>

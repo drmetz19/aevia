@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+
+<html class="light" lang="id"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>DrMetz Care — Form Konsultasi &amp; Riwayat Klinis</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS with configuration -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "on-primary-fixed-variant": "#004d62",
+            "inverse-primary": "#81d1f0",
+            "secondary-fixed-dim": "#6bd8cb",
+            "on-tertiary": "#ffffff",
+            "primary-fixed": "#b9eaff",
+            "surface-dim": "#cbdbf5",
+            "outline-variant": "#bec8cd",
+            "on-tertiary-fixed": "#001d32",
+            "secondary": "#006a61",
+            "text-secondary": "#475569",
+            "primary": "#005a71",
+            "on-primary-fixed": "#001f29",
+            "border-subtle": "#E2E8F0",
+            "on-primary-container": "#d3f1ff",
+            "status-warning": "#B45309",
+            "on-tertiary-fixed-variant": "#004b74",
+            "tertiary-container": "#1770a8",
+            "primary-fixed-dim": "#81d1f0",
+            "text-muted": "#94A3B8",
+            "confidential-internal": "#4338CA",
+            "status-warning-bg": "#FEF3C7",
+            "surface-container-highest": "#d3e4fe",
+            "surface-container-lowest": "#ffffff",
+            "on-error-container": "#93000a",
+            "surface-bright": "#f8f9ff",
+            "confidential-internal-border": "#C7D2FE",
+            "secondary-fixed": "#89f5e7",
+            "on-background": "#0b1c30",
+            "secondary-container": "#86f2e4",
+            "on-secondary-fixed-variant": "#005049",
+            "inverse-surface": "#213145",
+            "inverse-on-surface": "#eaf1ff",
+            "status-stable-bg": "#D1FAE5",
+            "surface-container-low": "#eff4ff",
+            "tertiary": "#005787",
+            "surface-variant": "#d3e4fe",
+            "outline": "#6f787d",
+            "on-tertiary-container": "#e0eeff",
+            "primary-container": "#0e7490",
+            "text-primary": "#0F172A",
+            "surface": "#f8f9ff",
+            "tertiary-fixed": "#cde5ff",
+            "surface-container": "#e5eeff",
+            "background": "#f8f9ff",
+            "surface-canvas": "#F8FAFC",
+            "surface-container-high": "#dce9ff",
+            "surface-card": "#FFFFFF",
+            "on-secondary-fixed": "#00201d",
+            "status-stable": "#047857",
+            "status-emergency": "#BE123C",
+            "status-emergency-bg": "#FFE4E6",
+            "on-secondary": "#ffffff",
+            "on-surface": "#0b1c30",
+            "on-secondary-container": "#006f66",
+            "tertiary-fixed-dim": "#94ccff",
+            "on-error": "#ffffff",
+            "surface-subtle": "#F1F5F9",
+            "border-strong": "#CBD5E1",
+            "on-primary": "#ffffff",
+            "error-container": "#ffdad6",
+            "surface-tint": "#006781",
+            "on-surface-variant": "#3f484c",
+            "error": "#ba1a1a",
+            "confidential-internal-bg": "#EEF2FF"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "2xl": "1rem",
+            "3xl": "1.5rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-xl": "2rem",
+            "space-2xl": "3rem",
+            "space-lg": "1.5rem",
+            "space-sm": "0.5rem",
+            "margin": "2rem",
+            "margin-mobile": "1rem",
+            "gutter-mobile": "0.75rem",
+            "space-xs": "0.25rem",
+            "space-md": "1rem",
+            "gutter": "1.5rem"
+          },
+          "fontFamily": {
+            "display-lg": ["Plus Jakarta Sans"],
+            "display-lg-mobile": ["Plus Jakarta Sans"],
+            "body-lg": ["Inter"],
+            "title-lg": ["Inter"],
+            "body-sm": ["Inter"],
+            "headline-lg-mobile": ["Plus Jakarta Sans"],
+            "label-md": ["Inter"],
+            "code-clinical": ["Inter"],
+            "headline-lg": ["Plus Jakarta Sans"],
+            "title-md": ["Inter"],
+            "headline-sm": ["Plus Jakarta Sans"],
+            "body-md": ["Inter"],
+            "headline-md": ["Plus Jakarta Sans"],
+            "label-sm": ["Inter"]
+          },
+          "fontSize": {
+            "display-lg": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "display-lg-mobile": ["28px", { "lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+            "body-lg": ["16px", { "lineHeight": "24px", "letterSpacing": "0", "fontWeight": "400" }],
+            "title-lg": ["16px", { "lineHeight": "24px", "letterSpacing": "0", "fontWeight": "600" }],
+            "body-sm": ["12px", { "lineHeight": "18px", "letterSpacing": "0.01em", "fontWeight": "400" }],
+            "headline-lg-mobile": ["22px", { "lineHeight": "30px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600" }],
+            "code-clinical": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500" }],
+            "headline-lg": ["28px", { "lineHeight": "36px", "letterSpacing": "-0.015em", "fontWeight": "600" }],
+            "title-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.005em", "fontWeight": "600" }],
+            "headline-sm": ["18px", { "lineHeight": "26px", "letterSpacing": "-0.005em", "fontWeight": "600" }],
+            "body-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0", "fontWeight": "400" }],
+            "headline-md": ["22px", { "lineHeight": "30px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "600" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    input[type=number]::-webkit-inner-spin-button, 
+    input[type=number]::-webkit-outer-spin-button { 
+      -webkit-appearance: none; 
+      margin: 0; 
+    }
+  </style>
+</head>
+<body class="bg-surface-canvas text-text-primary antialiased font-body-md min-h-screen flex flex-col selection:bg-primary-fixed selection:text-on-primary-fixed">
+<!-- TOP BAR: Apple Minimalist Clinical Header -->
+<header class="sticky top-0 z-40 w-full bg-surface-card/90 backdrop-blur-md border-b border-border-subtle transition-all">
+<div class="max-w-7xl mx-auto px-gutter md:px-margin h-16 flex items-center justify-between">
+<!-- Brand & Security Identifier -->
+<div class="flex items-center gap-space-md">
+<a class="flex items-center gap-2 group" href="#">
+<span class="w-8 h-8 rounded-lg bg-primary text-on-primary flex items-center justify-center font-display-lg text-headline-sm font-bold shadow-sm">M</span>
+<div class="flex flex-col">
+<span class="text-headline-sm font-headline-sm text-primary tracking-tight font-bold">DrMetz Care</span>
+<span class="text-label-sm font-label-sm text-text-muted -mt-1 hidden sm:block">Clinical Telemedicine Suite</span>
+</div>
+</a>
+<div class="h-4 w-px bg-border-subtle mx-1 hidden sm:block"></div>
+<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-subtle border border-border-subtle text-text-secondary text-label-sm font-label-sm">
+<span class="material-symbols-outlined text-[15px] text-primary" data-icon="lock" data-weight="fill" style="font-variation-settings: 'FILL' 1;">lock</span>
+<span>Enkripsi Medis 256-bit</span>
+</div>
+</div>
+<!-- Active Stage Indicator -->
+<div class="hidden lg:flex items-center gap-3 px-4 py-1.5 rounded-full bg-surface-subtle/70 border border-border-subtle">
+<div class="flex items-center gap-2">
+<span class="flex h-2 w-2 relative">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+</span>
+<span class="text-label-sm font-label-sm text-text-secondary">Tahap:</span>
+<span class="text-label-sm font-label-sm text-primary font-semibold">Form Konsultasi &amp; Riwayat Klinis</span>
+</div>
+<span class="text-text-muted text-label-sm">•</span>
+<span class="text-label-sm font-label-sm text-text-muted">Estimasi 4 menit</span>
+</div>
+<!-- Secondary Trailing Action -->
+<div class="flex items-center gap-space-sm">
+<button class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-surface-card hover:bg-surface-subtle border border-border-subtle text-text-secondary hover:text-text-primary text-title-md font-title-md transition-colors duration-150" type="button">
+<span class="material-symbols-outlined text-[18px] text-text-secondary" data-icon="bookmark_border">bookmark_border</span>
+<span class="hidden sm:inline">Simpan Draf</span>
+</button>
+</div>
+</div>
+</header>
+<!-- MAIN CANVAS -->
+<main class="flex-grow max-w-7xl w-full mx-auto px-gutter md:px-margin pt-8 pb-32">
+<!-- Breadcrumb & Header Unit -->
+<div class="mb-8 max-w-3xl">
+<div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary-fixed/30 text-primary border border-primary-fixed text-label-sm font-label-sm mb-3">
+<span class="material-symbols-outlined text-[15px]" data-icon="stethoscope">stethoscope</span>
+<span>Persiapan Telekonsultasi Spesialis</span>
+</div>
+<h1 class="text-display-lg font-display-lg text-text-primary tracking-tight text-balance">
+        Form Keluhan &amp; Riwayat Konsultasi
+      </h1>
+<p class="mt-2 text-body-lg font-body-lg text-text-secondary text-pretty">
+        Informasi ini akan langsung ditelaah oleh <strong class="text-text-primary font-semibold">Dr. Metz, Sp.D.V.E</strong> sebelum ruang temu telekonsultasi dibuka untuk merumuskan diagnosis banding yang akurat.
+      </p>
+</div>
+<!-- Layout Grid: 65% Form / 35% Sidebar Context -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+<!-- LEFT COLUMN: Consultation Form (Main Intake) -->
+<div class="lg:col-span-8 space-y-6">
+<!-- SECTION 1: Keluhan Utama & Kronologi -->
+<section class="bg-surface-card rounded-2xl border border-border-subtle p-6 sm:p-8 space-y-6 shadow-sm">
+<div class="flex items-center justify-between pb-4 border-b border-border-subtle">
+<div class="flex items-center gap-3">
+<span class="w-8 h-8 rounded-full bg-surface-subtle text-primary flex items-center justify-center text-label-md font-label-md font-bold">1</span>
+<div>
+<h2 class="text-headline-sm font-headline-sm text-text-primary">Keluhan Utama &amp; Kronologi</h2>
+<p class="text-body-sm font-body-sm text-text-muted">Deskripsikan kondisi terkini dan durasi keluhan kulit Anda</p>
+</div>
+</div>
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-status-emergency-bg text-status-emergency border border-rose-200">Wajib</span>
+</div>
+<!-- Sejak Kapan & Pemicu Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+<div>
+<label class="block text-title-md font-title-md text-text-primary mb-2" for="durasi-keluhan">
+                Sejak kapan keluhan dirasakan?
+              </label>
+<div class="relative">
+<select class="w-full h-11 px-3.5 bg-surface-card border border-border-strong rounded-lg text-text-primary text-body-md font-body-md focus:ring-2 focus:ring-primary focus:border-transparent outline-none appearance-none pr-10" id="durasi-keluhan">
+<option disabled="" selected="" value="">Pilih durasi klinis...</option>
+<option value="acute-3d">Kurang dari 3 hari (Akut tiba-tiba)</option>
+<option value="1-2w">1 - 2 minggu terakhir</option>
+<option value="1-3m">1 - 3 bulan (Sub-akut)</option>
+<option value="chronic-6m">&gt; 6 bulan (Kronis kambuhan)</option>
+<option value="chronic-years">&gt; 1 tahun belum tuntas</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-3 pointer-events-none text-text-muted text-[20px]" data-icon="expand_more">expand_more</span>
+</div>
+</div>
+<div>
+<label class="block text-title-md font-title-md text-text-primary mb-2" for="pemicu-keluhan">
+                Dugaan pemicu kambuh (Flare-up)
+              </label>
+<input class="w-full h-11 px-3.5 bg-surface-card border border-border-strong rounded-lg text-text-primary placeholder:text-text-muted text-body-md font-body-md focus:ring-2 focus:ring-primary focus:border-transparent outline-none" id="pemicu-keluhan" placeholder="Contoh: pergantian skincare, stres, cuaca panas..." type="text"/>
+</div>
+</div>
+<!-- Catatan Detail Gejala -->
+<div>
+<label class="block text-title-md font-title-md text-text-primary mb-2" for="deskripsi-gejala">
+              Deskripsi detail sensasi keluhan
+            </label>
+<textarea class="w-full p-3.5 bg-surface-card border border-border-strong rounded-lg text-text-primary placeholder:text-text-muted text-body-md font-body-md focus:ring-2 focus:ring-primary focus:border-transparent outline-none resize-none" id="deskripsi-gejala" placeholder="Jelaskan apakah area terasa panas, mengelupas, bernanah, atau perih saat dibilas air..." rows="3"></textarea>
+</div>
+<!-- Tingkat Nyeri / Gatal: Segmented Control (1-10) -->
+<div class="pt-2">
+<div class="flex items-center justify-between mb-2">
+<label class="block text-title-md font-title-md text-text-primary">
+                Tingkat Rasa Gatal / Nyeri / Sensasi Terbakar (Skala 1 - 10)
+              </label>
+<span class="text-label-md font-label-md font-bold px-2 py-0.5 rounded bg-primary-fixed/40 text-primary" id="scale-indicator">Skala 4: Mengganggu Aktivitas</span>
+</div>
+<div class="grid grid-cols-10 gap-1 sm:gap-2">
+<button class="scale-btn h-11 rounded-lg border border-border-subtle bg-surface-card hover:bg-surface-subtle text-title-md font-title-md text-text-secondary transition-all flex items-center justify-center" data-val="1" type="button">1</button>
+<button class="scale-btn h-11 rounded-lg border border-border-subtle bg-surface-card hover:bg-surface-subtle text-title-md font-title-md text-text-secondary transition-all flex items-center justify-center" data-val="2" type="button">2</button>
+<button class="scale-btn h-11 rounded-lg border border-border-subtle bg-surface-card hover:bg-surface-subtle text-title-md font-title-md text-text-secondary transition-all flex items-center justify-center" data-val="3" type="button">3</button>
+<button class="scale-btn h-11 rounded-lg border border-primary bg-primary text-on-primary font-bold text-title-md font-title-md transition-all flex items-center justify-center shadow-sm" data-val="4" type="button">4</button>
+<button class="scale-btn h-11 rounded-lg border border-border-subtle bg-surface-card hover:bg-surface-subtle text-title-md font-title-md text-text-secondary transition-all flex items-center justify-center" data-val="5" type="button">5</button>
+<button class="scale-btn h-11 rounded-lg border border-border-subtle bg-surface-card hover:bg-surface-subtle text-title-md font-title-md text-text-secondary transition-all flex items-center justify-center" data-val="6" type="button">6</button>
+<button class="scale-btn h-11 rounded-lg border border-border-subtle bg-surface-card hover:bg-surface-subtle text-title-md font-title-md text-text-secondary transition-all flex items-center justify-center" data-val="7" type="button">7</button>
+<button class="scale-btn h-11 rounded-lg border border-border-subtle bg-surface-card hover:bg-surface-subtle text-title-md font-title-md text-text-secondary transition-all flex items-center justify-center" data-val="8" type="button">8</button>
+<button class="scale-btn h-11 rounded-lg border border-border-subtle bg-surface-card hover:bg-surface-subtle text-title-md font-title-md text-text-secondary transition-all flex items-center justify-center" data-val="9" type="button">9</button>
+<button class="scale-btn h-11 rounded-lg border border-border-subtle bg-surface-card hover:bg-surface-subtle text-title-md font-title-md text-text-secondary transition-all flex items-center justify-center" data-val="10" type="button">10</button>
+</div>
+<div class="flex justify-between items-center text-label-sm font-label-sm text-text-muted mt-2 px-1">
+<span>1: Sangat ringan / tidak terasa</span>
+<span>5: Mengganggu tidur</span>
+<span>10: Nyeri tak tertahankan</span>
+</div>
+</div>
+</section>
+<!-- SECTION 2: Unggah Foto Kondisi Kulit (Apple Clinical Dropzone) -->
+<section class="bg-surface-card rounded-2xl border border-border-subtle p-6 sm:p-8 space-y-6 shadow-sm">
+<div class="flex items-center justify-between pb-4 border-b border-border-subtle">
+<div class="flex items-center gap-3">
+<span class="w-8 h-8 rounded-full bg-surface-subtle text-primary flex items-center justify-center text-label-md font-label-md font-bold">2</span>
+<div>
+<h2 class="text-headline-sm font-headline-sm text-text-primary">Unggah Foto Kondisi Kulit</h2>
+<p class="text-body-sm font-body-sm text-text-muted">Standar visual klinis: cahaya alami merata tanpa filter atau kosmetik tebal</p>
+</div>
+</div>
+<div class="flex items-center gap-1.5 text-label-sm font-label-sm text-status-stable px-2.5 py-1 bg-status-stable-bg rounded-full border border-emerald-200">
+<span class="material-symbols-outlined text-[14px]" data-icon="lock">lock</span>
+<span>Privasi Terjamin &amp; Akses Khusus Dokter</span>
+</div>
+</div>
+<!-- Three Angles Clinical Grid -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+<!-- Angle 1: Frontal -->
+<div class="group relative rounded-xl border-2 border-dashed border-border-strong hover:border-primary bg-surface-subtle/40 p-4 transition-all flex flex-col items-center justify-center text-center cursor-pointer min-h-[170px]">
+<div class="w-10 h-10 rounded-full bg-surface-card flex items-center justify-center text-primary mb-2 shadow-xs group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-[20px]" data-icon="add_a_photo">add_a_photo</span>
+</div>
+<span class="text-title-md font-title-md text-text-primary">Wajah Depan (Full Face)</span>
+<span class="text-label-sm font-label-sm text-text-muted mt-0.5">Pandangan lurus horizontal</span>
+<span class="mt-3 px-2 py-0.5 rounded bg-surface-card border border-border-subtle text-label-sm font-label-sm text-primary group-hover:bg-primary group-hover:text-on-primary transition-colors">Pilih File Foto</span>
+<input accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer" type="file"/>
+</div>
+<!-- Angle 2: Left Profile -->
+<div class="group relative rounded-xl border-2 border-dashed border-border-strong hover:border-primary bg-surface-subtle/40 p-4 transition-all flex flex-col items-center justify-center text-center cursor-pointer min-h-[170px]">
+<div class="w-10 h-10 rounded-full bg-surface-card flex items-center justify-center text-primary mb-2 shadow-xs group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-[20px]" data-icon="add_a_photo">add_a_photo</span>
+</div>
+<span class="text-title-md font-title-md text-text-primary">Profil Sisi Kiri</span>
+<span class="text-label-sm font-label-sm text-text-muted mt-0.5">Sudut 45° pipi &amp; rahang kiri</span>
+<span class="mt-3 px-2 py-0.5 rounded bg-surface-card border border-border-subtle text-label-sm font-label-sm text-primary group-hover:bg-primary group-hover:text-on-primary transition-colors">Pilih File Foto</span>
+<input accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer" type="file"/>
+</div>
+<!-- Angle 3: Right Profile -->
+<div class="group relative rounded-xl border-2 border-dashed border-border-strong hover:border-primary bg-surface-subtle/40 p-4 transition-all flex flex-col items-center justify-center text-center cursor-pointer min-h-[170px]">
+<div class="w-10 h-10 rounded-full bg-surface-card flex items-center justify-center text-primary mb-2 shadow-xs group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-[20px]" data-icon="add_a_photo">add_a_photo</span>
+</div>
+<span class="text-title-md font-title-md text-text-primary">Profil Sisi Kanan</span>
+<span class="text-label-sm font-label-sm text-text-muted mt-0.5">Sudut 45° pipi &amp; rahang kanan</span>
+<span class="mt-3 px-2 py-0.5 rounded bg-surface-card border border-border-subtle text-label-sm font-label-sm text-primary group-hover:bg-primary group-hover:text-on-primary transition-colors">Pilih File Foto</span>
+<input accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer" type="file"/>
+</div>
+</div>
+<!-- Micro Guide Notification -->
+<div class="flex items-start gap-3 p-3.5 rounded-xl bg-surface-subtle border border-border-subtle text-body-sm font-body-sm text-text-secondary">
+<span class="material-symbols-outlined text-primary text-[18px] shrink-0 mt-0.5" data-icon="light_mode">light_mode</span>
+<span><strong>Tips Foto Klinis:</strong> Gunakan pencahayaan tidak langsung dekat jendela pagi/siang. Hindari flash kamera ponsel langsung ke kulit karena dapat menyamarkan batas eritema (kemerahan).</span>
+</div>
+</section>
+<!-- SECTION 3: Riwayat Produk & Obat yang Sedang Dipakai -->
+<section class="bg-surface-card rounded-2xl border border-border-subtle p-6 sm:p-8 space-y-6 shadow-sm">
+<div class="flex items-center gap-3 pb-4 border-b border-border-subtle">
+<span class="w-8 h-8 rounded-full bg-surface-subtle text-primary flex items-center justify-center text-label-md font-label-md font-bold">3</span>
+<div>
+<h2 class="text-headline-sm font-headline-sm text-text-primary">Riwayat Bahan Aktif &amp; Obat Saat Ini</h2>
+<p class="text-body-sm font-body-sm text-text-muted">Pilih kandungan yang Anda gunakan dalam 14 hari terakhir</p>
+</div>
+</div>
+<!-- Interactive Chips -->
+<div>
+<label class="block text-title-md font-title-md text-text-primary mb-3">
+              Bahan Aktif Skincare Aktif Digunakan:
+            </label>
+<div class="flex flex-wrap gap-2.5" id="chip-container">
+<button class="chip-item inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border border-primary bg-primary text-on-primary text-body-md font-body-md shadow-xs transition-all" data-selected="true" type="button">
+<span class="material-symbols-outlined text-[16px]" data-icon="check_circle" data-weight="fill" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span>Retinoid / Tretinoin / Adapalene</span>
+</button>
+<button class="chip-item inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border border-border-strong bg-surface-card hover:bg-surface-subtle text-text-secondary text-body-md font-body-md transition-all" data-selected="false" type="button">
+<span class="material-symbols-outlined text-[16px] hidden" data-icon="check_circle">check_circle</span>
+<span>Salicylic Acid (BHA)</span>
+</button>
+<button class="chip-item inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border border-border-strong bg-surface-card hover:bg-surface-subtle text-text-secondary text-body-md font-body-md transition-all" data-selected="false" type="button">
+<span class="material-symbols-outlined text-[16px] hidden" data-icon="check_circle">check_circle</span>
+<span>Kortikosteroid Topikal</span>
+</button>
+<button class="chip-item inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border border-primary bg-primary text-on-primary text-body-md font-body-md shadow-xs transition-all" data-selected="true" type="button">
+<span class="material-symbols-outlined text-[16px]" data-icon="check_circle" data-weight="fill" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span>Sunscreen SPF 30+ Harian</span>
+</button>
+<button class="chip-item inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border border-border-strong bg-surface-card hover:bg-surface-subtle text-text-secondary text-body-md font-body-md transition-all" data-selected="false" type="button">
+<span class="material-symbols-outlined text-[16px] hidden" data-icon="check_circle">check_circle</span>
+<span>Niacinamide &gt; 5%</span>
+</button>
+<button class="chip-item inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border border-border-strong bg-surface-card hover:bg-surface-subtle text-text-secondary text-body-md font-body-md transition-all" data-selected="false" type="button">
+<span class="material-symbols-outlined text-[16px] hidden" data-icon="check_circle">check_circle</span>
+<span>Benzoyl Peroxide</span>
+</button>
+</div>
+</div>
+<!-- Open Prescription Text Input -->
+<div>
+<label class="block text-title-md font-title-md text-text-primary mb-2" for="nama-obat">
+              Nama obat minum (oral) atau salep racikan resep saat ini
+            </label>
+<input class="w-full h-11 px-3.5 bg-surface-card border border-border-strong rounded-lg text-text-primary placeholder:text-text-muted text-body-md font-body-md focus:ring-2 focus:ring-primary focus:border-transparent outline-none" id="nama-obat" placeholder="Misal: Doksisiklin 100mg, Cetirizine 10mg, atau 'Tidak ada obat oral'" type="text"/>
+</div>
+</section>
+<!-- SECTION 4: Target & Harapan Konsultasi -->
+<section class="bg-surface-card rounded-2xl border border-border-subtle p-6 sm:p-8 space-y-6 shadow-sm">
+<div class="flex items-center gap-3 pb-4 border-b border-border-subtle">
+<span class="w-8 h-8 rounded-full bg-surface-subtle text-primary flex items-center justify-center text-label-md font-label-md font-bold">4</span>
+<div>
+<h2 class="text-headline-sm font-headline-sm text-text-primary">Target &amp; Harapan Konsultasi</h2>
+<p class="text-body-sm font-body-sm text-text-muted">Tentukan fokus prioritas yang ingin dicapai dalam sesi terapi ini</p>
+</div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+<!-- Target Card 1 -->
+<label class="flex items-start gap-3 p-4 rounded-xl border border-primary bg-surface-container-low/40 cursor-pointer hover:border-primary transition-all">
+<input checked="" class="mt-1 rounded text-primary focus:ring-primary border-border-strong w-4 h-4" type="checkbox"/>
+<div>
+<span class="block text-title-md font-title-md text-text-primary font-semibold">Meredakan Jerawat Meradang</span>
+<span class="block text-body-sm font-body-sm text-text-secondary mt-0.5">Menekan pustula, nodul nyeri, dan papul aktif</span>
+</div>
+</label>
+<!-- Target Card 2 -->
+<label class="flex items-start gap-3 p-4 rounded-xl border border-primary bg-surface-container-low/40 cursor-pointer hover:border-primary transition-all">
+<input checked="" class="mt-1 rounded text-primary focus:ring-primary border-border-strong w-4 h-4" type="checkbox"/>
+<div>
+<span class="block text-title-md font-title-md text-text-primary font-semibold">Memperbaiki Skin Barrier</span>
+<span class="block text-body-sm font-body-sm text-text-secondary mt-0.5">Mengatasi perih, dehidrasi, dan sensibilitas berlebih</span>
+</div>
+</label>
+<!-- Target Card 3 -->
+<label class="flex items-start gap-3 p-4 rounded-xl border border-border-subtle bg-surface-card cursor-pointer hover:border-border-strong transition-all">
+<input class="mt-1 rounded text-primary focus:ring-primary border-border-strong w-4 h-4" type="checkbox"/>
+<div>
+<span class="block text-title-md font-title-md text-text-primary font-semibold">Menghilangkan Bekas Kemerahan (PIE)</span>
+<span class="block text-body-sm font-body-sm text-text-secondary mt-0.5">Memudarkan eritema pasca-inflamasi vaskular</span>
+</div>
+</label>
+<!-- Target Card 4 -->
+<label class="flex items-start gap-3 p-4 rounded-xl border border-border-subtle bg-surface-card cursor-pointer hover:border-border-strong transition-all">
+<input class="mt-1 rounded text-primary focus:ring-primary border-border-strong w-4 h-4" type="checkbox"/>
+<div>
+<span class="block text-title-md font-title-md text-text-primary font-semibold">Menyelaraskan Diet &amp; Pencernaan</span>
+<span class="block text-body-sm font-body-sm text-text-secondary mt-0.5">Evaluasi keterkaitan gut-skin axis &amp; intoleransi makanan</span>
+</div>
+</label>
+</div>
+</section>
+<!-- SECTION 5: Pertanyaan Utama untuk Dokter -->
+<section class="bg-surface-card rounded-2xl border border-border-subtle p-6 sm:p-8 space-y-6 shadow-sm">
+<div class="flex items-center gap-3 pb-4 border-b border-border-subtle">
+<span class="w-8 h-8 rounded-full bg-surface-subtle text-primary flex items-center justify-center text-label-md font-label-md font-bold">5</span>
+<div>
+<h2 class="text-headline-sm font-headline-sm text-text-primary">Pertanyaan Utama untuk Dokter</h2>
+<p class="text-body-sm font-body-sm text-text-muted">Tuliskan 1 - 2 pertanyaan esensial yang ingin diprioritaskan saat tatap muka video</p>
+</div>
+</div>
+<div>
+<textarea class="w-full p-3.5 bg-surface-card border border-border-strong rounded-lg text-text-primary placeholder:text-text-muted text-body-md font-body-md focus:ring-2 focus:ring-primary focus:border-transparent outline-none resize-none" placeholder="Contoh: 'Apakah saya perlu menghentikan retinol saat barrier mengelupas?', 'Apakah konsumsi whey protein berpengaruh pada jerawat rahang saya?'" rows="3"></textarea>
+<p class="text-label-sm font-label-sm text-text-muted mt-2 flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px]" data-icon="info">info</span>
+<span>Dokter akan memprioritaskan pembahasan poin ini di 10 menit pertama konsultasi.</span>
+</p>
+</div>
+</section>
+</div>
+<!-- RIGHT COLUMN: Doctor Context, Appointment, & Biomarker Snapshot (35%) -->
+<aside class="lg:col-span-4 space-y-6 lg:sticky lg:top-24">
+<!-- Doctor & Appointment Card -->
+<div class="bg-surface-card rounded-2xl border border-border-subtle p-6 shadow-sm">
+<div class="flex items-center gap-4 pb-5 border-b border-border-subtle">
+<div class="relative">
+<img class="w-16 h-16 rounded-full object-cover ring-2 ring-primary/20" data-alt="Professional clinical headshot of Dr. Metz, a female dermatology and venereology specialist in pristine white medical coat with subtle stethoscope, warm reassuring smile, clean minimalist clinical sanctuary backdrop with natural soft diffuse light and slate accents." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDrK0T7mCK8dc2a-E6JN-pMjFE78e43GJP9IIbGd3XzbxLaZ94ARE-mQiZZqVCg-P_hhHRxnlWIDwJMM4dom_nuPPHNG-XO8lS9PxX3bK_OPvb1BZ5TuqkoebZB4C4v8nbT-dheQlIzIkhu_Vh0YOng-hTLnXr99s-7qDw92QCixDBzKIq4-InM4J5HO5QFY4GIszygjSp_vn9JB0CfNUzoaVUc_ptFDgjttvisel7wcyjNohb0hUNLSw"/>
+<span class="absolute bottom-0 right-0 w-4 h-4 rounded-full bg-status-stable ring-2 ring-surface-card" title="Dokter Siap"></span>
+</div>
+<div>
+<div class="inline-flex items-center gap-1 text-label-sm font-label-sm text-primary font-semibold">
+<span class="material-symbols-outlined text-[15px] text-primary" data-icon="verified" data-weight="fill" style="font-variation-settings: 'FILL' 1;">verified</span>
+<span>SIP Terverifikasi IDI</span>
+</div>
+<h3 class="text-title-lg font-title-lg text-text-primary">Dr. Metz, Sp.D.V.E</h3>
+<p class="text-body-sm font-body-sm text-text-muted">Spesialis Dermatologi &amp; Venereologi</p>
+</div>
+</div>
+<!-- Appointment Detail Schedule -->
+<div class="py-4 space-y-3">
+<div class="flex items-start gap-3">
+<div class="w-8 h-8 rounded-lg bg-surface-subtle flex items-center justify-center text-primary shrink-0">
+<span class="material-symbols-outlined text-[18px]" data-icon="calendar_today">calendar_today</span>
+</div>
+<div>
+<span class="block text-label-sm font-label-sm text-text-muted">Waktu Konsultasi</span>
+<span class="block text-title-md font-title-md text-text-primary">Rabu, 10:00 WIB</span>
+<span class="block text-body-sm font-body-sm text-text-secondary">Durasi 30 Menit • Sesi Video Privat</span>
+</div>
+</div>
+<div class="flex items-start gap-3">
+<div class="w-8 h-8 rounded-lg bg-surface-subtle flex items-center justify-center text-primary shrink-0">
+<span class="material-symbols-outlined text-[18px]" data-icon="video_chat">video_chat</span>
+</div>
+<div>
+<span class="block text-label-sm font-label-sm text-text-muted">Ruang Telekonsultasi</span>
+<span class="block text-title-md font-title-md text-text-primary">Ruang Klinis WebRTC Terenkripsi</span>
+</div>
+</div>
+</div>
+<!-- Form Status Chip -->
+<div class="pt-3 border-t border-border-subtle">
+<div class="w-full flex items-center justify-between p-2.5 rounded-xl bg-status-warning-bg/60 border border-status-warning/20">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-status-warning text-[18px]" data-icon="pending_actions">pending_actions</span>
+<span class="text-label-md font-label-md text-status-warning font-semibold">Status Form:</span>
+</div>
+<span class="text-label-sm font-label-sm font-bold text-status-warning">Menunggu Pengisian Form</span>
+</div>
+</div>
+</div>
+<!-- Beauty Code Snapshot Widget (Longitudinal Sync) -->
+<div class="bg-surface-card rounded-2xl border border-border-subtle p-6 shadow-sm">
+<div class="flex items-center justify-between pb-3 mb-3 border-b border-border-subtle">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]" data-icon="hub">hub</span>
+<h4 class="text-title-md font-title-md text-text-primary">Beauty Code Snapshot</h4>
+</div>
+<span class="text-label-sm font-label-sm px-2 py-0.5 rounded bg-surface-subtle text-text-secondary font-mono">Sync 30 Hari</span>
+</div>
+<p class="text-body-sm font-body-sm text-text-secondary mb-4">
+            Riwayat pemantauan mandiri yang otomatis tersambung ke layar rekam medis dokter:
+          </p>
+<div class="grid grid-cols-2 gap-3">
+<div class="p-3 rounded-xl bg-surface-subtle border border-border-subtle">
+<span class="block text-label-sm font-label-sm text-text-muted">Skin Barrier Index</span>
+<div class="flex items-baseline gap-1 mt-1">
+<span class="text-headline-md font-headline-md font-bold text-text-primary">54</span>
+<span class="text-label-sm font-label-sm text-status-warning font-semibold">Perlu Perhatian</span>
+</div>
+<div class="w-full bg-border-strong h-1.5 rounded-full mt-2 overflow-hidden">
+<div class="bg-status-warning h-full rounded-full" style="width: 54%"></div>
+</div>
+</div>
+<div class="p-3 rounded-xl bg-surface-subtle border border-border-subtle">
+<span class="block text-label-sm font-label-sm text-text-muted">Trend Tidur Rerata</span>
+<div class="flex items-baseline gap-1 mt-1">
+<span class="text-headline-md font-headline-md font-bold text-text-primary">6.1h</span>
+<span class="text-label-sm font-label-sm text-status-stable font-semibold">+0.4h</span>
+</div>
+<div class="w-full bg-border-strong h-1.5 rounded-full mt-2 overflow-hidden">
+<div class="bg-status-stable h-full rounded-full" style="width: 76%"></div>
+</div>
+</div>
+</div>
+<div class="mt-3 flex items-center gap-1.5 text-label-sm font-label-sm text-text-muted">
+<span class="material-symbols-outlined text-[14px] text-status-stable" data-icon="check">check</span>
+<span>Terintegrasi SATUSEHAT &amp; Rekam Medis Elektronik</span>
+</div>
+</div>
+<!-- Panduan Pengisian Singkat -->
+<div class="bg-surface-subtle/70 rounded-2xl border border-border-subtle p-5">
+<div class="flex items-center gap-2 text-text-primary mb-3">
+<span class="material-symbols-outlined text-primary text-[18px]" data-icon="assignment_turned_in">assignment_turned_in</span>
+<h4 class="text-title-md font-title-md">Panduan Pengisian Singkat</h4>
+</div>
+<ul class="space-y-2 text-body-sm font-body-sm text-text-secondary">
+<li class="flex items-start gap-2">
+<span class="text-primary font-bold">•</span>
+<span><strong>Jujur &amp; Terbuka:</strong> Tidak ada riwayat skincare atau kebiasaan yang dinilai salah secara moral.</span>
+</li>
+<li class="flex items-start gap-2">
+<span class="text-primary font-bold">•</span>
+<span><strong>Foto Asli:</strong> Tanpa filter kehalusan atau bedak tebal agar batas kelainan kulit terbaca nyata.</span>
+</li>
+<li class="flex items-start gap-2">
+<span class="text-primary font-bold">•</span>
+<span><strong>Draf Otomatis:</strong> Progres tersimpan di perangkat lokal setiap detik perubahan.</span>
+</li>
+</ul>
+</div>
+</aside>
+</div>
+</main>
+<!-- STICKY FLOATING BOTTOM ACTION BAR: Apple Sanctuary Floating Dock -->
+<footer class="fixed bottom-0 left-0 w-full z-40 bg-surface-card/95 backdrop-blur-lg border-t border-border-subtle shadow-lg">
+<div class="max-w-7xl mx-auto px-gutter md:px-margin h-20 flex items-center justify-between">
+<!-- Auto-save Sync Status -->
+<div class="flex items-center gap-2 text-text-secondary text-body-sm font-body-sm">
+<span class="material-symbols-outlined text-status-stable text-[18px]" data-icon="cloud_done">cloud_done</span>
+<span class="hidden sm:inline">Draf otomatis tersimpan <span class="font-medium text-text-primary">1 menit lalu</span></span>
+<span class="sm:hidden font-medium text-text-primary">Tersimpan</span>
+</div>
+<!-- Action Group -->
+<div class="flex items-center gap-3">
+<!-- Simpan & Keluar -->
+<button class="px-4 py-2.5 rounded-xl border border-border-subtle bg-surface-card hover:bg-surface-subtle text-text-primary text-title-md font-title-md transition-colors" type="button">
+          Simpan &amp; Keluar
+        </button>
+<!-- Primary Submit CTA -->
+<button class="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-primary hover:bg-primary-container text-on-primary text-title-md font-title-md font-semibold transition-all shadow-md hover:shadow-lg active:scale-98" id="submit-form-btn" type="button">
+<span>Kirim Form &amp; Masuk Ruang Konsultasi</span>
+<span class="material-symbols-outlined text-[18px]" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+</div>
+</footer>
+<!-- Micro-interactions Script -->
+<script>
+    // Segmented Scale Button Toggle
+    const scaleButtons = document.querySelectorAll('.scale-btn');
+    const scaleIndicator = document.getElementById('scale-indicator');
+    
+    const scaleLabels = {
+      '1': 'Skala 1: Sangat Ringan',
+      '2': 'Skala 2: Nyaris Tidak Terasa',
+      '3': 'Skala 3: Gatal/Perih Ringan',
+      '4': 'Skala 4: Mengganggu Aktivitas',
+      '5': 'Skala 5: Sulit Konsentrasi',
+      '6': 'Skala 6: Cukup Mengganggu Tidur',
+      '7': 'Skala 7: Sensasi Terbakar Tajam',
+      '8': 'Skala 8: Nyeri Menjalar Signifikan',
+      '9': 'Skala 9: Sangat Menyakitkan',
+      '10': 'Skala 10: Nyeri Tak Tertahankan'
+    };
+
+    scaleButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        scaleButtons.forEach(b => {
+          b.classList.remove('border-primary', 'bg-primary', 'text-on-primary', 'font-bold', 'shadow-sm');
+          b.classList.add('border-border-subtle', 'bg-surface-card', 'text-text-secondary');
+        });
+        btn.classList.add('border-primary', 'bg-primary', 'text-on-primary', 'font-bold', 'shadow-sm');
+        btn.classList.remove('border-border-subtle', 'bg-surface-card', 'text-text-secondary');
+        
+        const val = btn.getAttribute('data-val');
+        if (scaleIndicator && scaleLabels[val]) {
+          scaleIndicator.textContent = scaleLabels[val];
+        }
+      });
+    });
+
+    // Chip Toggles
+    const chips = document.querySelectorAll('.chip-item');
+    chips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        const isSelected = chip.getAttribute('data-selected') === 'true';
+        const icon = chip.querySelector('.material-symbols-outlined');
+        
+        if (isSelected) {
+          chip.setAttribute('data-selected', 'false');
+          chip.classList.remove('border-primary', 'bg-primary', 'text-on-primary', 'shadow-xs');
+          chip.classList.add('border-border-strong', 'bg-surface-card', 'text-text-secondary');
+          if (icon) icon.classList.add('hidden');
+        } else {
+          chip.setAttribute('data-selected', 'true');
+          chip.classList.add('border-primary', 'bg-primary', 'text-on-primary', 'shadow-xs');
+          chip.classList.remove('border-border-strong', 'bg-surface-card', 'text-text-secondary');
+          if (icon) {
+            icon.classList.remove('hidden');
+            icon.setAttribute('data-weight', 'fill');
+            icon.style.fontVariationSettings = "'FILL' 1";
+          }
+        }
+      });
+    });
+
+    // Submit Simulation Micro-feedback
+    const submitBtn = document.getElementById('submit-form-btn');
+    if (submitBtn) {
+      submitBtn.addEventListener('click', () => {
+        const originalHtml = submitBtn.innerHTML;
+        submitBtn.innerHTML = `
+          <span class="animate-spin inline-block w-4 h-4 border-2 border-current border-t-transparent rounded-full mr-2"></span>
+          <span>Menyiapkan Ruang Enkripsi...</span>
+        `;
+        submitBtn.disabled = true;
+        setTimeout(() => {
+          submitBtn.innerHTML = `
+            <span class="material-symbols-outlined text-[18px]">check_circle</span>
+            <span>Form Terkirim • Menghubungkan</span>
+          `;
+          submitBtn.classList.remove('bg-primary');
+          submitBtn.classList.add('bg-status-stable');
+        }, 1200);
+      });
+    }
+  </script>
+</body></html>
