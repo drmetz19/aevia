@@ -201,7 +201,7 @@ export default async function Konsultasi({ params, searchParams }: Props) {
                 ["assessment", "A", "Assessment", "Penilaian profesional", "Penilaian profesional"],
                 ["plan", "P", "Plan", "Rencana tindakan dan tindak lanjut", "Rencana tindakan"],
               ] as const).map(([name, letter, title, hint, source]) => (
-                <section key={name} aria-labelledby={`h-${name}`} className="rounded-lg border border-line bg-white p-4 md:p-6">
+                <section key={name} aria-labelledby={`h-${name}`} className="rounded-lg border border-[var(--status-internal-border)] bg-[var(--status-internal-bg)] p-4 md:p-6">
                   <div className="flex items-center justify-between gap-3">
                     <h3 id={`h-${name}`} className="flex min-w-0 items-center gap-2 text-base font-semibold text-navy">
                       <span aria-hidden="true" className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-copper text-[12px] font-bold text-white">{letter}</span>
@@ -209,7 +209,7 @@ export default async function Konsultasi({ params, searchParams }: Props) {
                     </h3>
                     <span className="hidden shrink-0 text-[12px] font-semibold text-slate sm:inline">{source}</span>
                   </div>
-                  <textarea id={name} name={name} rows={4} maxLength={5000} defaultValue={k.soap[name]} className={`${area} mt-3`} />
+                  <textarea id={name} name={name} rows={4} maxLength={5000} defaultValue={k.soap[name]} className={`${area} mt-3 bg-white`} />
                 </section>
               ))}
               <div className="flex flex-wrap items-center gap-4">
